@@ -1,0 +1,51 @@
+[project]
+name = "snuffled"
+version = "0.1.0"
+description = "Systematic Numerical Univariate Full Function anaLysis for Establishing Root-finding difficulty"
+readme = "README.md"
+authors = [
+    { name = "Bert Pluymers", email = "bert.pluymers@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "backports-strenum>=1.3.1",
+    "numpy>=1.20",
+]
+
+[project.urls]
+Source = "https://github.com/bertpl/snuffled"
+Issues = "https://github.com/bertpl/snuffled/issues"
+Roadmap = "https://github.com/bertpl/snuffled/milestones"
+
+
+[project.optional-dependencies]
+numba = [
+    "numba>=0.50",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+packages = ["snuffled"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["snuffled"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["I"]
+
+[dependency-groups]
+dev = [
+    "genbadge[all]>=1.1.2",
+    "jupyterlab>=4.4.6",
+    "matplotlib>=3.10.5",
+    "notebook>=7.4.5",
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+]

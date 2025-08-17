@@ -1,2 +1,4 @@
+![snuffled logo](./figures/splash.webp)
+
 # snuffled
-Systematic Numerical Univariate Full Function anaLysis for Establishing Difficulty of root-finding
+**S**ystematic **N**umerical **U**nivariate **F**unction ana**L**ysis for **E**stablishing **D**ifficulty of root-finding.
