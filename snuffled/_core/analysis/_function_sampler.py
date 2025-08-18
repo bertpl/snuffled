@@ -189,14 +189,28 @@ def smooth_sign(values: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarray
 
     The following mapping is used for mapping f[i+1]-f[i] to [-1, 1]:
 
-        f[i+1]-f[i]                 smooth_fx_sign
+    There are 2 extremal cases (most cases will fall somewhere in between):
+
+     CASE 1 - INNER_TOL[i] ~= OUTER_TOL[i]
+
+            f[i+1]-f[i]              smooth_fx_sign
 
            >> +outer_tol    -->         +1.00
-              +outer_tol    -->      ~  +0.75
-              +inner_tol    -->      ~  +0.25
+              +outer_tol    -->      ~  +0.50
                0.0          -->          0.00
-              -inner_tol    -->      ~  -0.25
-              -outer_tol    -->      ~  -0.75
+              -outer_tol    -->      ~  -0.50
+           << -outer_tol    -->         -1.00
+
+     CASE 2 - INNER_TOL[i] << OUTER_TOL[i]
+
+            f[i+1]-f[i]              smooth_fx_sign
+
+           >> +outer_tol    -->         +1.00
+              +outer_tol    -->      ~  +0.95
+              +inner_tol    -->      ~  +0.05
+               0.0          -->          0.00
+              -inner_tol    -->      ~  -0.05
+              -outer_tol    -->      ~  -0.95
            << -outer_tol    -->         -1.00
 
     This implementation assumes that 0 <= inner_tol <= outer_tol.
@@ -211,8 +225,11 @@ def smooth_sign(values: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarray
         if v == 0.0:
             result[i] = 0.0
         elif inner > 0.0:
-            result[i] = 0.5 * (sigmoid_like(v / inner) + sigmoid_like(v / outer))
+            # both inner and outer are >0
+            for log2_ref in np.linspace(math.log2(inner), math.log2(outer), 10):
+                result[i] += 0.1 * sigmoid_like(v / math.exp2(log2_ref))
         elif outer > 0.0:
+            # only outer > 0
             result[i] = 0.5 * (1.0 + sigmoid_like(v / outer))
         else:
             result[i] = 1.0

@@ -1,11 +1,13 @@
 import math
 from typing import Callable
 
+import numpy as np
 import pytest
 
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.models import FunctionProperty
+from snuffled._core.utils.noise import noise_from_float
 
 
 # =================================================================================================
@@ -74,3 +76,110 @@ def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_sco
 
     # --- assert ------------------------------------------
     assert min_score <= flat_score <= max_score
+
+
+def test_function_analyser_flat_intervals_trend_1():
+    """
+    For wider fully flat intervals, the score should go up.
+    """
+
+    # --- arrange -----------------------------------------
+    def get_f_relu(_x0: float) -> Callable[[float], float]:
+        # construct function that is fully flat for x <= x0
+        def _f_relu(_x: float) -> float:
+            return max(0.0, _x - _x0) - 0.5
+
+        return _f_relu
+
+    # --- act ---------------------------------------------
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_relu(x0),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=1_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        for x0 in np.linspace(-0.95, 0.95, 20)
+    ]
+
+    # --- assert ------------------------------------------
+    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert 0.0 < min(scores) < 0.1
+    assert 0.9 < max(scores) < 1.0
+    assert max(np.diff(scores)) < 0.1, "change should be gradual"
+
+
+def test_function_analyser_flat_intervals_trend_2():
+    """
+    For gradually flatter function ranges, the score should go up.
+    """
+
+    # --- arrange -----------------------------------------
+    def get_f_exp(_c: float) -> Callable[[float], float]:
+        # construct function that is more and more flat for x<0 wrt f(1.0)
+        def _f_exp(_x: float) -> float:
+            # we expect 10**_c > 1.0
+            return (10 ** (_c * _x)) - 1.0
+
+        return _f_exp
+
+    # --- act ---------------------------------------------
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_exp(c),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=1_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        for c in np.linspace(1, 20, 20)
+    ]
+
+    # --- assert ------------------------------------------
+    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert min(scores) < 1e-3
+    assert max(scores) > 0.4
+    assert max(np.diff(scores)) < 0.05, "change should be gradual"
+
+
+def test_function_analyser_flat_intervals_trend_3():
+    """
+    Adding noise of increasing magnitude to flat areas should gradually decrease flatness score
+    """
+
+    # --- arrange -----------------------------------------
+    def get_f_noisy_exp(_c: float) -> Callable[[float], float]:
+        # construct strongly exponential function with noise of magnitude c
+        def _f_noisy_exp(_x: float) -> float:
+            return (10 ** (20 * _x)) - 1.0 + (_c * noise_from_float(_x))
+
+        return _f_noisy_exp
+
+    # --- act ---------------------------------------------
+    e_values = list(np.linspace(10, -20, 15))
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_noisy_exp(_c=10**e),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=10_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        for e in e_values
+    ]
+
+    # --- assert ------------------------------------------
+    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert min(scores) < 1e-2
+    assert max(scores) > 0.45
+    assert max(abs(np.diff(scores))) < 0.1, "change should be gradual"
