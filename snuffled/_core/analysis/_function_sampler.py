@@ -226,8 +226,8 @@ def smooth_sign(values: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarray
             result[i] = 0.0
         elif inner > 0.0:
             # both inner and outer are >0
-            for log2_ref in np.linspace(math.log2(inner), math.log2(outer), 10):
-                result[i] += 0.1 * sigmoid_like(v / math.exp2(log2_ref))
+            for log2_ref in np.linspace(np.log2(inner), np.log2(outer), 10):
+                result[i] += 0.1 * sigmoid_like(v / np.exp2(log2_ref))
         elif outer > 0.0:
             # only outer > 0
             result[i] = 0.5 * (1.0 + sigmoid_like(v / outer))
