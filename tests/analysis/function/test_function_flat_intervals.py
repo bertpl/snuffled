@@ -163,20 +163,23 @@ def test_function_analyser_flat_intervals_trend_3():
         return _f_noisy_exp
 
     # --- act ---------------------------------------------
-    e_values = list(np.linspace(10, -20, 15))
+    c_values = [10**e for e in np.linspace(10, -20, 100)]
     scores = [
         FunctionAnalyser(
             FunctionSampler(
-                fun=get_f_noisy_exp(_c=10**e),
+                fun=get_f_noisy_exp(_c=c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=10_000,
+                n_fun_samples=1_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
         ).analyse()[FunctionProperty.FLAT_INTERVALS]
-        for e in e_values
+        for c in c_values
     ]
+
+    # for c, score in zip(c_values, scores):
+    #     print(f"{c:.5e}", score)
 
     # --- assert ------------------------------------------
     assert sorted(scores) == scores, "Scores should be non-decreasing"

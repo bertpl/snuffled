@@ -5,7 +5,7 @@ import pytest
 
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis._function_sampler import smoothen_fx_abs_tol, smoothen_fx_rel_tol
-from tests.utils.constants import EPS
+from snuffled._core.utils.constants import EPS
 
 
 # =================================================================================================

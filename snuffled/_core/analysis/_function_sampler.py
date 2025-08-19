@@ -1,13 +1,14 @@
 import math
 from collections.abc import Callable
 from functools import cache
-from typing import Literal, LiteralString
+from typing import Literal
 
 import numpy as np
 
 from snuffled._core.compatibility import numba
+from snuffled._core.utils.constants import EPS
+from snuffled._core.utils.math import smooth_sign_array
 from snuffled._core.utils.sampling import multi_scale_samples
-from tests.utils.constants import EPS
 
 
 class FunctionSampler:
@@ -102,6 +103,10 @@ class FunctionSampler:
             raise ValueError(f"unsupported value for smoothing parameter: {smoothing}")
 
     @cache
+    def fx_diff_values(self) -> np.ndarray:
+        return np.diff(self.fx_values())
+
+    @cache
     def fx_quantile(self, q: float, absolute: bool) -> float:
         """
         Returns the requested quantile f(x).
@@ -146,11 +151,11 @@ class FunctionSampler:
         return np.full(self.n_fun_samples, self.rel_tol * self.robust_estimated_fx_max())
 
     @cache
-    def smooth_fx_sign(self) -> np.ndarray:
+    def fx_diff_smooth_sign(self) -> np.ndarray:
         """
-        Returns an array with elements in [-1,+1] representing a more nuance np.sign(fx_values()).
+        Returns an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values())).
 
-        Local and global tolerance areas are used to determine the threshold around which differences transition
+        Local and global tolerances are used to determine the threshold around which differences transition
         (smoothly) from 0 to 1 or 0 to -1.
 
         See also smooth_sign().
@@ -168,8 +173,8 @@ class FunctionSampler:
         outer_tol = np.maximum(outer_tol[1:], outer_tol[:-1])  # take maximum of all subsequent points
 
         # compute smooth_sign
-        return smooth_sign(
-            values=np.diff(self.fx_values()),
+        return smooth_sign_array(
+            x=self.fx_diff_values(),
             inner_tol=inner_tol,
             outer_tol=outer_tol,
         )
@@ -178,65 +183,6 @@ class FunctionSampler:
 # =================================================================================================
 #  Static Helpers
 # =================================================================================================
-@numba.njit
-def smooth_sign(values: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarray) -> np.ndarray:
-    """
-    Returns an array that can be seen as a 'smooth' version of np.sign(values).
-
-    Smoothing should NOT be interpreted in the i-direction along the array, but rather in the value-direction,
-    i.e. we replace the normally expected values -1, 0, +1 by the entire spectrum of values in [-1, 1].
-    This is done by taking into account the 'inner_tol' and 'outer_tol' arrays.
-
-    The following mapping is used for mapping f[i+1]-f[i] to [-1, 1]:
-
-    There are 2 extremal cases (most cases will fall somewhere in between):
-
-     CASE 1 - INNER_TOL[i] ~= OUTER_TOL[i]
-
-            f[i+1]-f[i]              smooth_fx_sign
-
-           >> +outer_tol    -->         +1.00
-              +outer_tol    -->      ~  +0.50
-               0.0          -->          0.00
-              -outer_tol    -->      ~  -0.50
-           << -outer_tol    -->         -1.00
-
-     CASE 2 - INNER_TOL[i] << OUTER_TOL[i]
-
-            f[i+1]-f[i]              smooth_fx_sign
-
-           >> +outer_tol    -->         +1.00
-              +outer_tol    -->      ~  +0.95
-              +inner_tol    -->      ~  +0.05
-               0.0          -->          0.00
-              -inner_tol    -->      ~  -0.05
-              -outer_tol    -->      ~  -0.95
-           << -outer_tol    -->         -1.00
-
-    This implementation assumes that 0 <= inner_tol <= outer_tol.
-    """
-
-    def sigmoid_like(x: float) -> float:
-        """Linear around x=0, levels off at -1 and +1 for ±inf; f(1)=1/2"""
-        return x / math.sqrt(3 + (x * x))
-
-    result = np.zeros_like(values)
-    for i, (v, inner, outer) in enumerate(zip(values, inner_tol, outer_tol)):
-        if v == 0.0:
-            result[i] = 0.0
-        elif inner > 0.0:
-            # both inner and outer are >0
-            for log2_ref in np.linspace(np.log2(inner), np.log2(outer), 10):
-                result[i] += 0.1 * sigmoid_like(v / np.exp2(log2_ref))
-        elif outer > 0.0:
-            # only outer > 0
-            result[i] = 0.5 * (1.0 + sigmoid_like(v / outer))
-        else:
-            result[i] = 1.0
-
-    return result
-
-
 @numba.njit
 def smoothen_fx_abs_tol(fx: np.ndarray, abs_tol: float) -> np.ndarray:
     """

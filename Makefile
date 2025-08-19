@@ -18,16 +18,16 @@ help:
 build:
 	uv build;
 
-test-with-numba:
-	# run tests WITH optional [numba] dependencies installed
-	uv run --extra numba pytest ./tests
-
 test-without-numba:
 	# run tests WITHOUT optional [benchmarking] dependencies installed
 	uv sync;	# should remove numba from the environment
 	uv run pytest ./tests
 
-test: test-with-numba test-without-numba
+test-with-numba:
+	# run tests WITH optional [numba] dependencies installed
+	uv run --extra numba pytest ./tests
+
+test: test-without-numba test-with-numba
 	# run all tests
 
 coverage:
