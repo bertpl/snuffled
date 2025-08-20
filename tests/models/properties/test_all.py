@@ -13,7 +13,7 @@ def test_snuffled_properties_construction_extraction_getters():
     # --- arrange -----------------------------------------
     sfp = SnuffledFunctionProperties([1, 2, 3, 4, 5])
     srp = SnuffledRootProperties([11, 12, 13, 14, 15])
-    sdp = SnuffledDiagnostics([21, 22])
+    sdp = SnuffledDiagnostics([21, 22, 23])
 
     # --- act ---------------------------------------------
     sp = SnuffledProperties(

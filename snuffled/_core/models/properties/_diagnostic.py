@@ -4,7 +4,8 @@ from snuffled._core.models.base import NamedArray
 
 class Diagnostic(StrEnum):
     MAX_ZERO_WIDTH = "diagnostic_max_zero_width"
-    SIGN_CHANGE_MISSING = "diagnostic_sign_change_missing"
+    NO_ZEROS_DETECTED = "diagnostic_no_zeros_detected"
+    INTERVAL_NOT_BRACKETING_READY = "diagnostic_interval_not_bracketing_ready"
 
 
 class SnuffledDiagnostics(NamedArray):
