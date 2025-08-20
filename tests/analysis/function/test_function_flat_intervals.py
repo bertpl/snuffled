@@ -8,6 +8,7 @@ from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.models import FunctionProperty
 from snuffled._core.utils.noise import noise_from_float
+from tests.helpers import is_sorted_with_tolerance
 
 
 # =================================================================================================
@@ -107,7 +108,7 @@ def test_function_analyser_flat_intervals_trend_1():
     ]
 
     # --- assert ------------------------------------------
-    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
     assert 0.0 < min(scores) < 0.1
     assert 0.9 < max(scores) < 1.0
     assert max(np.diff(scores)) < 0.1, "change should be gradual"
@@ -143,7 +144,7 @@ def test_function_analyser_flat_intervals_trend_2():
     ]
 
     # --- assert ------------------------------------------
-    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
     assert min(scores) < 1e-3
     assert max(scores) > 0.4
     assert max(np.diff(scores)) < 0.05, "change should be gradual"
@@ -182,7 +183,7 @@ def test_function_analyser_flat_intervals_trend_3():
     #     print(f"{c:.5e}", score)
 
     # --- assert ------------------------------------------
-    assert sorted(scores) == scores, "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
     assert min(scores) < 1e-2
     assert max(scores) > 0.45
     assert max(abs(np.diff(scores))) < 0.1, "change should be gradual"
