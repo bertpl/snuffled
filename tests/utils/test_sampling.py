@@ -4,7 +4,6 @@ import pytest
 from snuffled._core.utils.sampling import (
     fit_fixed_sum_exponential_intervals,
     get_fixed_sum_exponential_intervals,
-    get_fixed_sum_integers,
     multi_scale_samples,
 )
 
@@ -47,54 +46,6 @@ def test_multi_scale_sampling_seed():
     # --- assert ------------------------------------------
     assert np.array_equal(s_1, s_2)
     assert not np.array_equal(s_1, s_3)
-
-
-# =================================================================================================
-#  Constrained integer sampling
-# =================================================================================================
-@pytest.mark.parametrize("n", [5, 10, 100])
-@pytest.mark.parametrize(
-    "v_min, v_max",
-    [
-        (5, 5),
-        (4, 6),
-        (2, 8),
-        (10, 10),
-        (9, 11),
-        (5, 15),
-        (100, 100),
-        (99, 101),
-        (90, 110),
-        (50, 150),
-    ],
-)
-def test_fixed_sum_integers(n: int, v_min: int, v_max: int):
-    # --- arrange -----------------------------------------
-    tgt_sum = round(0.5 * (v_min + v_max) * n)
-
-    # --- act ---------------------------------------------
-    integers = get_fixed_sum_integers(n, v_min, v_max, tgt_sum)
-
-    # --- assert ------------------------------------------
-    assert all(v_min <= v <= v_max for v in integers)
-    assert sum(integers) == tgt_sum
-
-
-def test_fixed_sum_integers_seed():
-    # --- arrange -----------------------------------------
-    n = 100
-    v_min = 5
-    v_max = 15
-    tgt_sum = 1000
-
-    # --- act ---------------------------------------------
-    v_1 = get_fixed_sum_integers(n, v_min, v_max, tgt_sum, seed=10)
-    v_2 = get_fixed_sum_integers(n, v_min, v_max, tgt_sum, seed=10)  # same seed
-    v_3 = get_fixed_sum_integers(n, v_min, v_max, tgt_sum, seed=11)  # different seed
-
-    # --- assert ------------------------------------------
-    assert np.array_equal(v_1, v_2)
-    assert not np.array_equal(v_1, v_3)
 
 
 # =================================================================================================
