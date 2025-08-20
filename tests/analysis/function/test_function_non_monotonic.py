@@ -5,13 +5,15 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis import FunctionSampler
-from snuffled._core.analysis.function.analyser import (
-    FunctionAnalyser,
-    _non_monotonicity_score_n_up_down_flips,
-    _non_monotonicity_score_up_down_fx,
-    _non_monotonicity_score_up_down_x,
+from snuffled._core.analysis.function.analyser import FunctionAnalyser
+from snuffled._core.analysis.function.helpers_non_monotonic import (
+    non_monotonicity_score_n_up_down_flips,
+    non_monotonicity_score_up_down_fx,
+    non_monotonicity_score_up_down_x,
 )
 from snuffled._core.models import FunctionProperty
+from snuffled._core.utils.noise import noise_from_float
+from tests.helpers import is_sorted_with_tolerance
 
 
 # =================================================================================================
@@ -45,7 +47,7 @@ def f_sin(x: float) -> float:
 
 
 # =================================================================================================
-#  Test - Main method
+#  Tests - Simple cases
 # =================================================================================================
 @pytest.mark.parametrize(
     "fun, min_score, max_score",
@@ -70,6 +72,111 @@ def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_scor
 
 
 # =================================================================================================
+#  Tests - Trends
+# =================================================================================================
+def test_function_analyser_non_monotonic_trend_1():
+    """If non-monotonicity becomes more pronounced in y-direction, scores should increase"""
+
+    # --- arrange -----------------------------------------
+    def get_f_lin_quad(_c: float) -> Callable[[float], float]:
+        # construct function with f(-1)=-1 and f(1)=1, f(0)=c
+        def _f_lin_quad(_x: float) -> float:
+            return _x + _c * (_x + 1) * (1 - _x)
+
+        return _f_lin_quad
+
+    # --- act ---------------------------------------------
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_lin_quad(c),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=1_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        for c in [10**e for e in np.linspace(-1, 10, 20)]
+    ]
+
+    print(scores)
+
+    # --- assert ------------------------------------------
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-6)
+    assert min(scores) == 0.0
+    assert max(scores) > 0.60  # 2 of 3 scores will max out in the end
+
+
+def test_function_analyser_non_monotonic_trend_2():
+    """Increasing noise will increase score"""
+
+    # --- arrange -----------------------------------------
+    def get_f_exp_noisy(_c: float) -> Callable[[float], float]:
+        # construct strongly exponential function with noise of magnitude _c
+        def _f_exp_noisy(_x: float) -> float:
+            return -2 + math.exp(20 * _x) + _c * noise_from_float(_x)
+
+        return _f_exp_noisy
+
+    # --- act ---------------------------------------------
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_exp_noisy(c),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=1_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        for c in [10**e for e in np.linspace(-20, 20, 20)]
+    ]
+
+    print(scores)
+
+    # --- assert ------------------------------------------
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-6)
+    assert min(scores) == 0.0
+    assert max(scores) > 0.95
+
+
+def test_function_analyser_non_monotonic_trend_3():
+    """Increasing number of wobbles will increase score"""
+
+    # --- arrange -----------------------------------------
+    def get_f_lin_cos(_c: float) -> Callable[[float], float]:
+        # construct linear function with smaller amplitude cosine superimposed, with varying frequency
+        def _f_lin_cos(_x: float) -> float:
+            return 10 * _x + math.cos(_c * _x)
+
+        return _f_lin_cos
+
+    # --- act ---------------------------------------------
+    scores = [
+        FunctionAnalyser(
+            FunctionSampler(
+                fun=get_f_lin_cos(c * math.pi),
+                x_min=-1.0,
+                x_max=1.0,
+                n_fun_samples=1_000,
+                dx=1e-9,
+                rel_tol_scale=10.0,
+            )
+        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        for c in [10**e for e in np.linspace(0, 10, 11)]
+    ]
+
+    print(scores)
+
+    # --- assert ------------------------------------------
+    assert is_sorted_with_tolerance(scores, abs_tol=0.1)  # large tol. as n_up_down_flips score is quite stochastic
+    assert min(scores) == 0.0
+    assert max(scores) > 0.95
+
+
+# =================================================================================================
 #  Tests - Helpers
 # =================================================================================================
 @pytest.mark.parametrize(
@@ -86,8 +193,8 @@ def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_scor
 )
 def test_score_total_up_down_fx(fx_diff: np.ndarray, expected_result: float):
     # --- act ---------------------------------------------
-    score_1 = _non_monotonicity_score_up_down_fx(fx_diff)
-    score_2 = _non_monotonicity_score_up_down_fx(-fx_diff)
+    score_1 = non_monotonicity_score_up_down_fx(fx_diff)
+    score_2 = non_monotonicity_score_up_down_fx(-fx_diff)
 
     # --- assert ------------------------------------------
     assert score_1 == score_2
@@ -107,8 +214,8 @@ def test_score_total_up_down_fx(fx_diff: np.ndarray, expected_result: float):
 )
 def test_score_total_up_down_x(diff_fx_signs: np.ndarray, expected_result: float):
     # --- act ---------------------------------------------
-    score_1 = _non_monotonicity_score_up_down_x(diff_fx_signs)
-    score_2 = _non_monotonicity_score_up_down_x(-diff_fx_signs)
+    score_1 = non_monotonicity_score_up_down_x(diff_fx_signs)
+    score_2 = non_monotonicity_score_up_down_x(-diff_fx_signs)
 
     # --- assert ------------------------------------------
     assert score_1 == score_2
@@ -133,8 +240,8 @@ def test_score_total_up_down_x(diff_fx_signs: np.ndarray, expected_result: float
 )
 def test_score_n_up_down_flips(diff_fx_signs: np.ndarray, expected_result: float):
     # --- act ---------------------------------------------
-    score_1 = _non_monotonicity_score_n_up_down_flips(diff_fx_signs)
-    score_2 = _non_monotonicity_score_n_up_down_flips(-diff_fx_signs)
+    score_1 = non_monotonicity_score_n_up_down_flips(diff_fx_signs)
+    score_2 = non_monotonicity_score_n_up_down_flips(-diff_fx_signs)
 
     # --- assert ------------------------------------------
     assert score_1 == score_2
