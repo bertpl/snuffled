@@ -62,8 +62,7 @@ def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_scor
     function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
     analyser = FunctionAnalyser(function_data)
     # --- act ---------------------------------------------
-    function_props = analyser.analyse()
-    non_monotonic_score = function_props[FunctionProperty.NON_MONOTONIC]
+    non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
 
     print(non_monotonic_score)
 
@@ -96,7 +95,7 @@ def test_function_analyser_non_monotonic_trend_1():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        ).extract(FunctionProperty.NON_MONOTONIC)
         for c in [10**e for e in np.linspace(-1, 10, 20)]
     ]
 
@@ -130,7 +129,7 @@ def test_function_analyser_non_monotonic_trend_2():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        ).extract(FunctionProperty.NON_MONOTONIC)
         for c in [10**e for e in np.linspace(-20, 20, 20)]
     ]
 
@@ -164,7 +163,7 @@ def test_function_analyser_non_monotonic_trend_3():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.NON_MONOTONIC]
+        ).extract(FunctionProperty.NON_MONOTONIC)
         for c in [10**e for e in np.linspace(0, 10, 11)]
     ]
 

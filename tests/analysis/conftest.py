@@ -2,6 +2,7 @@ from typing import Callable
 
 import pytest
 
+
 @pytest.fixture
 def test_fun_quad() -> Callable[[float], float]:
     """

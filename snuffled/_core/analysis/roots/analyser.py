@@ -1,42 +1,52 @@
 from snuffled._core.analysis._function_sampler import FunctionSampler
+from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import RootProperty, SnuffledRootProperties
 
 
-class RootsAnalyser:
+class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, function_data: FunctionSampler, dx: float, n_root_samples):
-        self.function_data = function_data
+    def __init__(self, function_sampler: FunctionSampler, dx: float, n_root_samples: int):
+        super().__init__(function_sampler)
         self.dx = dx
         self.n_root_samples = n_root_samples
 
     # -------------------------------------------------------------------------
-    #  Main API
+    #  Main Implementation
     # -------------------------------------------------------------------------
-    def analyse(self) -> SnuffledRootProperties:
-        props = SnuffledRootProperties()
-        props[RootProperty.DERIVATIVE_ZERO] = self._detect_derivative_zero()
-        props[RootProperty.DERIVATIVE_INFINITE] = self._detect_derivative_infinite()
-        props[RootProperty.NOISY] = self._detect_noisy()
-        props[RootProperty.DISCONTINUOUS] = self._detect_discontinuous()
-        props[RootProperty.NON_DIFFERENTIABLE] = self._detect_non_differentiable()
-        return props
+    def _new_named_array(self) -> SnuffledRootProperties:
+        return SnuffledRootProperties()
+
+    def _extract(self, prop: str) -> float:
+        match prop:
+            case RootProperty.DISCONTINUOUS:
+                return self._extract_discontinuous()
+            case RootProperty.DERIVATIVE_ZERO:
+                return self._extract_derivative_zero()
+            case RootProperty.DERIVATIVE_INFINITE:
+                return self._extract_derivative_infinite()
+            case RootProperty.NOISY:
+                return self._extract_noisy()
+            case RootProperty.NON_DIFFERENTIABLE:
+                return self._extract_non_differentiable()
+            case _:
+                raise ValueError(f"Property {prop} not supported")
 
     # -------------------------------------------------------------------------
-    #  Internal snuffling methods
+    #  Internal methods
     # -------------------------------------------------------------------------
-    def _detect_derivative_zero(self) -> float:
+    def _extract_derivative_zero(self) -> float:
         return -1.0
 
-    def _detect_derivative_infinite(self) -> float:
+    def _extract_derivative_infinite(self) -> float:
         return -1.0
 
-    def _detect_noisy(self) -> float:
+    def _extract_noisy(self) -> float:
         return -1.0
 
-    def _detect_discontinuous(self) -> float:
+    def _extract_discontinuous(self) -> float:
         return -1.0
 
-    def _detect_non_differentiable(self) -> float:
+    def _extract_non_differentiable(self) -> float:
         return -1.0

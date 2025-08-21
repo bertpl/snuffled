@@ -69,8 +69,7 @@ def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_sco
     analyser = FunctionAnalyser(function_data)
 
     # --- act ---------------------------------------------
-    function_props = analyser.analyse()
-    flat_score = function_props[FunctionProperty.FLAT_INTERVALS]
+    flat_score = analyser.extract(FunctionProperty.FLAT_INTERVALS)
 
     print(flat_score)
 
@@ -102,7 +101,7 @@ def test_function_analyser_flat_intervals_trend_1():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        ).extract(FunctionProperty.FLAT_INTERVALS)
         for x0 in np.linspace(-0.95, 0.95, 100)
     ]
 
@@ -138,7 +137,7 @@ def test_function_analyser_flat_intervals_trend_2():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        ).extract(FunctionProperty.FLAT_INTERVALS)
         for c in np.linspace(1, 20, 100)
     ]
 
@@ -174,7 +173,7 @@ def test_function_analyser_flat_intervals_trend_3():
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
-        ).analyse()[FunctionProperty.FLAT_INTERVALS]
+        ).extract(FunctionProperty.FLAT_INTERVALS)
         for c in c_values
     ]
 

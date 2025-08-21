@@ -31,7 +31,11 @@ class FunctionSampler:
         dx: float = 1e-8,
         n_fun_samples: int = 1_000,
         rel_tol_scale: float = 10.0,
+        seed: int = 42,
     ):
+        # --- randomization -------------------------------
+        self._seed = seed
+
         # --- function properties -------------------------
         self._fun = fun
         self.x_min = x_min
@@ -85,6 +89,7 @@ class FunctionSampler:
             x_max=self.x_max,
             dx_min=self.dx,
             n=self.n_fun_samples,
+            seed=self._seed,
         )
 
     @cache
@@ -116,6 +121,10 @@ class FunctionSampler:
         only return information related to the initial multiscale sampling.
         """
         return list(self._fun_cache.items())
+
+    def function_cache_size(self) -> int:
+        """Return number of values in function cache."""
+        return len(self._fun_cache)
 
     @cache
     def fx_diff_values(self) -> np.ndarray:

@@ -53,8 +53,7 @@ def test_function_analyser_high_dynamic_range(fun: Callable[[float], float], min
     analyser = FunctionAnalyser(function_data)
 
     # --- act ---------------------------------------------
-    function_props = analyser.analyse()
-    hdr_score = function_props[FunctionProperty.HIGH_DYNAMIC_RANGE]
+    hdr_score = analyser.extract(FunctionProperty.HIGH_DYNAMIC_RANGE)
 
     # --- assert ------------------------------------------
     assert min_score <= hdr_score <= max_score
