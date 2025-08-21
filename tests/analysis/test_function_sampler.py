@@ -81,6 +81,44 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
         )
 
 
+@pytest.mark.parametrize(
+    "x_before, x_after",
+    [
+        ([], []),
+        ([0.12345], []),
+        ([], [0.12345]),
+        ([0.12345], [0.12345]),
+        ([1.0], []),
+        ([], [1.0]),
+        ([-2.0, -1.25437], [0.3579, 1.0]),
+    ],
+)
+def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x_after: list[float]):
+    """Tests if .function_cache() returns consistent info after calling .fx_values() and .f(.)"""
+
+    # --- arrange -----------------------------------------
+    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+
+    # --- act ---------------------------------------------
+
+    # fetch data before calling x_values(), fx_values()
+    x_fx_before = [(x, fun_sampler.f(x)) for x in x_before]
+
+    # call x_values(), fx_values()
+    x_values = fun_sampler.x_values()
+    fx_values = fun_sampler.fx_values()
+
+    # fetch data after calling x_values(), fx_values()
+    x_fx_after = [(x, fun_sampler.f(x)) for x in x_after]
+
+    # get cache contents
+    cache_contents = fun_sampler.function_cache()
+
+    # --- assert ------------------------------------------
+    assert set(cache_contents) == {(x, test_fun_quad(x)) for x in x_before + list(x_values) + x_after}
+    assert set(cache_contents) == {(x, fx) for x, fx in zip(x_values, fx_values)} | set(x_fx_before) | set(x_fx_after)
+
+
 @pytest.mark.parametrize("n", [100, 1_000, 10_000, 100_000])
 def test_function_sampler_robust_estimated_fx_max(n: int):
     # --- arrange -----------------------------------------

@@ -82,12 +82,11 @@ class FunctionSampler:
         # get x-values
         x_values = self.x_values()
 
-        # pre-fill cache, which is faster than going through self.f(x) for each x
+        # use _fun(.) and fill cache, which is faster than going through self.f(x) for each x
         fx_values = np.zeros_like(x_values, dtype=float)
         for i, x in enumerate(x_values):
             if x not in self._fun_cache:
-                fx = self._fun(x)
-                self._fun_cache[x] = self._fun(x)
+                self._fun_cache[x] = fx = self._fun(x)
             else:
                 fx = self._fun_cache[x]
             fx_values[i] = fx
@@ -101,6 +100,14 @@ class FunctionSampler:
             return smoothen_fx_rel_tol(fx=fx_values, rel_tol=self.rel_tol)
         else:
             raise ValueError(f"unsupported value for smoothing parameter: {smoothing}")
+
+    def function_cache(self) -> list[tuple[float, float]]:
+        """
+        Returns contents of the function cache as a list of (x, f(x))-tuples.
+        Note this might return more information than .x_values() and .fx_values(), since those methods
+        only return information related to the initial multiscale sampling.
+        """
+        return list(self._fun_cache.items())
 
     @cache
     def fx_diff_values(self) -> np.ndarray:
