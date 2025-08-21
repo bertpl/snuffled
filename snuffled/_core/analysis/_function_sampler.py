@@ -168,9 +168,9 @@ class FunctionSampler:
         inner_tol = np.minimum(tol_local, tol_global)  # make sure inner_tol[i] is the smallest of both tolerances
         outer_tol = np.maximum(tol_local, tol_global)  # make sure outer_tol[i] is the largest of both tolerances
 
-        # reduce to size n-1 from size n  (take maximum
-        inner_tol = np.maximum(inner_tol[1:], inner_tol[:-1])  # take maximum of all subsequent points
-        outer_tol = np.maximum(outer_tol[1:], outer_tol[:-1])  # take maximum of all subsequent points
+        # reduce to size n-1 from size n  (take sum)
+        inner_tol = inner_tol[1:] + inner_tol[:-1]  # take sum of both tolerances
+        outer_tol = outer_tol[1:] + outer_tol[:-1]  # take sum of both tolerances
 
         # compute smooth_sign
         return smooth_sign_array(
