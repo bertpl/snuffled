@@ -1,4 +1,3 @@
-import math
 from typing import Callable
 
 import numpy as np
@@ -104,14 +103,14 @@ def test_function_analyser_flat_intervals_trend_1():
                 rel_tol_scale=10.0,
             )
         ).analyse()[FunctionProperty.FLAT_INTERVALS]
-        for x0 in np.linspace(-0.95, 0.95, 20)
+        for x0 in np.linspace(-0.95, 0.95, 100)
     ]
 
     # --- assert ------------------------------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
     assert 0.0 < min(scores) < 0.1
     assert 0.9 < max(scores) < 1.0
-    assert max(np.diff(scores)) < 0.1, "change should be gradual"
+    assert max(np.diff(scores)) < 0.05, "change should be gradual"
 
 
 def test_function_analyser_flat_intervals_trend_2():
@@ -140,7 +139,7 @@ def test_function_analyser_flat_intervals_trend_2():
                 rel_tol_scale=10.0,
             )
         ).analyse()[FunctionProperty.FLAT_INTERVALS]
-        for c in np.linspace(1, 20, 20)
+        for c in np.linspace(1, 20, 100)
     ]
 
     # --- assert ------------------------------------------
@@ -178,9 +177,6 @@ def test_function_analyser_flat_intervals_trend_3():
         ).analyse()[FunctionProperty.FLAT_INTERVALS]
         for c in c_values
     ]
-
-    # for c, score in zip(c_values, scores):
-    #     print(f"{c:.5e}", score)
 
     # --- assert ------------------------------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
