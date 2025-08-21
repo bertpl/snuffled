@@ -153,7 +153,7 @@ def compute_discontinuity_score(x_values: np.ndarray, fx_values: np.ndarray, dx_
 
     # --- init --------------------------------------------
     dx_values = np.diff(x_values)
-    dfx_values = abs(np.diff(fx_values))
+    dfx_values = np.abs(np.diff(fx_values))
     dx_total = x_values[-1] - x_values[0]
     dfx_total = np.sum(dfx_values)
 
