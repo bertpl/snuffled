@@ -31,11 +31,11 @@ test: test-without-numba test-with-numba
 	# run all tests
 
 coverage:
-	# run tests WITH numba & create new report
-	uv run --extra numba pytest ./tests --cov=./snuffled/ --cov-report=html
-	# run tests WITHOUT numba & append to report
+	# run tests WITHOUT numba & create new report
 	uv sync;	# should remove numba from the environment
-	uv run pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
+	uv run --python 3.10 pytest ./tests --cov=./snuffled/ --cov-report=html
+	# run tests WITH numba & append to report
+	uv run --python 3.13 --extra numba pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
 
 format:
 	uvx ruff format .;
