@@ -48,16 +48,30 @@ class FunctionSampler:
     # -------------------------------------------------------------------------
     #  Low-level generic functionality
     # -------------------------------------------------------------------------
-    def f(self, x: float) -> float:
-        # simple cached version of fun(x), without size limited (and simpler than lru_cache, so less overhead)
-        if x in self._fun_cache:
-            return self._fun_cache[x]
-        elif self.x_min <= x <= self.x_max:
-            fx = self._fun(x)
-            self._fun_cache[x] = fx
-            return fx
+    def f(self, x: float | list[float]) -> float | list[float]:
+        # simple cached version of fun(x), without size limit (and simpler than lru_cache, so less overhead)
+        if isinstance(x, list):
+            # --- get MULTIPLE f(x) values ------
+            fx_values = []
+            for single_x in x:
+                if not (self.x_min <= single_x <= self.x_max):
+                    raise ValueError(f"x={single_x} is out of bounds [{self.x_min}, {self.x_max}]")
+                elif single_x not in self._fun_cache:
+                    self._fun_cache[single_x] = fx = self._fun(single_x)
+                else:
+                    fx = self._fun_cache[single_x]
+                fx_values.append(fx)
+            return fx_values
         else:
-            raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
+            # --- get SINGLE f(x) values --------
+            if x in self._fun_cache:
+                return self._fun_cache[x]
+            elif self.x_min <= x <= self.x_max:
+                fx = self._fun(x)
+                self._fun_cache[x] = fx
+                return fx
+            else:
+                raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
 
     @cache
     def x_values(self) -> np.ndarray:
@@ -79,17 +93,11 @@ class FunctionSampler:
         f(x) values corresponding to the x_values().
         """
 
-        # get x-values
-        x_values = self.x_values()
-
-        # use _fun(.) and fill cache, which is faster than going through self.f(x) for each x
-        fx_values = np.zeros_like(x_values, dtype=float)
-        for i, x in enumerate(x_values):
-            if x not in self._fun_cache:
-                self._fun_cache[x] = fx = self._fun(x)
-            else:
-                fx = self._fun_cache[x]
-            fx_values[i] = fx
+        # use self.f(.) with list syntax
+        fx_values = np.array(
+            self.f(list(self.x_values())),
+            dtype=np.float64,
+        )
 
         # check if we need to smoothen
         if smoothing == "":

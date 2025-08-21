@@ -36,6 +36,41 @@ def test_function_sampler_f_out_of_range(test_fun_quad):
         _ = fun_sampler.f(x_max + 1e-6)
 
 
+@pytest.mark.parametrize(
+    "x_values",
+    [
+        [],
+        [0.123],
+        [-0.1, 0.2345, 0.5234],
+    ],
+)
+def test_function_sampler_f_list(test_fun_quad, x_values: list[float]):
+    # --- arrange -----------------------------------------
+    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    expected_result = [test_fun_quad(x) for x in x_values]
+
+    # --- act ---------------------------------------------
+    result = fun_sampler.f(x_values)
+
+    # --- assert ------------------------------------------
+    assert isinstance(result, list)
+    assert len(result) == len(x_values)
+    assert np.array_equal(result, expected_result)
+
+
+def test_function_sampler_f_list_out_of_range(test_fun_quad):
+    # --- arrange -----------------------------------------
+    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    # --- act & assert ------------------------------------
+    with pytest.raises(ValueError):
+        # out of bounds left
+        _ = fun_sampler.f([0.0, -0.5, 0.5, -2.345, 0.8])
+
+    with pytest.raises(ValueError):
+        # out of bounds right
+        _ = fun_sampler.f([0.0, -0.5, 0.5, 2.345, 0.8])
+
+
 @pytest.mark.parametrize("dx", [1e-3, 1e-6, 1e-9, 1e-12])
 def test_function_sampler_x_values(test_fun_quad, dx: float):
     # --- arrange -----------------------------------------
