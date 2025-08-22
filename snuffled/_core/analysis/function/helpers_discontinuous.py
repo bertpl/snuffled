@@ -167,11 +167,19 @@ def compute_discontinuity_score(x_values: np.ndarray, fx_values: np.ndarray, dx_
     deriv_mean = dfx_total / dx_total  # avg. absolute derivative over entire interval
     deriv_max = dfx_total / dx_min  # if the entire dfx_total would occur in 1 interval of size dx_min
     deriv_threshold = math.sqrt(deriv_mean * deriv_max)
-    # we now compute 'e' such that deriv_i = deriv_mean  -->  w_i =   sqrt(EPS) ~=     1e-8
-    #                              deriv_i = deriv_max   -->  w_i = 1-sqrt(EPS) ~= 1 - 1e-8
+    # we now compute 'c' such that deriv_i = deriv_mean        -->  w_i = 0.0
+    #                              deriv_i = deriv_threshold   -->  w_i = 0.5
+    #                              deriv_i = deriv_max         -->  w_i = 1.0
     # when using the formula:
-    #   w_i = 1 / (1 + (deriv_threshold/deriv_i)**e)
-    e = math.log2(EPS) / math.log2(deriv_mean / deriv_max)
+    #   w_i_unscaled = 1 / (1 + (deriv_threshold/deriv_i))
+    #   w_i          = 0.5 * c*(w_i_unscaled - 0.5)
+    #
+    # NOTE: we choose this type of scaling (in the w_i-direction rather than the deriv-direction),
+    #       since we don't want the transition around the threshold derivative to become sharper for increasing
+    #       values of dx_min.  The result will be that for smaller dx_min values there will be 'wider' regions
+    #       where w_i is close to 0.0 or 1.0, which then correctly reflects the fact that we can more easily
+    #       distinguish 'step' vs 'non-step' intervals if dx_min is smaller.
+    c = 0.5 / ((1 / (1 + (deriv_threshold / deriv_max))) - 0.5)
 
     # --- actual computations -------------------
     score = 0.0
@@ -179,7 +187,9 @@ def compute_discontinuity_score(x_values: np.ndarray, fx_values: np.ndarray, dx_
         dfx_i, dx_i = dfx_values[i], dx_values[i]
         if dfx_i > 0:
             deriv_i = dfx_i / dx_i
-            w_i = 1 / (1 + (deriv_threshold / deriv_i) ** e)
+            w_i_unscaled = 1 / (1 + (deriv_threshold / deriv_i))
+            w_i = 0.5 + c * (w_i_unscaled - 0.5)
+            w_i = min(max(w_i, 0.0), 1.0)
             score += w_i * (dfx_i / dfx_total)
 
     return score
