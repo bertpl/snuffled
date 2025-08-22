@@ -5,6 +5,7 @@ from snuffled._core.utils.sampling import (
     fit_fixed_sum_exponential_intervals,
     get_fixed_sum_exponential_intervals,
     multi_scale_samples,
+    sample_integers,
 )
 
 
@@ -127,3 +128,30 @@ def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt
     # check result of get_...
     assert sum(interval_sizes) == pytest.approx(tgt_sum, rel=n * 1e-15)
     assert np.allclose(interval_sizes, computed_interval_sizes, rtol=1e-15)
+
+
+# =================================================================================================
+#  Integer sampling
+# =================================================================================================
+@pytest.mark.parametrize(
+    "i_min, i_max, n",
+    [
+        (0, 100, 10),
+        (0, 100, 100),
+        (50, 100, 10),
+        (50, 100, 50),
+        (990, 1_000, 5),
+        (999_900, 1_000_000, 10),
+        (1_000, 1_000_000, 1_000),
+    ],
+)
+def test_sample_n_integers(i_min: int, i_max: int, n: int):
+    # --- act ---------------------------------------------
+    samples = sample_integers(i_min, i_max, n)
+
+    # --- assert ------------------------------------------
+    assert isinstance(samples, list)
+    assert len(samples) == n
+    assert all([i_min <= s < i_max for s in samples])
+    assert sorted(samples) == samples
+    assert len(set(samples)) == n

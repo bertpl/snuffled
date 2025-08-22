@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from snuffled._core.compatibility import numba
@@ -145,3 +147,15 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
                 c_max = c_mid
 
     return c_mid
+
+
+# =================================================================================================
+#  Integer sampling
+# =================================================================================================
+def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]:
+    """
+    Sample n integers (without replacement) from range [i_min, i_max).
+    Result is returned as a list of sorted integers.
+    """
+    random.seed(seed)
+    return sorted(random.sample(range(i_min, i_max), n))
