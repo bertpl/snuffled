@@ -4,13 +4,12 @@ import numpy as np
 
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.compatibility import numba
-from snuffled._core.utils.constants import EPS
 
 
 # =================================================================================================
 #  Main computation
 # =================================================================================================
-def compute_discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> float:
+def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> float:
     """
     Compute discontinuity score (value in [0,1]) for the given function indicating to what extent it suffers
     from discontinuities, where...
@@ -90,7 +89,12 @@ def compute_discontinuity_score(function_sampler: FunctionSampler, n_samples: in
 
     # determine iteration count, etc...
     log2_dx_min_max_ratio = math.log2(dx_max / dx_min)  # number of bisection steps need to get from dx_max to dx_min
-    n_iters = math.ceil(max(log2_dx_min_max_ratio, math.sqrt(n_samples)))
+    n_iters = math.ceil(
+        max(
+            2 * log2_dx_min_max_ratio,  # margin 2x, so also later detected suspicious intervals can be fully bisected
+            math.sqrt(n_samples),
+        )
+    )
     n_samples_remaining = n_samples
 
     # --- iterative sampling ------------------------------
@@ -126,7 +130,7 @@ def compute_discontinuity_score(function_sampler: FunctionSampler, n_samples: in
     samples = sorted(function_sampler.function_cache())
     x_values = np.array([x for x, fx in samples], dtype=np.float64)
     fx_values = np.array([fx for x, fx in samples], dtype=np.float64)
-    return compute_discontinuity_score(
+    return compute_discontinuity_score_from_intervals(
         x_values=x_values,
         fx_values=fx_values,
         dx_min=dx_min,
@@ -137,7 +141,7 @@ def compute_discontinuity_score(function_sampler: FunctionSampler, n_samples: in
 #  Helper functions
 # =================================================================================================
 @numba.njit
-def compute_discontinuity_score(x_values: np.ndarray, fx_values: np.ndarray, dx_min: float) -> float:
+def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: np.ndarray, dx_min: float) -> float:
     """
     Computes final discontinuity score (value in [0,1]) based on the provided (x,fx)-samples
     and minimum interval width dx_min.
@@ -193,46 +197,3 @@ def compute_discontinuity_score(x_values: np.ndarray, fx_values: np.ndarray, dx_
             score += w_i * (dfx_i / dfx_total)
 
     return score
-
-
-@numba.njit(inline="always")
-def interval_score(dx: float, dfx: float, dx_min: float, dx_max: float, dfx_total: float) -> tuple[float, float]:
-    """
-    Returns a score in [0,1] for a given interval (defined by dx, dfx), indicating how closely it resembles
-    a discontinuity.
-
-    We expect dx, dx_min, dx_max, dfx_max to be >0.
-
-    This functions returns (score, max_sub_score) with...
-      - score = score of current interval
-      - max_sub_score = max. score of a subinterval of size dx_min if the entire dfx would occur in this subinterval
-
-    """
-    # max. derivative occurs when total dfx-movement happens in 1 small dx_min interval
-    #  --> this is the derivative at which we'll get a score of ~1.0
-    deriv_max = dfx_total / dx_min
-
-    # mean derivative occurs by spreading out total dfx-movement over entire dx_max interval
-    #  --> this is the derivative at or below which we'll get a score of ~0.0
-    deriv_mean = dfx_total / dx_max
-
-    # compute derivative threshold, i.e. derivative at which interval gets an intermediate score of 0.5
-    deriv_threshold = math.sqrt(deriv_mean * deriv_max)
-
-    # now we can compute a score as z/(1+z) with z=deriv/deriv_threshold, which is a sigmoid-like function
-    score = stable_sigmoid_like(num=abs(dfx / dx), den=deriv_threshold)
-    max_sub_score = stable_sigmoid_like(num=abs(dfx / dx_min), den=deriv_threshold)
-    return score, max_sub_score
-
-
-@numba.njit(inline="always")
-def stable_sigmoid_like(num: float, den: float) -> float:
-    """
-    Computes sigmoid like function z/(1+z) with z = num/den in a numerically stable way.
-    """
-    if abs(num) <= abs(den):
-        z = num / den
-        return z / (1.0 + z)
-    else:
-        z_inv = den / num
-        return 1 / (1.0 + z_inv)

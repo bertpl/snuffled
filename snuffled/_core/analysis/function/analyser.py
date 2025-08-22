@@ -4,6 +4,7 @@ from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import FunctionProperty, SnuffledFunctionProperties
 
+from .helpers_discontinuous import discontinuity_score
 from .helpers_non_monotonic import non_monotonicity_score
 
 
@@ -78,4 +79,7 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         return 1.0 - float(np.mean(abs(fx_sign)))
 
     def _extract_discontinuous(self) -> float:
-        return -1.0  # TODO
+        return discontinuity_score(
+            function_sampler=self.function_sampler,
+            n_samples=self.function_sampler.n_fun_samples,
+        )
