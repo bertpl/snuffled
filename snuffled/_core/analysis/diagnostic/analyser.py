@@ -20,9 +20,9 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
         match prop:
             case Diagnostic.INTERVAL_NOT_BRACKETING_READY:
                 return self._extract_interval_not_bracketing_ready()
-            case Diagnostic.NO_ZEROS_DETECTED:
+            case Diagnostic.MAX_ZERO_WIDTH:
                 return self._extract_max_zero_width()
-            case Diagnostic.INTERVAL_NOT_BRACKETING_READY:
+            case Diagnostic.NO_ZEROS_DETECTED:
                 return self._extract_no_zeros_detected()
             case _:
                 raise ValueError(f"Property {prop} not supported")
