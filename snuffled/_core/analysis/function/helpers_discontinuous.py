@@ -85,10 +85,10 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     # extract sampling settings
     dx_min = function_sampler.dx
     x_min, x_max = function_sampler.x_min, function_sampler.x_max
-    dx_max = x_max - x_min
+    dx_total = x_max - x_min
 
     # determine iteration count, etc...
-    log2_dx_min_max_ratio = math.log2(dx_max / dx_min)  # number of bisection steps need to get from dx_max to dx_min
+    log2_dx_min_max_ratio = math.log2(dx_total / dx_min)  # number of bisection steps to get from dx_total to dx_min
     n_iters = math.ceil(
         max(
             2 * log2_dx_min_max_ratio,  # margin 2x, so also later detected suspicious intervals can be fully bisected
@@ -108,8 +108,28 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
             (x0, x1, x1 - x0, abs(fx1 - fx0))  # convert to (x_left, x_right, dx, dfx)-tuples
             for (x0, fx0), (x1, fx1) in zip(all_samples[:-1], all_samples[1:])
         ]
-        # we use dfx*deriv as score
-        scores = [dfx * (dfx / dx) if dx > dx_min else 0.0 for _, _, dx, dfx in intervals]
+        dfx_total = sum(dfx for _, _, _, dfx in intervals)
+
+        # We use dfx*deriv + dx^2 as heuristic resampling score
+        # Rationale:
+        #    dfx*deriv is the main driving heuristic
+        #       --> if we split a mostly linear interval in 2 --> the score halves and is split acros both intervals
+        #       --> if we split an interval with a step       --> the score of the step-containing sub-interval doubles
+        #    This way we focus primarily first on those intervals that look most 'suspicious' until
+        #
+        #    In order to avoid long seemingly constant intervals stay under the radar indefinitely, we add a small dx^2
+        #     component to also focus on long flat intervals, if we don't have any other suspicious looking ones.
+        #
+        #    Note that we normalize both dx & dfx to be scaling-independent
+        def heuristic(_dx: float, _dfx: float) -> float:
+            if _dx > dx_min:
+                _dx_rel = _dx / dx_total
+                _dfx_rel = _dfx / dfx_total
+                return (_dfx_rel * _dfx_rel / _dx_rel) + (_dx_rel * _dx_rel)
+            else:
+                return 0.0
+
+        scores = [heuristic(dx, dfx) for _, _, dx, dfx in intervals]
 
         # sort by score and generate new candidate x-values for sampling
         scored_intervals = sorted(list(zip(scores, intervals)), reverse=True)
