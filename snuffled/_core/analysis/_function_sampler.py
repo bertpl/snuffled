@@ -81,8 +81,8 @@ class FunctionSampler:
     def x_values(self) -> np.ndarray:
         """
         Returns an array of x-values in [x_min, x_max] that we use to sample the function and infer its properties.
-
-        This is based on the multi_scale_samples function.
+        This is based on the multi_scale_samples function and does not include any other cached x-values resulting
+        from other calls to .f(.)
         """
         return multi_scale_samples(
             x_min=self.x_min,
@@ -93,26 +93,9 @@ class FunctionSampler:
         )
 
     @cache
-    def fx_values(self, smoothing: Literal["", "absolute", "relative"] = "") -> np.ndarray:
-        """
-        f(x) values corresponding to the x_values().
-        """
-
-        # use self.f(.) with list syntax
-        fx_values = np.array(
-            self.f(list(self.x_values())),
-            dtype=np.float64,
-        )
-
-        # check if we need to smoothen
-        if smoothing == "":
-            return fx_values
-        elif smoothing == "absolute":
-            return smoothen_fx_abs_tol(fx=fx_values, abs_tol=self.rel_tol * self.fx_quantile(0.9, absolute=True))
-        elif smoothing == "relative":
-            return smoothen_fx_rel_tol(fx=fx_values, rel_tol=self.rel_tol)
-        else:
-            raise ValueError(f"unsupported value for smoothing parameter: {smoothing}")
+    def fx_values(self) -> np.ndarray:
+        """f(x) values corresponding to the x_values()."""
+        return np.array(self.f(list(self.x_values())), dtype=np.float64)
 
     def function_cache(self) -> list[tuple[float, float]]:
         """
@@ -202,46 +185,3 @@ class FunctionSampler:
             inner_tol=inner_tol,
             outer_tol=outer_tol,
         )
-
-
-# =================================================================================================
-#  Static Helpers
-# =================================================================================================
-@numba.njit
-def smoothen_fx_abs_tol(fx: np.ndarray, abs_tol: float) -> np.ndarray:
-    """
-    Smoothen a series of f(x) values (for increasing x) such that we keep f(x) values constant
-    as long as they stay within a certain bound of the starting f(x') value of the current run of constant values.
-
-    An ABSOLUTE tolerance is used, i.e. we check if abs(f(x) - f(x')) <= abs_tol
-    """
-    fx_smooth = fx.copy()
-    fx_ref = fx[0]
-    for i in range(1, len(fx)):
-        if abs(fx_ref - fx[i]) <= abs_tol:
-            # keep constant
-            fx_smooth[i] = fx_ref
-        else:
-            # deviation large enough, don't keep constant
-            fx_ref = fx[i]
-    return fx_smooth
-
-
-@numba.njit
-def smoothen_fx_rel_tol(fx: np.ndarray, rel_tol: float) -> np.ndarray:
-    """
-    Smoothen a series of f(x) values (for increasing x) such that we keep f(x) values constant
-    as long as they stay within a certain bound of the starting f(x') value of the current run of constant values.
-
-    A RELATIVE tolerance is used, i.e. we check if abs(f(x) - f(x')) <= rel_tol * abs(f(x))
-    """
-    fx_smooth = fx.copy()
-    fx_ref = fx[0]
-    for i in range(1, len(fx)):
-        if abs(fx_ref - fx[i]) <= (rel_tol * abs(fx[i])):
-            # keep constant
-            fx_smooth[i] = fx_ref
-        else:
-            # deviation large enough, don't keep constant
-            fx_ref = fx[i]
-    return fx_smooth

@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis import FunctionSampler
-from snuffled._core.analysis._function_sampler import smoothen_fx_abs_tol, smoothen_fx_rel_tol
 from snuffled._core.utils.constants import EPS
 
 
@@ -207,27 +206,3 @@ def test_function_sampler_tol_array_global(test_fun_quad):
 
     # --- assert ------------------------------------------
     assert np.array_equal(tol_array, expected_tol_array)
-
-
-def test_function_sampler_fx_values_smoothed(test_fun_quad):
-    # --- arrange -----------------------------------------
-    x_min, x_max = -2.0, 1.0
-    n = 1000
-    dx = 1e-6
-    rel_tol_scale = 1e10  # influences smoothing; chosen large to see an effect with this simple, well-behaved function
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
-
-    abs_tol = fun_sampler.rel_tol * fun_sampler.fx_quantile(0.9, absolute=True)
-    rel_tol = fun_sampler.rel_tol
-
-    # --- act ---------------------------------------------
-    fx_raw = fun_sampler.fx_values(smoothing="")
-    fx_smooth_abs = fun_sampler.fx_values(smoothing="absolute")
-    fx_smooth_rel = fun_sampler.fx_values(smoothing="relative")
-
-    # --- assert ------------------------------------------
-    assert not np.array_equal(fx_raw, fx_smooth_abs), "test not well set up; increase rel_tol_scale"
-    assert not np.array_equal(fx_raw, fx_smooth_rel), "test not well set up; increase rel_tol_scale"
-    assert not np.array_equal(fx_smooth_abs, fx_smooth_rel), "test not well set up; increase rel_tol_scale"
-    assert np.array_equal(fx_smooth_abs, smoothen_fx_abs_tol(fx_raw, abs_tol=abs_tol))
-    assert np.array_equal(fx_smooth_rel, smoothen_fx_rel_tol(fx_raw, rel_tol=rel_tol))
