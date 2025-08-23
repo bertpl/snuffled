@@ -5,6 +5,7 @@ from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import FunctionProperty, SnuffledFunctionProperties
 
 from .helpers_discontinuous import discontinuity_score
+from .helpers_many_zeroes import compute_many_zeroes_score
 from .helpers_non_monotonic import non_monotonicity_score
 
 
@@ -66,7 +67,26 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         return float(np.interp(np.log2(q90 / q10), [10.0, 94.0], [0.0, 1.0], left=0.0, right=1.0))
 
     def _extract_many_zeroes(self) -> float:
-        return -1.0  # TODO
+        """
+        The MANY_ZEROES score indicates if we're 'suffering' from a large number of zeroes,
+        and is calibrated on a log-like scale as follows:
+
+            # of zeroes detected
+              using multiscale sampling                 score
+
+                1                                        0.0
+                3                                       ~0.1
+                n_fun_samples/2  (*)                     1.0
+
+        (8) For functions with >>n_fun_samples zeroes, an interval having a sign switch becomes a stochastic process
+            with 50% chance of detecting a zero.  Hence, n_fun_samples/2 is the highest stochastically expected value.
+
+        :return: (float) score in [0,1]
+        """
+        return compute_many_zeroes_score(
+            n=len(self.function_sampler.candidate_root_intervals()),
+            n_max=int(self.function_sampler.n_fun_samples / 2.0),
+        )
 
     def _extract_non_monotonic(self) -> float:
         return non_monotonicity_score(

@@ -138,7 +138,7 @@ class FunctionSampler:
         return (1 / q) * self.fx_quantile(q, absolute=True)
 
     # -------------------------------------------------------------------------
-    #  Specialized
+    #  Specialized - Tolerances
     # -------------------------------------------------------------------------
     @cache
     def tol_array_local(self) -> np.ndarray:
@@ -185,3 +185,21 @@ class FunctionSampler:
             inner_tol=inner_tol,
             outer_tol=outer_tol,
         )
+
+    # -------------------------------------------------------------------------
+    #  Specialized - Roots
+    # -------------------------------------------------------------------------
+    @cache
+    def candidate_root_intervals(self) -> list[tuple[float, float]]:
+        # multi-scale samples as (x, fx)-tuples
+        samples = list(zip(self.x_values(), self.fx_values()))
+
+        # remove 0-valued samples, we are looking for strict sign switches
+        samples = [(x, fx) for x, fx in samples if fx != 0.0]
+
+        # return intervals with strict fx sign switches
+        return [
+            (fx_left, fx_right)
+            for (x_left, fx_left), (x_right, fx_right) in zip(samples[:-1], samples[1:])
+            if fx_left * fx_right < 0.0
+        ]
