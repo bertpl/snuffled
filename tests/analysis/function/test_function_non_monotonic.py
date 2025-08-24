@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis import FunctionSampler
-from snuffled._core.analysis.function.analyser import FunctionAnalyser
+from snuffled._core.analysis.function.function_analyser import FunctionAnalyser
 from snuffled._core.analysis.function.helpers_non_monotonic import (
     non_monotonicity_score_n_up_down_flips,
     non_monotonicity_score_up_down_fx,
@@ -59,8 +59,8 @@ def f_sin(x: float) -> float:
 )
 def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
-    analyser = FunctionAnalyser(function_data)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    analyser = FunctionAnalyser(sampler)
     # --- act ---------------------------------------------
     non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
 

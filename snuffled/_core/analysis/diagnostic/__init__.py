@@ -1,1 +1,1 @@
-from .analyser import DiagnosticAnalyser
+from .diagnostic_analyser import DiagnosticAnalyser

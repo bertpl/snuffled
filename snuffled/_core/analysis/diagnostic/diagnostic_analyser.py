@@ -13,6 +13,14 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     # -------------------------------------------------------------------------
     #  Main Implementation
     # -------------------------------------------------------------------------
+    def supported_properties(self) -> list[str]:
+        # return in order of increasing number of required function evals
+        return [
+            Diagnostic.INTERVAL_NOT_BRACKETING_READY,
+            Diagnostic.NO_ZEROS_DETECTED,
+            Diagnostic.MAX_ZERO_WIDTH,
+        ]
+
     def _new_named_array(self) -> SnuffledDiagnostics:
         return SnuffledDiagnostics()
 
@@ -31,10 +39,25 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     #  Internal methods
     # -------------------------------------------------------------------------
     def _extract_interval_not_bracketing_ready(self) -> float:
-        return -1.0
+        x_min, x_max = self.function_sampler.x_min, self.function_sampler.x_max
+        fx_min, fx_max = self.function_sampler.f(x_min), self.function_sampler.f(x_max)
+        if fx_min * fx_max > 0:
+            # interval end-point f-values have same sign -> NOT READY
+            return 0.0
+        elif fx_min * fx_max == 0.0:
+            # one of the end-point f-values is 0         -> BORDERLINE
+            return 0.5
+        else:
+            # end-point f-values have opposite sign      -> READY
+            return 1.0
 
     def _extract_max_zero_width(self) -> float:
-        return -1.0
+        return max([root_max - root_min for root_min, root_max in self.function_sampler.roots()])
 
     def _extract_no_zeros_detected(self) -> float:
-        return -1.0
+        root_intervals, no_root_intervals = self.function_sampler.candidate_root_intervals()
+        if len(root_intervals) == 0:
+            # no candidate intervals to find roots
+            return 1.0
+        else:
+            return 0.0

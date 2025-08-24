@@ -15,26 +15,26 @@ from snuffled._core.utils.constants import EPS
 def test_function_sampler_f(test_fun_quad):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max)
 
     # --- act & assert ------------------------------------
-    assert fun_sampler.f(-1.0) == test_fun_quad(-1.0)
-    assert fun_sampler.f(-1.0) == test_fun_quad(-1.0)  # check if cached version also works
-    assert fun_sampler.f(0.8) == test_fun_quad(0.8)
-    assert fun_sampler.f(1.0) == test_fun_quad(1.0)
+    assert sampler.f(-1.0) == test_fun_quad(-1.0)
+    assert sampler.f(-1.0) == test_fun_quad(-1.0)  # check if cached version also works
+    assert sampler.f(0.8) == test_fun_quad(0.8)
+    assert sampler.f(1.0) == test_fun_quad(1.0)
 
 
 def test_function_sampler_f_out_of_range(test_fun_quad):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max)
 
     # --- act & assert ------------------------------------
     with pytest.raises(ValueError):
-        _ = fun_sampler.f(x_min - 1e-6)
+        _ = sampler.f(x_min - 1e-6)
 
     with pytest.raises(ValueError):
-        _ = fun_sampler.f(x_max + 1e-6)
+        _ = sampler.f(x_max + 1e-6)
 
 
 @pytest.mark.parametrize(
@@ -47,11 +47,11 @@ def test_function_sampler_f_out_of_range(test_fun_quad):
 )
 def test_function_sampler_f_list(test_fun_quad, x_values: list[float]):
     # --- arrange -----------------------------------------
-    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
     expected_result = [test_fun_quad(x) for x in x_values]
 
     # --- act ---------------------------------------------
-    result = fun_sampler.f(x_values)
+    result = sampler.f(x_values)
 
     # --- assert ------------------------------------------
     assert isinstance(result, list)
@@ -61,15 +61,15 @@ def test_function_sampler_f_list(test_fun_quad, x_values: list[float]):
 
 def test_function_sampler_f_list_out_of_range(test_fun_quad):
     # --- arrange -----------------------------------------
-    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
     # --- act & assert ------------------------------------
     with pytest.raises(ValueError):
         # out of bounds left
-        _ = fun_sampler.f([0.0, -0.5, 0.5, -2.345, 0.8])
+        _ = sampler.f([0.0, -0.5, 0.5, -2.345, 0.8])
 
     with pytest.raises(ValueError):
         # out of bounds right
-        _ = fun_sampler.f([0.0, -0.5, 0.5, 2.345, 0.8])
+        _ = sampler.f([0.0, -0.5, 0.5, 2.345, 0.8])
 
 
 @pytest.mark.parametrize("dx", [1e-3, 1e-6, 1e-9, 1e-12])
@@ -77,13 +77,13 @@ def test_function_sampler_x_values(test_fun_quad, dx: float):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
     n = 1000
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
 
     # --- act ---------------------------------------------
-    x_values = fun_sampler.x_values()
-    x_values_2 = fun_sampler.x_values()
-    fun_sampler.x_values.cache_clear()
-    x_values_3 = fun_sampler.x_values()
+    x_values = sampler.x_values()
+    x_values_2 = sampler.x_values()
+    sampler.x_values.cache_clear()
+    x_values_3 = sampler.x_values()
 
     # --- assert ------------------------------------------
     assert np.array_equal(x_values, x_values_2)
@@ -100,15 +100,15 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
     x_min, x_max = -2.0, 1.0
     n = 1000
     dx = 1e-6
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
 
     if warmup_cache:
-        _ = fun_sampler.f(x_min)
-        _ = fun_sampler.f(0.123456)
+        _ = sampler.f(x_min)
+        _ = sampler.f(0.123456)
 
     # --- act ---------------------------------------------
-    x_values = fun_sampler.x_values()
-    fx_values = fun_sampler.fx_values()
+    x_values = sampler.x_values()
+    fx_values = sampler.fx_values()
 
     # --- assert ------------------------------------------
     for x, fx in zip(x_values, fx_values):
@@ -133,22 +133,22 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
     """Tests if .function_cache() returns consistent info after calling .fx_values() and .f(.)"""
 
     # --- arrange -----------------------------------------
-    fun_sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
 
     # --- act ---------------------------------------------
 
     # fetch data before calling x_values(), fx_values()
-    x_fx_before = [(x, fun_sampler.f(x)) for x in x_before]
+    x_fx_before = [(x, sampler.f(x)) for x in x_before]
 
     # call x_values(), fx_values()
-    x_values = fun_sampler.x_values()
-    fx_values = fun_sampler.fx_values()
+    x_values = sampler.x_values()
+    fx_values = sampler.fx_values()
 
     # fetch data after calling x_values(), fx_values()
-    x_fx_after = [(x, fun_sampler.f(x)) for x in x_after]
+    x_fx_after = [(x, sampler.f(x)) for x in x_after]
 
     # get cache contents
-    cache_contents = fun_sampler.function_cache()
+    cache_contents = sampler.function_cache()
 
     # --- assert ------------------------------------------
     assert set(cache_contents) == {(x, test_fun_quad(x)) for x in x_before + list(x_values) + x_after}
@@ -162,12 +162,12 @@ def test_function_sampler_robust_estimated_fx_max(n: int):
     x_min = -1.0
     x_max = 1.0
     dx = 1e-9
-    fun_sampler = FunctionSampler(f_linear, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(f_linear, x_min, x_max, n_fun_samples=n, dx=dx)
 
     max_rel_deviation = 1 / math.sqrt(n)
 
     # --- act ---------------------------------------------
-    estimated_max = fun_sampler.robust_estimated_fx_max()
+    estimated_max = sampler.robust_estimated_fx_max()
 
     # --- assert ------------------------------------------
     assert estimated_max == pytest.approx(1.0, rel=max_rel_deviation)
@@ -182,12 +182,12 @@ def test_function_sampler_tol_array_local(test_fun_quad):
     n = 1000
     dx = 1e-6
     rel_tol_scale = 10.0
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
 
-    expected_tol_array = abs(fun_sampler.fx_values()) * EPS * rel_tol_scale
+    expected_tol_array = abs(sampler.fx_values()) * EPS * rel_tol_scale
 
     # --- act ---------------------------------------------
-    tol_array = fun_sampler.tol_array_local()
+    tol_array = sampler.tol_array_local()
 
     # --- assert ------------------------------------------
     assert np.array_equal(tol_array, expected_tol_array)
@@ -199,12 +199,12 @@ def test_function_sampler_tol_array_global(test_fun_quad):
     n = 1000
     dx = 1e-6
     rel_tol_scale = 10.0
-    fun_sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
 
-    expected_tol_array = fun_sampler.robust_estimated_fx_max() * EPS * rel_tol_scale * np.ones(n)
+    expected_tol_array = sampler.robust_estimated_fx_max() * EPS * rel_tol_scale * np.ones(n)
 
     # --- act ---------------------------------------------
-    tol_array = fun_sampler.tol_array_global()
+    tol_array = sampler.tol_array_global()
 
     # --- assert ------------------------------------------
     assert np.array_equal(tol_array, expected_tol_array)
@@ -246,13 +246,11 @@ def f_edge_roots(x: float) -> float:
 )
 def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
     # --- arrange -----------------------------------------
-    fun_sampler = FunctionSampler(
-        fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=n_roots, dx=1e-10, rel_tol_scale=10.0
-    )
-    candidate_root_intervals, _ = fun_sampler.candidate_root_intervals()
+    sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=n_roots, dx=1e-10, rel_tol_scale=10.0)
+    candidate_root_intervals, _ = sampler.candidate_root_intervals()
 
     # --- act ---------------------------------------------
-    roots = fun_sampler.roots()
+    roots = sampler.roots()
 
     # --- assert ------------------------------------------
     assert len(roots) == min(n_roots, len(candidate_root_intervals))
@@ -272,11 +270,11 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
 )
 def test_function_sampler_roots_edge_cases(fun: Callable[[float], float], expected_root: float):
     # --- arrange -----------------------------------------
-    fun_sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=100, dx=1e-10, rel_tol_scale=10.0)
-    candidate_root_intervals, _ = fun_sampler.candidate_root_intervals()
+    sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=100, dx=1e-10, rel_tol_scale=10.0)
+    candidate_root_intervals, _ = sampler.candidate_root_intervals()
 
     # --- act ---------------------------------------------
-    roots = fun_sampler.roots()
+    roots = sampler.roots()
 
     # --- assert ------------------------------------------
     assert any(root_min <= expected_root <= root_max for root_min, root_max in roots)

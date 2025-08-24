@@ -40,13 +40,11 @@ def f_sine(x: float, n_roots: int) -> float:
 )
 def test_function_analyser_many_zeroes(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-6)
-    analyser = FunctionAnalyser(function_data)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-6)
+    analyser = FunctionAnalyser(sampler)
 
     # --- act ---------------------------------------------
     many_zeroes_score = analyser.extract(FunctionProperty.MANY_ZEROES)
-
-    print(many_zeroes_score)
 
     # --- assert ------------------------------------------
     assert min_score <= many_zeroes_score <= max_score

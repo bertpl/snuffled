@@ -65,8 +65,8 @@ def f_exp_2(x: float) -> float:
 )
 def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
-    analyser = FunctionAnalyser(function_data)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    analyser = FunctionAnalyser(sampler)
 
     # --- act ---------------------------------------------
     flat_score = analyser.extract(FunctionProperty.FLAT_INTERVALS)

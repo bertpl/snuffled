@@ -7,10 +7,8 @@ from snuffled._core.models import Diagnostic
 
 def test_diagnostic_analyser_supported_properties():
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0
-    )
-    analyser = DiagnosticAnalyser(function_data)
+    sampler = FunctionSampler(fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0)
+    analyser = DiagnosticAnalyser(sampler)
 
     # --- act ---------------------------------------------
     supported_properties = analyser.supported_properties()
@@ -21,10 +19,8 @@ def test_diagnostic_analyser_supported_properties():
 
 def test_diagnostic_analyser_extract_all():
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0
-    )
-    analyser = DiagnosticAnalyser(function_data)
+    sampler = FunctionSampler(fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0)
+    analyser = DiagnosticAnalyser(sampler)
 
     # --- act ---------------------------------------------
     _ = analyser.extract_all()
@@ -35,10 +31,8 @@ def test_diagnostic_analyser_extract_all():
 
 def test_diagnostic_analyser_statistics():
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0
-    )
-    analyser = DiagnosticAnalyser(function_data)
+    sampler = FunctionSampler(fun=lambda x: x, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0)
+    analyser = DiagnosticAnalyser(sampler)
 
     # --- act ---------------------------------------------
     t_start = time.perf_counter()

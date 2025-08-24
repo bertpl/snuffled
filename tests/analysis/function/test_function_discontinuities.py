@@ -48,11 +48,11 @@ def f_step(x: float) -> float:
 )
 def test_function_analyser_discontinuity(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0)
-    analyser = FunctionAnalyser(function_data)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-10, rel_tol_scale=10.0)
+    analyser = FunctionAnalyser(sampler)
 
     # seed function cache
-    _ = function_data.fx_values()
+    _ = sampler.fx_values()
 
     # --- act ---------------------------------------------
     discontinuity_score = analyser.extract(FunctionProperty.DISCONTINUOUS)

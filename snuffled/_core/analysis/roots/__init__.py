@@ -1,1 +1,1 @@
-from .analyser import RootsAnalyser
+from .roots_analyser import RootsAnalyser

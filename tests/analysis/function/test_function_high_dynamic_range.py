@@ -49,8 +49,8 @@ def f_exp_2(x: float) -> float:
 )
 def test_function_analyser_high_dynamic_range(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    function_data = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9)
-    analyser = FunctionAnalyser(function_data)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9)
+    analyser = FunctionAnalyser(sampler)
 
     # --- act ---------------------------------------------
     hdr_score = analyser.extract(FunctionProperty.HIGH_DYNAMIC_RANGE)

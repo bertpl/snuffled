@@ -1,1 +1,1 @@
-from .analyser import FunctionAnalyser
+from .function_analyser import FunctionAnalyser
