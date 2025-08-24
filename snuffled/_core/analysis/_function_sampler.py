@@ -212,7 +212,7 @@ class FunctionSampler:
         root_intervals = []
         non_root_intervals = []
         for (x_left, fx_left), (x_right, fx_right) in zip(samples[:-1], samples[1:]):
-            if fx_left * fx_right <= 0.0:
+            if np.sign(fx_left) != np.sign(fx_right):
                 # sign flip
                 root_intervals.append((x_left, x_right))
             else:

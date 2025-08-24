@@ -228,6 +228,12 @@ def f_roots_sine(x: float, c: float) -> float:
     return math.sin(c * x)
 
 
+def f_near_underflow(x: float) -> float:
+    # function that does _not_ suffer from underflow itself, but _will_ cause underflow when computing f(x)*f(y)
+    # for x & y inside [-1, 1]
+    return (1e-200) * (x - 0.1)
+
+
 def f_edge_roots(x: float) -> float:
     """roots at -1 and 1"""
     return x * (x - 1) * (x + 1)
@@ -242,6 +248,7 @@ def f_edge_roots(x: float) -> float:
         partial(f_roots_sine, c=1.0),
         partial(f_roots_sine, c=10.0),
         partial(f_roots_sine, c=1e3),
+        f_near_underflow,
     ],
 )
 def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
@@ -258,7 +265,7 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
         f_min, f_max = fun(root_min), fun(root_max)
         assert -1.0 <= root_min <= root_max <= 1.0
         assert root_max - root_min < (4 * EPS)  # all roots are expected to be sharp
-        assert (f_min == f_max == 0.0) or (f_min * f_max < 0.0)
+        assert (f_min == f_max == 0.0) or (np.sign(f_min) * np.sign(f_max) < 0.0)
 
 
 @pytest.mark.parametrize(
