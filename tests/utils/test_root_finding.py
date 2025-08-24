@@ -30,6 +30,12 @@ def f_step(x: float, root: float) -> float:
         return -1.0
 
 
+def f_near_underflow(x: float) -> float:
+    # function that does _not_ suffer from underflow itself, but _will_ cause underflow when computing f(x)*f(y)
+    # for x & y inside [-1, 1]
+    return (1e-200) * (x - 0.1)
+
+
 def f_lin_with_wide_zero(x: float, root: float, zero_width: float) -> float:
     if abs(x - root) <= (zero_width / 2):
         return 0.0
@@ -65,6 +71,7 @@ def f_lin_with_wide_zero(x: float, root: float, zero_width: float) -> float:
         (partial(f_step, root=0.0), EPS, 0.0, EPS),  # check if dx_min is handled correctly
         (partial(f_linear, root=-1.0), EPS * EPS, -1.0, EPS),  # root at the edge if x_min=-1
         (partial(f_linear, root=1.0), EPS * EPS, 1.0, EPS),  # root at the edge if x_max=1
+        (f_near_underflow, EPS * EPS, 0.1, EPS),  # check if we don't get inaccurate results due to underflow
     ],
 )
 def test_find_root(

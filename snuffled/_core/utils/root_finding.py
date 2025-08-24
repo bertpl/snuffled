@@ -47,12 +47,12 @@ def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min:
     if x_min > x_max:
         raise ValueError(f"We expect x_min <= x_max; here {x_min} > {x_max}.")
     fx_min, fx_max = fun(x_min), fun(x_max)
-    if fx_min * fx_max > 0:
-        raise ValueError(f"No sign change in interval [{x_min}, {x_max}]; f(x_min)*f(x_max) = {fx_min * fx_max}")
-    elif fx_min == 0.0:
+    if fx_min == 0.0:
         return x_min, x_min
     elif fx_max == 0.0:
         return x_max, x_max
+    elif np.sign(fx_min) == np.sign(fx_max):
+        raise ValueError(f"No sign change in interval [{x_min}, {x_max}]; f(x_min)*f(x_max) = {fx_min * fx_max}")
 
     # --- bisection ---------------------------------------
     while (x_max - x_min) > dx_min:
@@ -67,7 +67,7 @@ def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min:
         elif (x_mid == x_min) or (x_mid == x_max):
             # fx_min & fx_max are so close to each other that fx_mid coincides with either due to rounding
             return x_min, x_max
-        elif fx_mid * fx_min > 0:
+        elif np.sign(fx_mid) == np.sign(fx_min):
             x_min = x_mid
             fx_min = fx_mid
         else:
