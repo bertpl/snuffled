@@ -26,10 +26,13 @@ def f_linear(x: float, fx_left: float, fx_right: float) -> float:
         (partial(f_linear, fx_left=-1, fx_right=1), 0.0),
         (partial(f_linear, fx_left=-1e-9, fx_right=1), 0.0),
         (partial(f_linear, fx_left=-1, fx_right=1e-9), 0.0),
+        (partial(f_linear, fx_left=1e-250, fx_right=-1e-250), 0.0),
         (partial(f_linear, fx_left=0, fx_right=1), 0.5),
         (partial(f_linear, fx_left=-1, fx_right=0), 0.5),
+        (partial(f_linear, fx_left=-1e-250, fx_right=0), 0.5),
         (partial(f_linear, fx_left=1, fx_right=2), 1.0),
         (partial(f_linear, fx_left=-1, fx_right=-2), 1.0),
+        (partial(f_linear, fx_left=1e-250, fx_right=1e-250), 1.0),
     ],
 )
 def test_function_analyser_not_bracketing_ready(fun: Callable[[float], float], expected_result: float):

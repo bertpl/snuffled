@@ -1,3 +1,5 @@
+import numpy as np
+
 from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models.properties import Diagnostic, SnuffledDiagnostics
@@ -41,10 +43,11 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     def _extract_interval_not_bracketing_ready(self) -> float:
         x_min, x_max = self.function_sampler.x_min, self.function_sampler.x_max
         fx_min, fx_max = self.function_sampler.f(x_min), self.function_sampler.f(x_max)
-        if fx_min * fx_max > 0:
+        fx_min_sign, fx_max_sign = np.sign(fx_min), np.sign(fx_max)
+        if fx_min_sign * fx_max_sign > 0:
             # interval end-point f-values have same sign -> NOT READY
             return 0.0
-        elif fx_min * fx_max == 0.0:
+        elif fx_min_sign * fx_max_sign == 0.0:
             # one of the end-point f-values is 0         -> BORDERLINE
             return 0.5
         else:
