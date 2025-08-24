@@ -1,4 +1,6 @@
 import math
+from functools import partial
+from typing import Callable
 
 import numpy as np
 import pytest
@@ -206,3 +208,51 @@ def test_function_sampler_tol_array_global(test_fun_quad):
 
     # --- assert ------------------------------------------
     assert np.array_equal(tol_array, expected_tol_array)
+
+
+# =================================================================================================
+#  FunctionSampler - Roots
+# =================================================================================================
+def f_roots_linear(x: float) -> float:
+    return x - 0.1
+
+
+def f_roots_step(x: float) -> float:
+    if x >= 0.1232465789:
+        return 1.0
+    else:
+        return -1.0
+
+
+def f_roots_sine(x: float, c: float) -> float:
+    return math.sin(c * x)
+
+
+@pytest.mark.parametrize("n_roots", [1, 10, 100])
+@pytest.mark.parametrize(
+    "fun",
+    [
+        f_roots_linear,
+        f_roots_step,
+        partial(f_roots_sine, c=1.0),
+        partial(f_roots_sine, c=10.0),
+        partial(f_roots_sine, c=1e3),
+    ],
+)
+def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
+    # --- arrange -----------------------------------------
+    fun_sampler = FunctionSampler(
+        fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=n_roots, dx=1e-10, rel_tol_scale=10.0
+    )
+    candidate_root_intervals, _ = fun_sampler.candidate_root_intervals()
+
+    # --- act ---------------------------------------------
+    roots = fun_sampler.roots()
+
+    # --- assert ------------------------------------------
+    assert len(roots) == min(n_roots, len(candidate_root_intervals))
+    for root_min, root_max in roots:
+        f_min, f_max = fun(root_min), fun(root_max)
+        assert -1.0 <= root_min <= root_max <= 1.0
+        assert root_max - root_min < (4 * EPS)  # all roots are expected to be sharp
+        assert (f_min == f_max == 0.0) or (f_min * f_max < 0.0)

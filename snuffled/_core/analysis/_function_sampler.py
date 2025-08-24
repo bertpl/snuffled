@@ -1,23 +1,22 @@
 import math
 from collections.abc import Callable
 from functools import cache
-from typing import Literal
 
 import numpy as np
 
-from snuffled._core.compatibility import numba
 from snuffled._core.utils.constants import EPS
 from snuffled._core.utils.math import smooth_sign_array
-from snuffled._core.utils.sampling import multi_scale_samples
+from snuffled._core.utils.root_finding import find_root_and_width
+from snuffled._core.utils.sampling import multi_scale_samples, sample_integers
 
 
 class FunctionSampler:
     """
     Class holding (cached) data related to a specific function, shared across different analyses.
     All the following classes make use of this class to access the data they need for their analyses:
-     - FunctionAnalyser
-     - RootAnalyser
-     - DiagnosticAnalyser
+      - FunctionAnalyser
+      - RootAnalyser
+      - DiagnosticAnalyser
     """
 
     # -------------------------------------------------------------------------
@@ -30,6 +29,7 @@ class FunctionSampler:
         x_max: float,
         dx: float = 1e-8,
         n_fun_samples: int = 1_000,
+        n_roots: int = 100,
         rel_tol_scale: float = 10.0,
         seed: int = 42,
     ):
@@ -44,6 +44,7 @@ class FunctionSampler:
         # --- settings ------------------------------------
         self.dx = dx
         self.n_fun_samples = n_fun_samples
+        self.n_roots = n_roots
         self.rel_tol = EPS * rel_tol_scale
 
         # --- cache ---------------------------------------
@@ -218,5 +219,38 @@ class FunctionSampler:
 
         # we're done
         return root_intervals, non_root_intervals
+
+    @cache
+    def roots(self) -> list[tuple[float, float]]:
+        """
+        Returns at most 'n_roots' root intervals [root_min, root_max] obtained using find_root_and_width().
+        We start from the candidate_root_intervals and - if needed - sample 'n_roots' intervals randomly
+        to if there are too many candidate intervals.
+        :return: list of (root_min, root_max)-tuples.
+        """
+
+        # get intervals
+        cand_intervals, _ = self.candidate_root_intervals()
+
+        # sample if needed
+        if len(cand_intervals) > self.n_roots:
+            cand_intervals = [
+                cand_intervals[i]
+                for i in sample_integers(
+                    i_min=0,
+                    i_max=len(cand_intervals),
+                    n=self.n_roots,
+                    seed=self._seed,
+                )
+            ]
+
+        # compute roots & return
         return [
+            find_root_and_width(
+                fun=self.f,
+                x_min=x_min,
+                x_max=x_max,
+                dx_min=(EPS * EPS) * (self.x_max - self.x_min),
+            )
+            for x_min, x_max in cand_intervals
         ]

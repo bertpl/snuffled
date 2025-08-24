@@ -33,12 +33,13 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         x_min: float,
         x_max: float,
         dx: float,
-        n_root_samples: int = 100,
         n_fun_samples: int = 10_000,
+        n_roots: int = 100,
+        n_root_samples: int = 100,
         rel_tol_scale: float = 10.0,
         seed: int = 42,
     ):
-        function_sampler = FunctionSampler(fun, x_min, x_max, dx, n_fun_samples, rel_tol_scale, seed)
+        function_sampler = FunctionSampler(fun, x_min, x_max, dx, n_fun_samples, n_roots, rel_tol_scale, seed)
         super().__init__(function_sampler)
         self._function_analyser = FunctionAnalyser(function_sampler)
         self._roots_analyser = RootsAnalyser(function_sampler, dx, n_root_samples)
