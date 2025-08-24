@@ -228,6 +228,11 @@ def f_roots_sine(x: float, c: float) -> float:
     return math.sin(c * x)
 
 
+def f_edge_roots(x: float) -> float:
+    """roots at -1 and 1"""
+    return x * (x - 1) * (x + 1)
+
+
 @pytest.mark.parametrize("n_roots", [1, 10, 100])
 @pytest.mark.parametrize(
     "fun",
@@ -256,3 +261,22 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
         assert -1.0 <= root_min <= root_max <= 1.0
         assert root_max - root_min < (4 * EPS)  # all roots are expected to be sharp
         assert (f_min == f_max == 0.0) or (f_min * f_max < 0.0)
+
+
+@pytest.mark.parametrize(
+    "fun, expected_root",
+    [
+        (f_edge_roots, -1.0),
+        (f_edge_roots, 1.0),
+    ],
+)
+def test_function_sampler_roots_edge_cases(fun: Callable[[float], float], expected_root: float):
+    # --- arrange -----------------------------------------
+    fun_sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=100, dx=1e-10, rel_tol_scale=10.0)
+    candidate_root_intervals, _ = fun_sampler.candidate_root_intervals()
+
+    # --- act ---------------------------------------------
+    roots = fun_sampler.roots()
+
+    # --- assert ------------------------------------------
+    assert any(root_min <= expected_root <= root_max for root_min, root_max in roots)

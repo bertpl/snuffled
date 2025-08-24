@@ -203,14 +203,16 @@ class FunctionSampler:
         # multi-scale samples as (x, fx)-tuples
         samples = list(zip(self.x_values(), self.fx_values()))
 
-        # remove 0-valued samples, we are looking for strict sign flips
-        samples = [(x, fx) for x, fx in samples if fx != 0.0]
+        # remove 0-valued samples, we are looking for strict sign flips,
+        # except for the edge intervals (we don't want to miss 0s at the exact edges)
+        n = len(samples)
+        samples = [(x, fx) for i, (x, fx) in enumerate(samples) if (fx != 0.0) or (i == 0) or (i == n - 1)]
 
         # split in root- and non-root-intervals
         root_intervals = []
         non_root_intervals = []
         for (x_left, fx_left), (x_right, fx_right) in zip(samples[:-1], samples[1:]):
-            if fx_left * fx_right < 0.0:
+            if fx_left * fx_right <= 0.0:
                 # sign flip
                 root_intervals.append((x_left, x_right))
             else:
