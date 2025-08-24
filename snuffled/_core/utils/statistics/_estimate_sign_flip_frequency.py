@@ -123,4 +123,5 @@ def estimate_sign_flip_frequency(
 
 @numba.njit(inline="always")
 def cross_entropy_loss(w: np.ndarray, p: np.ndarray, lamb: float) -> float:
-    return -1 * np.sum((p * np.log(1 - np.exp(-2 * lamb * w))) + ((1 - p) * np.log(1 + np.exp(-2 * lamb * w))))
+    exp_minus_two_lamb_w = np.exp(-2 * lamb * w)
+    return -1 * np.sum((p * np.log(1 - exp_minus_two_lamb_w)) + ((1 - p) * np.log(1 + exp_minus_two_lamb_w)))
