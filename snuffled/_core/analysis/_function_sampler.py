@@ -190,16 +190,33 @@ class FunctionSampler:
     #  Specialized - Roots
     # -------------------------------------------------------------------------
     @cache
-    def candidate_root_intervals(self) -> list[tuple[float, float]]:
+    def candidate_root_intervals(self) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
+        """
+        Return a list of 'root intervals' and 'non-root intervals', with the root intervals serving as candidates
+        (but potentially too many) for root finding.
+        :return: (root_intervals, non_root_intervals)-tuple
+                    root_intervals      : list of (x_left, x_right)-tuples   WITH    sign flip
+                    non_root_intervals  : list of (x_left, x_right)-tuples   WITHOUT sign flip
+        """
+
         # multi-scale samples as (x, fx)-tuples
         samples = list(zip(self.x_values(), self.fx_values()))
 
-        # remove 0-valued samples, we are looking for strict sign switches
+        # remove 0-valued samples, we are looking for strict sign flips
         samples = [(x, fx) for x, fx in samples if fx != 0.0]
 
-        # return intervals with strict fx sign switches
+        # split in root- and non-root-intervals
+        root_intervals = []
+        non_root_intervals = []
+        for (x_left, fx_left), (x_right, fx_right) in zip(samples[:-1], samples[1:]):
+            if fx_left * fx_right < 0.0:
+                # sign flip
+                root_intervals.append((x_left, x_right))
+            else:
+                # no sign flip
+                non_root_intervals.append((x_left, x_right))
+
+        # we're done
+        return root_intervals, non_root_intervals
         return [
-            (fx_left, fx_right)
-            for (x_left, fx_left), (x_right, fx_right) in zip(samples[:-1], samples[1:])
-            if fx_left * fx_right < 0.0
         ]

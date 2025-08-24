@@ -1,11 +1,13 @@
+import math
+
 import numpy as np
 
 from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import FunctionProperty, SnuffledFunctionProperties
+from snuffled._core.utils.statistics import estimate_sign_flip_frequency
 
 from .helpers_discontinuous import discontinuity_score
-from .helpers_many_zeroes import compute_many_zeroes_score
 from .helpers_non_monotonic import non_monotonicity_score
 
 
@@ -69,24 +71,40 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
     def _extract_many_zeroes(self) -> float:
         """
         The MANY_ZEROES score indicates if we're 'suffering' from a large number of zeroes,
-        and is calibrated on a log-like scale as follows:
+        and is calibrated on a log scale as follows:
 
-            # of zeroes detected
-              using multiscale sampling                 score
+            estimated # of zeroes            score
 
-                1                                        0.0
-                3                                       ~0.1
-                n_fun_samples/2  (*)                     1.0
+                1                             0.0
+                (x_max-x_min)/dx              1.0
 
-        (8) For functions with >>n_fun_samples zeroes, an interval having a sign switch becomes a stochastic process
-            with 50% chance of detecting a zero.  Hence, n_fun_samples/2 is the highest stochastically expected value.
+        We estimate the # of zeroes by using the 'estimate_sign_flip_frequency' stats method.
 
         :return: (float) score in [0,1]
         """
-        return compute_many_zeroes_score(
-            n=len(self.function_sampler.candidate_root_intervals()),
-            n_max=int(self.function_sampler.n_fun_samples / 2.0),
-        )
+
+        # Estimate 'zero frequency' lambda = # of zeroes estimated to occur in a unit interval
+
+        #  STEP 1: build list of observations (w, p) with w the interval width and p indicating if we have a sign flip
+        root_intervals, non_root_intervals = self.function_sampler.candidate_root_intervals()
+        observations = [(x_right - x_left, 1.0) for x_left, x_right in root_intervals]
+        observations += [(x_right - x_left, 0.0) for x_left, x_right in non_root_intervals]
+        w_values = np.array([w for w, p in observations])
+        p_values = np.array([p for w, p in observations])
+
+        #  STEP 2: estimate lambda
+        # note that we use a factor of 1.1 in lambda_min to ensure we only give score>0.0 if we see some convincing
+        # evidence for multiple zeroes.
+        lambda_min = 1.1 / (self.function_sampler.x_max - self.function_sampler.x_min)
+        lambda_max = 1 / self.function_sampler.dx
+        zeroes_lambda = estimate_sign_flip_frequency(w_values, p_values, lambda_min, lambda_max)
+
+        #  STEP 3: convert to score in [0,1]
+        score = (math.log2(zeroes_lambda) - math.log2(lambda_min)) / (math.log2(lambda_max) - math.log2(lambda_min))
+        score = min(max(score, 0.0), 1.0)
+
+        # done
+        return float(score)
 
     def _extract_non_monotonic(self) -> float:
         return non_monotonicity_score(
