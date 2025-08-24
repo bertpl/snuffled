@@ -70,8 +70,8 @@ def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
     """
     extrema = [fx_diff_signs[0]]
     for fx_diff_sign in fx_diff_signs:
-        if np.sign(fx_diff_sign) == np.sign(extrema[-1]):
-            # same sign as last extrema remembered
+        if np.sign(fx_diff_sign) * np.sign(extrema[-1]) >= 0:
+            # same sign as last extrema remembered (or 0)
             if abs(fx_diff_sign) > abs(extrema[-1]):
                 # more extreme value of same sign -> overwrite last element
                 extrema[-1] = fx_diff_sign

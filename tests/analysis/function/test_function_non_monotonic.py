@@ -226,6 +226,7 @@ def test_score_total_up_down_x(diff_fx_signs: np.ndarray, expected_result: float
     [
         (np.array([-1, 1]), 1.0),
         (np.array([-1, -1, 1]), 1.0),
+        (np.array([-1, 0, 1]), 1.0),
         (np.array([-1, -1, 1, 1, 1]), 0.5),
         (np.array([-0.5, 0.5, 0.5]), 0.5),
         (np.array([-1.0, 0.5, 0.5]), 0.5),
