@@ -18,24 +18,15 @@ help:
 build:
 	uv build;
 
-test-without-numba:
-	# run tests WITHOUT optional [benchmarking] dependencies installed
-	uv sync;	# should remove numba from the environment
-	uv run pytest ./tests
-
-test-with-numba:
-	# run tests WITH optional [numba] dependencies installed
-	uv run --extra numba pytest ./tests
-
-test: test-without-numba test-with-numba
+test:
 	# run all tests
+	uv run --python 3.13 pytest ./tests
 
 coverage:
-	# run tests WITHOUT numba & create new report
-	uv sync;	# should remove numba from the environment
+	# run tests with Python 3.10 & create new report
 	uv run --python 3.10 pytest ./tests --cov=./snuffled/ --cov-report=html
-	# run tests WITH numba & append to report
-	uv run --python 3.13 --extra numba pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
+	# run tests with Python 3.13 & append to report
+	uv run --python 3.13 pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
 
 format:
 	uvx ruff format .;

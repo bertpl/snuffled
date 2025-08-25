@@ -1,6 +1,5 @@
+import numba
 import numpy as np
-
-from snuffled._core.compatibility import numba
 
 
 @numba.njit
