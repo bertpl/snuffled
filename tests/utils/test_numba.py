@@ -30,17 +30,20 @@ def test_numba_clip_scalar(a: float, a_min: float, a_max: float, expected_result
         ([1, 2, 4, 8, 16], 4.0),
         ([3, 9, 27], 9.0),
         ([4, 17], math.sqrt(4 * 17)),
+        ([1e-100] * 100, 1e-100),  # naive implementations will experience underflow here
+        ([1e100] * 100, 1e100),  # naive implementations will experience overflow here
     ],
 )
 def test_numba_geomean(values: list[float], expected_result: float):
     # --- arrange -----------------------------------------
     values_arr = np.array(values, dtype=np.float64)
+    tol = len(values) * 1e-15
 
     # --- act ---------------------------------------------
     result = geomean(values_arr)
 
     # --- assert ------------------------------------------
-    assert result == pytest.approx(expected_result, rel=1e-15, abs=1e-15)
+    assert result == pytest.approx(expected_result, rel=tol, abs=tol)
 
 
 @pytest.mark.parametrize(
