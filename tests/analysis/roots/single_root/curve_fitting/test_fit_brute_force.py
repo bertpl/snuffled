@@ -1,13 +1,16 @@
 import numpy as np
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import compute_x_deltas, fit_curve_brute_force
+from snuffled._core.analysis.roots.single_root.curve_fitting import (
+    compute_x_deltas,
+    fit_curve_with_uncertainty_brute_force,
+)
 from snuffled._core.utils.noise import noise_from_float
 
 
 @pytest.mark.parametrize("c_noise", [1e-9, 1e-6, 1e-4, 1e-2])
 @pytest.mark.parametrize("true_c", [0.25, 0.5, 0.8, 1.0, 1.25, 2.0, 4.0])
-def test_fit_curve_brute_force_c(true_c: float, c_noise: float):
+def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: float):
     """Check if for simple cases we can reliably reverse-engineer parameter 'c'"""
 
     # --- arrange -----------------------------------------
@@ -15,7 +18,7 @@ def test_fit_curve_brute_force_c(true_c: float, c_noise: float):
     fx_values = np.array([(x**true_c) + (c_noise * noise_from_float(x)) for x in x_values])
 
     # --- act ---------------------------------------------
-    a_values, b_values, c_values, cost_values = fit_curve_brute_force(
+    a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
         range_b=(-0.5, 1.0),
@@ -39,7 +42,7 @@ def test_fit_curve_brute_force_c(true_c: float, c_noise: float):
 
 @pytest.mark.parametrize("c_noise", [1e-9, 1e-6, 1e-4, 1e-2])
 @pytest.mark.parametrize("true_b", [0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-def test_fit_curve_brute_force_b(true_b: float, c_noise: float):
+def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: float):
     """Check if for simple cases we can reliably reverse-engineer parameter 'b'"""
 
     # --- arrange -----------------------------------------
@@ -47,7 +50,7 @@ def test_fit_curve_brute_force_b(true_b: float, c_noise: float):
     fx_values = np.array([true_b + (1 - true_b) * x + (c_noise * noise_from_float(x)) for x in x_values])
 
     # --- act ---------------------------------------------
-    a_values, b_values, c_values, cost_values = fit_curve_brute_force(
+    a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
         range_b=(-0.5, 1.0),

@@ -4,8 +4,11 @@ import numpy as np
 from ._curves_and_costs import fitting_cost
 
 
+# =================================================================================================
+#  Find solution WITH uncertainty
+# =================================================================================================
 @numba.njit
-def fit_curve_brute_force(
+def fit_curve_with_uncertainty_brute_force(
     x: np.ndarray,
     fx: np.ndarray,
     range_b: tuple[float, float],
