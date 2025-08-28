@@ -2,17 +2,51 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis.roots.single_root.curve_fitting import fitting_curve
-from snuffled._core.analysis.roots.single_root.curve_fitting._fit_tailored import fit_curve_exact_three_points
+from snuffled._core.analysis.roots.single_root.curve_fitting._fit_tailored import (
+    fit_curve_exact_three_points,
+    param_step,
+)
+
+# all param_step method strings that we test here - should be all that are implemented
+__PARAM_STEP_METHODS = ["a", "b", "c", "ac", "bc"]
 
 # =================================================================================================
-#  Find solution WITH uncertainty
+#  TEST - Find solution WITH uncertainty
 # =================================================================================================
 pass
 
 # =================================================================================================
-#  Find solution WITHOUT uncertainty - OPTIMAL FIT
+#  TEST - Find solution WITHOUT uncertainty - OPTIMAL FIT - fitting procedure
 # =================================================================================================
 pass
+
+
+# =================================================================================================
+#  TEST - Find solution WITHOUT uncertainty - OPTIMAL FIT - search directions
+# =================================================================================================
+@pytest.mark.parametrize("a", [1.0, 2.0])
+@pytest.mark.parametrize("b", [-0.5, 0.0, 1.0])
+@pytest.mark.parametrize("c", [0.1, 1.0, 10.0])
+@pytest.mark.parametrize("step_size", [-1.0, 0.0, 1.0])
+@pytest.mark.parametrize("method", __PARAM_STEP_METHODS)
+def test_param_step_bounds(a: float, b: float, c: float, method: str, step_size: float):
+    # test if taking maximal step respects parameter bounds
+
+    # --- arrange -----------------------------------------
+    range_b = (-0.5, 1.0)
+    range_c = (0.1, 10.0)
+
+    # --- act ---------------------------------------------
+    a_new, b_new, c_new = param_step(a, b, c, method, step_size, range_b, range_c)
+
+    # --- assert ------------------------------------------
+    assert 0 < a_new
+    assert range_b[0] <= b_new <= range_b[1]
+    assert range_c[0] <= c_new <= range_c[1]
+    if step_size == 0.0:
+        assert a_new == a
+        assert b_new == b
+        assert c_new == c
 
 
 # =================================================================================================

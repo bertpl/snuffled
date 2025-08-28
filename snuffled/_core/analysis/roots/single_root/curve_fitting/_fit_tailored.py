@@ -3,9 +3,13 @@ import math
 import numba
 import numpy as np
 
-from snuffled._core.utils.numba import clip_scalar
+from snuffled._core.utils.constants import EPS
+from snuffled._core.utils.numba import clip_scalar, geomean
 
-from ._curves_and_costs import fitting_cost
+from ._curves_and_costs import fitting_cost, fitting_curve
+
+# pre-computed constant, to avoid unnecessary re-computation and to improve readability
+__LN_R = math.log(2 * math.sqrt(2))  # ln(r) with r = 2*math.sqrt(2),   used in param_step()
 
 
 # =================================================================================================
@@ -41,6 +45,84 @@ def fit_curve_tailored(
 
     # --- refine ------------------------------------------------
     pass
+
+
+@numba.njit
+def param_step(
+    a: float,
+    b: float,
+    c: float,
+    method: str,
+    step_size: float,
+    range_b: tuple[float, float],
+    range_c: tuple[float, float],
+) -> tuple[float, float, float]:
+    """
+    Take a step of size 'step_size' using method 'method' starting from current parameter values (a,b,c)
+    and return (a_new, b_new, c_new).
+    """
+
+    # --- init --------------------------------------------
+    a_new, b_new, c_new = a, b, c
+    b_min, b_max = range_b
+    c_min, c_max = range_c
+
+    # --- take step ---------------------------------------
+    if step_size != 0.0:
+        match method:
+            case "a" | "ac":
+                # -------------------------------
+                # These steps first modify parameter 'a' in a certain way and then optionally modify 'c'
+                # to satisfy an invariant
+                # -------------------------------
+                # STEP 1: modify 'a' with a factor in [0.5, 2.0]
+                a_new *= np.exp2(step_size)
+                # STEP 2: modify 'c' if needed
+                match method:
+                    case "a":
+                        # don't modify 'c', in this mode we only modify 'b'
+                        pass
+                    case "ac_bal":
+                        # INVARIANT: keep dg(r) - dg(1/r) constant, by adjusting c
+                        #            with r=2*sqrt(2)    (=position of outermost x-value)
+                        # since we keep b constant, this means we need to adjust c such that...
+                        #    c = asinh(  (a'/a) * sinh(ln(r)*c') ) / ln(r)
+                        ratio = a / a_new
+                        c_new = math.asinh(ratio * math.sinh(__LN_R * c)) / __LN_R
+            case "b" | "bc":
+                # -------------------------------
+                # These steps first modify parameter 'b' in a certain way and then optionally modify 'c'
+                # to satisfy an invariant
+                # -------------------------------
+                # STEP 1: modify 'b' in [b_min, b_max] with step_size=-1 -> b_min and step_size=+1 -> b_max  (LIN scale)
+                if step_size < 0:
+                    b_new = b + step_size * (b - b_min)
+                else:
+                    b_new = b + step_size * (b_max - b)
+                # STEP 2: modify 'c' if needed
+                match method:
+                    case "b":
+                        # don't modify 'c', in this mode we only modify 'b'
+                        pass
+                    case "bc_bal":
+                        # INVARIANT: keep dg(r) - dg(1/r) constant, by adjusting c
+                        #            with r=2*sqrt(2)    (=position of outermost x-value)
+                        # since we keep a constant, this means we need to adjust c such that...
+                        #    c = asinh(  ((1-b')/(1-b)) * sinh(ln(r)*c') ) / ln(r)
+                        ratio = (1 - b) / max(EPS, (1 - b_new))
+                        c_new = math.asinh(ratio * math.sinh(__LN_R * c)) / __LN_R
+            case "c":
+                # modify 'c' with a factor in [0.5, 2.0]
+                c_new *= np.exp2(step_size)
+            case _:
+                raise ValueError(f"Unknown step method: {method}")
+
+    # --- return clipped updates --------------------------
+    return (
+        float(a_new),
+        clip_scalar(float(b_new), b_min, b_max),
+        clip_scalar(float(c_new), c_min, c_max),
+    )
 
 
 # =================================================================================================
