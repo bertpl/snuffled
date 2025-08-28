@@ -45,7 +45,12 @@ def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
     # 6*k additional randomized samples
     for j in range(k):
         # set up iteration j
-        r_outer = 1 + ((math.sqrt(2) - 1) * random.random())
+        if j == 0:
+            # make sure first outer samples are right at the edges,
+            # which guarantees that we span the entire range [(2.0^-0.5)*dx, (2.0^2.5)*dx]
+            r_outer = math.sqrt(2)
+        else:
+            r_outer = 1 + ((math.sqrt(2) - 1) * random.random())
         r_inner = 1 + ((math.sqrt(2) - 1) * random.random())
         i_start = 3 + (6 * j)
 
