@@ -22,22 +22,21 @@ def test_numba_clip_scalar(a: float, a_min: float, a_max: float, expected_result
 
 
 @pytest.mark.parametrize(
-    "values, expected_result",
+    "values, expected_result, tol",
     [
-        ([], 1.0),
-        ([math.pi], math.pi),
-        ([1, 2, 3, 4, 0], 0.0),
-        ([1, 2, 4, 8, 16], 4.0),
-        ([3, 9, 27], 9.0),
-        ([4, 17], math.sqrt(4 * 17)),
-        ([1e-100] * 100, 1e-100),  # naive implementations will experience underflow here
-        ([1e100] * 100, 1e100),  # naive implementations will experience overflow here
+        ([], 1.0, 0.0),
+        ([math.pi], math.pi, 0.0),
+        ([1, 2, 3, 4, 0], 0.0, 0.0),
+        ([1, 2, 4, 8, 16], 4.0, 1e-15),
+        ([3, 9, 27], 9.0, 1e-15),
+        ([4, 17], math.sqrt(4 * 17), 1e-15),
+        ([1e-100] * 100, 1e-100, 1e-12),  # naive implementations will experience underflow here
+        ([1e100] * 100, 1e100, 1e-12),  # naive implementations will experience overflow here
     ],
 )
-def test_numba_geomean(values: list[float], expected_result: float):
+def test_numba_geomean(values: list[float], expected_result: float, tol: float):
     # --- arrange -----------------------------------------
     values_arr = np.array(values, dtype=np.float64)
-    tol = len(values) * 1e-15
 
     # --- act ---------------------------------------------
     result = geomean(values_arr)
