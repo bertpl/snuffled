@@ -40,11 +40,111 @@ def fit_curve_tailored(
     :return: (a,b,c)-tuple of parameters that are considered optimal, with b & c in requested ranges.
     """
 
-    # --- initial point -----------------------------------------
-    pass
+    # --- init --------------------------------------------
+    n = len(fx)
+    fx_group_1 = fx[: n // 3]
+    fx_group_2 = fx[n // 3 : 2 * n // 3]
+    fx_group_3 = fx[2 * n // 3 :]
 
-    # --- refine ------------------------------------------------
-    pass
+    # --- initial point -----------------------------------
+    a_opt, b_opt, c_opt = 1.0, 0.0, 1.0
+    optimal_cost = math.inf
+    if np.min(fx) > 0.0:
+        methods = ["median_local", "median_global", "geomean_local", "geomean_global"]
+    else:
+        # cannot take the geomean of negative values
+        methods = ["median_local", "median_global"]
+
+    for method in methods:
+        # We potentially use 4 different methods for generating the initial point,
+        #   differing how we generate the 3 reference values.
+        #
+        # We use two aggregation methods:
+        #    - median  : Most robust method that should theoretically work under all circumstances (any a,b,c-values),
+        #                  but might be slightly less accurate because it doesn't truly average out multiple points.
+        #    - geomean : Only expected to be accurate if b_true=0 (so no discontinuity).  But could be more accurate
+        #                  under slightly noisy conditions, since it averages out data points in each group.
+        #
+        # We use two methods for generating fx_1:
+        #    - local  : Only use the middle group of data points.
+        #    - global : Use all data points.  Might be more accurate because more data points are taken into account,
+        #                 but might be more subject to skewing effects under very noisy conditions.
+        match method:
+            case "median_local":
+                fx_05 = np.median(fx_group_1)
+                fx_1 = np.median(fx_group_2)
+                fx_2 = np.median(fx_group_3)
+            case "median_global":
+                fx_05 = np.median(fx_group_1)
+                fx_1 = np.median(fx)  # = global
+                fx_2 = np.median(fx_group_3)
+            case "geomean_local":
+                fx_05 = geomean(fx_group_1)
+                fx_1 = geomean(fx_group_2)
+                fx_2 = geomean(fx_group_3)
+            case "geomean_global":
+                fx_05 = geomean(fx_group_1)
+                fx_1 = geomean(fx)  # =global
+                fx_2 = geomean(fx_group_3)
+            case _:
+                raise ValueError(f"Unknown method for initial point generation: {method}")
+
+        a_est, b_est, c_est = fit_curve_exact_three_points(
+            fx_05=fx_05,
+            fx_1=fx_1,
+            fx_2=fx_2,
+            range_b=range_b,
+            range_c=range_c,
+        )
+        current_cost = fitting_cost(x, fx, a_est, b_est, c_est, reg)
+
+        print(f"Method '{method}'  --> cost=", current_cost)
+
+        if current_cost < optimal_cost:
+            a_opt, b_opt, c_opt = a_est, b_est, c_est
+            optimal_cost = current_cost
+
+    # --- refine - step 2 - grid --------------------------
+    for i in range(15):
+        # start with step_size=1 and reduce with factor 2x each iteration
+        step_size = np.exp2(-i)
+
+        # take discrete steps
+        for step_method in ["a", "b", "c", "ac", "bc"]:
+            for step_dir in [-1.0, 1.0]:
+                # compute candidate (a,b,c) values by taking a step from (a_opt, b_opt, c_opt)
+                a_cand, b_cand, c_cand = param_step(
+                    a=a_opt,
+                    b=b_opt,
+                    c=c_opt,
+                    method=step_method,
+                    step_size=step_dir * step_size,
+                    range_b=range_b,
+                    range_c=range_c,
+                )
+
+                # evaluate
+                if (a_cand != a_opt) or (b_cand != b_opt) or (c_cand != c_opt):
+                    # only evaluate if this is an actually new set of parameters
+                    # (can happen that there's no change if we're already at the boundary of the search space)
+                    current_cost = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
+                    if current_cost < optimal_cost:
+                        print(
+                            "Improved along ",
+                            step_size * step_dir,
+                            f"x {step_method}: ",
+                            optimal_cost,
+                            " --> ",
+                            current_cost,
+                        )
+                        a_opt = a_cand
+                        b_opt = b_cand
+                        c_opt = c_cand
+                        optimal_cost = current_cost
+                        break  # no need to explore the other step direction (back to where we came from)
+
+    # --- return ------------------------------------------
+    return a_opt, b_opt, c_opt
 
 
 @numba.njit

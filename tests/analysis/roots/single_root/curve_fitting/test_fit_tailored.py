@@ -1,24 +1,71 @@
 import numpy as np
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import fitting_curve
+from snuffled._core.analysis.roots.single_root.curve_fitting import compute_x_deltas, fitting_curve
 from snuffled._core.analysis.roots.single_root.curve_fitting._fit_tailored import (
     fit_curve_exact_three_points,
+    fit_curve_tailored,
     param_step,
 )
-
-# all param_step method strings that we test here - should be all that are implemented
-__PARAM_STEP_METHODS = ["a", "b", "c", "ac", "bc"]
+from snuffled._core.utils.noise import noise_from_float
 
 # =================================================================================================
 #  TEST - Find solution WITH uncertainty
 # =================================================================================================
 pass
 
+
 # =================================================================================================
 #  TEST - Find solution WITHOUT uncertainty - OPTIMAL FIT - fitting procedure
 # =================================================================================================
-pass
+@pytest.mark.parametrize("a_true", [1.0, 5.0])
+@pytest.mark.parametrize("b_true", [0.0, 0.2, 0.9])
+@pytest.mark.parametrize("c_true", [0.25, 0.5, 1.0, 2.0, 4.0])
+@pytest.mark.parametrize("c_noise, tol", [(0.0, 1e-9), (1e-9, 1e-6), (1e-6, 1e-3)])
+def test_fit_curve_tailored_accurate(a_true: float, b_true: float, c_true: float, c_noise: float, tol: float):
+    """Can we recover the true (a,b,c)-values in the presence of varying levels of noise?"""
+
+    # --- arrange -----------------------------------------
+    x_values = compute_x_deltas(dx=0.5, k=5)
+    fx_values = fitting_curve(x_values, a_true, b_true, c_true)
+    for i, x in enumerate(x_values):
+        fx_values[i] += c_noise * noise_from_float(x)
+
+    range_b = (-0.5, 1.0)
+    range_c = (0.25, 4.0)
+
+    # --- act ---------------------------------------------
+    a_est, b_est, c_est = fit_curve_tailored(x_values, fx_values, range_b, range_c, reg=0.0)
+
+    # --- assert ------------------------------------------
+    assert a_est == pytest.approx(a_true, rel=tol, abs=tol)
+    assert b_est == pytest.approx(b_true, rel=tol, abs=tol)
+    assert c_est == pytest.approx(c_true, rel=tol, abs=tol)
+
+
+@pytest.mark.parametrize("a_true", [1.0, 5.0])
+@pytest.mark.parametrize("b_true", [-1.0, 0.5, 1.5])
+@pytest.mark.parametrize("c_true", [0.1, 0.5, 1.0, 2.0, 10.0])
+@pytest.mark.parametrize("c_noise", [1e-9, 1e-6, 1e-01, 1.0])
+def test_fit_curve_tailored_bounds(a_true: float, b_true: float, c_true: float, c_noise: float):
+    """Do we always get parameter estimates within bounds?"""
+
+    # --- arrange -----------------------------------------
+    x_values = compute_x_deltas(dx=0.5, k=5)
+    fx_values = fitting_curve(x_values, a_true, b_true, c_true)
+    for i, x in enumerate(x_values):
+        fx_values[i] += c_noise * noise_from_float(x)
+
+    range_b = (-0.5, 1.0)
+    range_c = (0.25, 4.0)
+
+    # --- act ---------------------------------------------
+    a_est, b_est, c_est = fit_curve_tailored(x_values, fx_values, range_b, range_c, reg=0.0)
+
+    # --- assert ------------------------------------------
+    assert a_est > 0
+    assert -0.5 <= b_est <= 1.0
+    assert 0.25 <= c_est <= 4.0
 
 
 # =================================================================================================
@@ -28,7 +75,7 @@ pass
 @pytest.mark.parametrize("b", [-0.5, 0.0, 1.0])
 @pytest.mark.parametrize("c", [0.1, 1.0, 10.0])
 @pytest.mark.parametrize("step_size", [-1.0, 0.0, 1.0])
-@pytest.mark.parametrize("method", __PARAM_STEP_METHODS)
+@pytest.mark.parametrize("method", ["a", "b", "c", "ac", "bc"])
 def test_param_step_bounds(a: float, b: float, c: float, method: str, step_size: float):
     # test if taking maximal step respects parameter bounds
 
