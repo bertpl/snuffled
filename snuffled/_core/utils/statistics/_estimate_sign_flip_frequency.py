@@ -41,10 +41,10 @@ def estimate_sign_flip_frequency(
         Observation 2
 
            Given the nature of how we observe sign flips, we need to correctly interpret observations:
-               -> 1.0 means an  ODD number of sign flips occurred over the interval
+               -> 1.0 actually means an  ODD number of sign flips (not necessarily 1) occurred over the interval
                         -> p( ODD @ w_i) = 1/2 * (1 - exp(-2*lambda_i))
                                          = 1/2 * (1 - exp(-2*lambda*w_i))
-               -> 0.0 means an EVEN number of sign flips occurred over the interval
+               -> 0.0 actually means an EVEN number of sign flips (not necessarily 0) occurred over the interval
                         -> p(EVEN @ w_i) = 1/2 * (1 + exp(-2*lambda_i))
                                          = 1/2 * (1 + exp(-2*lambda*w_i))
 

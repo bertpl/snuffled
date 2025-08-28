@@ -50,6 +50,7 @@ def fit_curve_tailored(
     a_opt, b_opt, c_opt = 1.0, 0.0, 1.0
     optimal_cost = math.inf
     if np.min(fx) > 0.0:
+        # if all fx are positive, we can use geomean-based approaches as well
         methods = ["median_local", "median_global", "geomean_local", "geomean_global"]
     else:
         # cannot take the geomean of negative values
@@ -57,7 +58,7 @@ def fit_curve_tailored(
 
     for method in methods:
         # We potentially use 4 different methods for generating the initial point,
-        #   differing how we generate the 3 reference values.
+        #                                   differing in how we generate the 3 reference values.
         #
         # We use two aggregation methods:
         #    - median  : Most robust method that should theoretically work under all circumstances (any a,b,c-values),
