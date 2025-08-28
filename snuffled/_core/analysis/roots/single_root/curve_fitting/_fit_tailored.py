@@ -183,14 +183,14 @@ def param_step(
                     case "a":
                         # don't modify 'c', in this mode we only modify 'b'
                         pass
-                    case "ac_bal":
+                    case "ac":
                         # INVARIANT: keep dg(r) - dg(1/r) constant, by adjusting c
                         #            with r=2*sqrt(2)    (=position of outermost x-value)
                         # since we keep b constant, this means we need to adjust c such that...
                         #    c = asinh(  (a'/a) * sinh(ln(r)*c') ) / ln(r)
                         ratio = a / a_new
                         c_new = math.asinh(ratio * math.sinh(__LN_R * c)) / __LN_R
-            case "b" | "bc":
+            case "b" | "ba" | "bc":
                 # -------------------------------
                 # These steps first modify parameter 'b' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
@@ -205,7 +205,14 @@ def param_step(
                     case "b":
                         # don't modify 'c', in this mode we only modify 'b'
                         pass
-                    case "bc_bal":
+                    case "ba":
+                        # INVARIANT: keep dg(r) - dg(1/r) constant, by adjusting a
+                        #            with r=2*sqrt(2)    (=position of outermost x-value)
+                        # since we keep c constant, this means we need to adjust a such that...
+                        #     a =  a'*(1-b')/(1-b)
+                        ratio = (1 - b) / max(EPS, (1 - b_new))
+                        a_new = a * ratio
+                    case "bc":
                         # INVARIANT: keep dg(r) - dg(1/r) constant, by adjusting c
                         #            with r=2*sqrt(2)    (=position of outermost x-value)
                         # since we keep a constant, this means we need to adjust c such that...
@@ -220,7 +227,7 @@ def param_step(
 
     # --- return clipped updates --------------------------
     return (
-        float(a_new),
+        clip_scalar(float(a_new), 0.001 * a, 1000 * a),  # we don't have explicit ranges for a, we only want a>0
         clip_scalar(float(b_new), b_min, b_max),
         clip_scalar(float(c_new), c_min, c_max),
     )
