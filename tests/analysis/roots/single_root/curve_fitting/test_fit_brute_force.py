@@ -1,10 +1,7 @@
 import numpy as np
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import (
-    compute_x_deltas,
-    fit_curve_with_uncertainty_brute_force,
-)
+from snuffled._core.analysis.roots.single_root.curve_fitting import fit_curve_with_uncertainty_brute_force
 from snuffled._core.utils.noise import noise_from_float
 
 
@@ -26,8 +23,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: 
         c_sign=1.0,
         n_grid=201,
         reg=1e-3,
-        tol_c0=0.0,
-        tol_c1=2.0,
+        rel_uncertainty_size=1.0,
     )
 
     print(f"b : {min(b_values)} -> {max(b_values)}")
@@ -58,8 +54,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: 
         c_sign=1.0,
         n_grid=201,
         reg=1e-3,
-        tol_c0=0.0,
-        tol_c1=2.0,
+        rel_uncertainty_size=1.0,
     )
 
     print(f"b : {min(b_values)} -> {max(b_values)}")

@@ -1,7 +1,7 @@
 import numba
 import numpy as np
 
-from ._curves_and_costs import fitting_cost
+from ._curves_and_costs import compute_threshold_cost, fitting_cost
 
 
 # =================================================================================================
@@ -16,8 +16,8 @@ def fit_curve_with_uncertainty_brute_force(
     c_sign: float,
     n_grid: int,
     reg: float,
-    tol_c0: float,
-    tol_c1: float,
+    rel_uncertainty_size: float = 1.0,
+    fixed_a_value: float | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Fits a curve of the following form to a list of (x, fx)-tuples:
@@ -42,14 +42,14 @@ def fit_curve_with_uncertainty_brute_force(
     :param c_sign: (float) sign of c, i.e. if _sign=-1, we will search over range [-c_max, -c_min].
     :param n_grid: (int) number of grid values along each dimension
     :param reg: (float) regularization coefficient that helps favour c=1.0, b=0.0  (e.g. 1e-3)
-    :param tol_c0: (float) Only those values whose cost <= cost_threshold are returned, with
-    :param tol_c1: (float)   cost_threshold = tol_c0 + tol_c1*min(cost)
+    :param rel_uncertainty_size: (float, default=1.0) factor to influence size of uncertainty region; this parameter
+                                   maps to the 'relative_margin' parameter of the compute_threshold_cost function
+    :param fixed_a_value: (float | None, default=None) Parameter to set a fixed value for 'a' instead of estimating it
+                                   from the data. If None, the 'a' parameter will be estimated based on the median
+                                   of the fx values.
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
-
-    # --- determine a -------------------------------------
-    a = float(np.median(fx))  # should be a reasonable value for 'a' given that median(x) == 1.0 and g(1)==a
 
     # --- init --------------------------------------------
     b_min, b_max = range_b
@@ -57,6 +57,14 @@ def fit_curve_with_uncertainty_brute_force(
 
     b_values = np.linspace(b_min, b_max, n_grid)
     c_values = c_sign * np.exp(np.linspace(np.log(c_min), np.log(c_max), n_grid))
+
+    fx_q25, fx_q50, fx_q75 = np.quantile(fx, [0.25, 0.5, 0.75])
+
+    # --- determine a -------------------------------------
+    if fixed_a_value is not None:
+        a = fixed_a_value
+    else:
+        a = float(fx_q50)  # should be a reasonable value for 'a' given that median(x) == 1.0 and g(1)==a
 
     # --- grid search -------------------------------------
     cost_arr = np.zeros(shape=(n_grid, n_grid))
@@ -66,7 +74,13 @@ def fit_curve_with_uncertainty_brute_force(
 
     # --- return good enough results ----------------------
     cost_min = np.min(cost_arr)
-    cost_threshold = tol_c0 + (tol_c1 * cost_min)
+    cost_threshold = compute_threshold_cost(
+        relative_margin=rel_uncertainty_size,
+        optimal_cost=cost_min,
+        fx_q25=fx_q25,
+        fx_q50=fx_q50,
+        fx_q75=fx_q75,
+    )
 
     a_lst, b_lst, c_lst = [], [], []
     cost_lst = []
