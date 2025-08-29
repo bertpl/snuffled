@@ -158,3 +158,28 @@ def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]
     """
     random.seed(seed)
     return sorted(random.sample(range(i_min, i_max), n))
+
+
+# =================================================================================================
+#  Pseudo-uniform sampling
+# =================================================================================================
+@numba.njit
+def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -> np.ndarray:
+    """
+    Return n random numbers in interval [x_min, x_max), with 1 random sample in each of n uniform
+    sub-intervals of width (x_max-x_min)/n.  Within each sub-interval uniform sampling is used.
+    """
+
+    # take care of corner cases
+    if n < 0:
+        raise ValueError("n should be >= 0")
+    elif n == 0:
+        return np.zeros(shape=(0,), dtype=np.float64)
+
+    # prep
+    np.random.seed(seed)
+    interval_width = (x_max - x_min) / n
+    interval_lefts = np.linspace(x_min, x_max - interval_width, n)  # left edges of each sub-interval
+
+    # return
+    return interval_lefts + interval_width * np.random.random(size=n)

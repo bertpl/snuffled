@@ -4,6 +4,8 @@ import random
 import numba
 import numpy as np
 
+from snuffled._core.utils.sampling import pseudo_uniform_samples
+
 
 @numba.njit
 def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
@@ -36,11 +38,15 @@ def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
     """
 
     # initialize
-    random.seed(seed)
     x_deltas = np.zeros(3 + 6 * k)
     x_deltas[0] = dx
     x_deltas[1] = 2 * dx
     x_deltas[2] = 4 * dx
+
+    # collect appropriate random numbers
+    # (=random values in [1, sqrt(2))
+    rand_values_outer = np.exp2(pseudo_uniform_samples(0.0, 0.5, k - 1, seed=seed))
+    rand_values_inner = np.exp2(pseudo_uniform_samples(0.0, 0.5, k, seed=seed + 1))
 
     # 6*k additional randomized samples
     for j in range(k):
@@ -50,8 +56,8 @@ def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
             # which guarantees that we span the entire range [(2.0^-0.5)*dx, (2.0^2.5)*dx]
             r_outer = math.sqrt(2)
         else:
-            r_outer = 1 + ((math.sqrt(2) - 1) * random.random())
-        r_inner = 1 + ((math.sqrt(2) - 1) * random.random())
+            r_outer = rand_values_outer[j - 1]
+        r_inner = rand_values_inner[j]
         i_start = 3 + (6 * j)
 
         # two values geo-symmetrically around dx

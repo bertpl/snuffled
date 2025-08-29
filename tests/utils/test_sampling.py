@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 
@@ -5,6 +7,7 @@ from snuffled._core.utils.sampling import (
     fit_fixed_sum_exponential_intervals,
     get_fixed_sum_exponential_intervals,
     multi_scale_samples,
+    pseudo_uniform_samples,
     sample_integers,
 )
 
@@ -155,3 +158,39 @@ def test_sample_n_integers(i_min: int, i_max: int, n: int):
     assert all([i_min <= s < i_max for s in samples])
     assert sorted(samples) == samples
     assert len(set(samples)) == n
+
+
+# =================================================================================================
+#  Pseudo-uniform sampling
+# =================================================================================================
+@pytest.mark.parametrize(
+    "x_min, x_max, n",
+    [
+        (1.0, 7.0, 5),
+        (-3.45, 6.78, 101),
+        (-101.0, 101.0, 32),
+    ],
+)
+def test_pseudo_uniform_samples(x_min: float, x_max: float, n: int):
+    # --- arrange -----------------------------------------
+    w = (x_max - x_min) / n  # sub-interval width
+
+    # --- act ---------------------------------------------
+    samples = pseudo_uniform_samples(x_min, x_max, n)
+
+    # --- assert ------------------------------------------
+    assert len(samples) == n
+    assert min(samples) >= x_min
+    assert max(samples) < x_max
+    assert len({math.floor((x_min - x) / w) for x in samples}) == n
+
+
+def test_pseudo_uniform_samples_edge_cases():
+    # --- act & assert 1 ----------------------------------
+    with pytest.raises(ValueError):
+        _ = pseudo_uniform_samples(0.0, 1.0, -3)
+
+    # --- act & assert 2 ----------------------------------
+    result = pseudo_uniform_samples(0.0, 1.0, 0)
+    assert isinstance(result, np.ndarray)
+    assert len(result) == 0
