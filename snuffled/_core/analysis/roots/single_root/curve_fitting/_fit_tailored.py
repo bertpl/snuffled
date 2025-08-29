@@ -1,8 +1,8 @@
 import math
 
-import numba
 import numpy as np
 
+from snuffled._core.compatibility import numba
 from snuffled._core.utils.constants import EPS
 from snuffled._core.utils.numba import clip_scalar, geomean
 

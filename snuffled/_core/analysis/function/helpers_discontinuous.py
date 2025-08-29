@@ -1,9 +1,9 @@
 import math
 
-import numba
 import numpy as np
 
 from snuffled._core.analysis import FunctionSampler
+from snuffled._core.compatibility import numba
 
 
 # =================================================================================================

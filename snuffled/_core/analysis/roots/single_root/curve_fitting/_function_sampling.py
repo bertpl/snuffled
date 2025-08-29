@@ -1,8 +1,8 @@
 import math
 
-import numba
 import numpy as np
 
+from snuffled._core.compatibility import numba
 from snuffled._core.utils.constants import SEED_OFFSET_COMPUTE_X_DELTAS
 from snuffled._core.utils.sampling import pseudo_uniform_samples
 

@@ -1,7 +1,8 @@
 import random
 
-import numba
 import numpy as np
+
+from snuffled._core.compatibility import numba
 
 from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES, SEED_OFFSET_SAMPLE_INTEGERS
 
