@@ -37,7 +37,7 @@ def f_linear(x: float, fx_left: float, fx_right: float) -> float:
 )
 def test_function_analyser_not_bracketing_ready(fun: Callable[[float], float], expected_result: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0)
     analyser = DiagnosticAnalyser(sampler)
 
     # --- act ---------------------------------------------

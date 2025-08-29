@@ -27,11 +27,11 @@ class FunctionSampler:
         fun: Callable[[float], float],
         x_min: float,
         x_max: float,
-        dx: float = 1e-8,
+        dx: float,
+        seed: int,
         n_fun_samples: int = 1_000,
         n_roots: int = 100,
         rel_tol_scale: float = 10.0,
-        seed: int = 42,
     ):
         # --- randomization -------------------------------
         self._seed = seed + SEED_OFFSET_FUNCTION_SAMPLER

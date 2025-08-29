@@ -8,7 +8,7 @@ from snuffled._core.utils.sampling import pseudo_uniform_samples
 
 
 @numba.njit
-def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
+def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
     """
     Computes x_delta-array, containing values that can be used to sample function values around
     a root:    f(root ± x_delta).

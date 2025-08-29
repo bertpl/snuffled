@@ -15,7 +15,7 @@ from snuffled._core.utils.constants import EPS
 def test_function_sampler_f(test_fun_quad):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=1e-9, seed=42)
 
     # --- act & assert ------------------------------------
     assert sampler.f(-1.0) == test_fun_quad(-1.0)
@@ -27,7 +27,7 @@ def test_function_sampler_f(test_fun_quad):
 def test_function_sampler_f_out_of_range(test_fun_quad):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=1e-9, seed=42)
 
     # --- act & assert ------------------------------------
     with pytest.raises(ValueError):
@@ -47,7 +47,7 @@ def test_function_sampler_f_out_of_range(test_fun_quad):
 )
 def test_function_sampler_f_list(test_fun_quad, x_values: list[float]):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=10)
     expected_result = [test_fun_quad(x) for x in x_values]
 
     # --- act ---------------------------------------------
@@ -61,7 +61,7 @@ def test_function_sampler_f_list(test_fun_quad, x_values: list[float]):
 
 def test_function_sampler_f_list_out_of_range(test_fun_quad):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=10)
     # --- act & assert ------------------------------------
     with pytest.raises(ValueError):
         # out of bounds left
@@ -77,7 +77,7 @@ def test_function_sampler_x_values(test_fun_quad, dx: float):
     # --- arrange -----------------------------------------
     x_min, x_max = -2.0, 1.0
     n = 1000
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, seed=42, n_fun_samples=n)
 
     # --- act ---------------------------------------------
     x_values = sampler.x_values()
@@ -100,7 +100,7 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
     x_min, x_max = -2.0, 1.0
     n = 1000
     dx = 1e-6
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, seed=42, n_fun_samples=n)
 
     if warmup_cache:
         _ = sampler.f(x_min)
@@ -133,7 +133,7 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
     """Tests if .function_cache() returns consistent info after calling .fx_values() and .f(.)"""
 
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, n_fun_samples=10, dx=1e-10)
+    sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=10)
 
     # --- act ---------------------------------------------
 
@@ -162,7 +162,7 @@ def test_function_sampler_robust_estimated_fx_max(n: int):
     x_min = -1.0
     x_max = 1.0
     dx = 1e-9
-    sampler = FunctionSampler(f_linear, x_min, x_max, n_fun_samples=n, dx=dx)
+    sampler = FunctionSampler(f_linear, x_min, x_max, dx=dx, seed=42, n_fun_samples=n)
 
     max_rel_deviation = 1 / math.sqrt(n)
 
@@ -182,7 +182,7 @@ def test_function_sampler_tol_array_local(test_fun_quad):
     n = 1000
     dx = 1e-6
     rel_tol_scale = 10.0
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, seed=42, n_fun_samples=n, rel_tol_scale=rel_tol_scale)
 
     expected_tol_array = abs(sampler.fx_values()) * EPS * rel_tol_scale
 
@@ -199,7 +199,7 @@ def test_function_sampler_tol_array_global(test_fun_quad):
     n = 1000
     dx = 1e-6
     rel_tol_scale = 10.0
-    sampler = FunctionSampler(test_fun_quad, x_min, x_max, n_fun_samples=n, dx=dx, rel_tol_scale=rel_tol_scale)
+    sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, seed=42, n_fun_samples=n, rel_tol_scale=rel_tol_scale)
 
     expected_tol_array = sampler.robust_estimated_fx_max() * EPS * rel_tol_scale * np.ones(n)
 
@@ -253,7 +253,9 @@ def f_edge_roots(x: float) -> float:
 )
 def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=n_roots, dx=1e-10, rel_tol_scale=10.0)
+    sampler = FunctionSampler(
+        fun, x_min=-1, x_max=1, dx=1e-10, seed=42, n_fun_samples=1000, n_roots=n_roots, rel_tol_scale=10.0
+    )
     candidate_root_intervals, _ = sampler.candidate_root_intervals()
 
     # --- act ---------------------------------------------
@@ -277,7 +279,9 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
 )
 def test_function_sampler_roots_edge_cases(fun: Callable[[float], float], expected_root: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun, x_min=-1, x_max=1, n_fun_samples=1000, n_roots=100, dx=1e-10, rel_tol_scale=10.0)
+    sampler = FunctionSampler(
+        fun, x_min=-1, x_max=1, dx=1e-10, seed=42, n_fun_samples=1000, n_roots=100, rel_tol_scale=10.0
+    )
     candidate_root_intervals, _ = sampler.candidate_root_intervals()
 
     # --- act ---------------------------------------------

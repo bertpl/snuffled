@@ -28,7 +28,7 @@ def test_fit_curve_with_uncertainty_tailored(
     # --- arrange -----------------------------------------
 
     # define optimization problem
-    x_values = compute_x_deltas(dx=0.5, k=5)
+    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)
@@ -73,7 +73,7 @@ def test_fit_curve_tailored_accurate(a_true: float, b_true: float, c_true: float
     """Can we recover the true (a,b,c)-values in the presence of varying levels of noise?"""
 
     # --- arrange -----------------------------------------
-    x_values = compute_x_deltas(dx=0.5, k=5)
+    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)
@@ -98,7 +98,7 @@ def test_fit_curve_tailored_bounds(a_true: float, b_true: float, c_true: float, 
     """Do we always get parameter estimates within bounds?"""
 
     # --- arrange -----------------------------------------
-    x_values = compute_x_deltas(dx=0.5, k=5)
+    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)

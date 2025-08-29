@@ -59,7 +59,7 @@ def f_sin(x: float) -> float:
 )
 def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=10000, dx=1e-9, rel_tol_scale=10.0)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=10000, rel_tol_scale=10.0)
     analyser = FunctionAnalyser(sampler)
     # --- act ---------------------------------------------
     non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
@@ -91,8 +91,9 @@ def test_function_analyser_non_monotonic_trend_1():
                 fun=get_f_lin_quad(c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=10_000,
                 dx=1e-9,
+                seed=42,
+                n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
         ).extract(FunctionProperty.NON_MONOTONIC)
@@ -125,8 +126,9 @@ def test_function_analyser_non_monotonic_trend_2():
                 fun=get_f_exp_noisy(c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=10_000,
                 dx=1e-9,
+                seed=42,
+                n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
         ).extract(FunctionProperty.NON_MONOTONIC)
@@ -159,8 +161,9 @@ def test_function_analyser_non_monotonic_trend_3():
                 fun=get_f_lin_cos(c * math.pi),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=10_000,
                 dx=1e-9,
+                seed=42,
+                n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
         ).extract(FunctionProperty.NON_MONOTONIC)

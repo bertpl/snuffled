@@ -42,9 +42,9 @@ def f_quadratic(x: float, c0: float) -> float:
         (partial(f_quadratic, c0=-2), 1.0),
     ],
 )
-def test_function_analyser_no_zeros_detected(fun: Callable[[float], float], expected_result: float):
+def test_diagnostic_analyser_no_zeros_detected(fun: Callable[[float], float], expected_result: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0)
     analyser = DiagnosticAnalyser(sampler)
 
     # --- act ---------------------------------------------

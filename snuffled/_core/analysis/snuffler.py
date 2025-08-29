@@ -30,11 +30,11 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         x_min: float,
         x_max: float,
         dx: float,
+        seed: int,
         n_fun_samples: int = 10_000,
         n_roots: int = 100,
         n_root_samples: int = 100,
         rel_tol_scale: float = 10.0,
-        seed: int = 42,
     ):
         seed += SEED_OFFSET_SNUFFLER
         function_sampler = FunctionSampler(fun, x_min, x_max, dx, n_fun_samples, n_roots, rel_tol_scale, seed)

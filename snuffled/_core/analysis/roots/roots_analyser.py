@@ -12,7 +12,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, function_sampler: FunctionSampler, dx: float, n_root_samples: int, seed: int = 42):
+    def __init__(self, function_sampler: FunctionSampler, dx: float, n_root_samples: int, seed: int):
         super().__init__(function_sampler)
         self.dx = dx
         self.n_root_samples = n_root_samples

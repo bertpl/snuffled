@@ -14,7 +14,7 @@ class SingleRootAnalyser(PropertyExtractor[SnuffledRootProperties]):
         root: tuple[float, float],
         dx: float,
         n_root_samples: int,
-        seed: int = 42,
+        seed: int,
     ):
         super().__init__(function_sampler)
         self.root = root
