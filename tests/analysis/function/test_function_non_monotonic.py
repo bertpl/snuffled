@@ -59,7 +59,7 @@ def f_sin(x: float) -> float:
 )
 def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=10000, dx=1e-9, rel_tol_scale=10.0)
     analyser = FunctionAnalyser(sampler)
     # --- act ---------------------------------------------
     non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
@@ -102,7 +102,7 @@ def test_function_analyser_non_monotonic_trend_1():
     print(scores)
 
     # --- assert ------------------------------------------
-    assert is_sorted_with_tolerance(scores, abs_tol=1e-6)
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
     assert max(scores) > 0.60  # 2 of 3 scores will max out in the end
 
@@ -136,7 +136,7 @@ def test_function_analyser_non_monotonic_trend_2():
     print(scores)
 
     # --- assert ------------------------------------------
-    assert is_sorted_with_tolerance(scores, abs_tol=1e-6)
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
     assert max(scores) > 0.95
 

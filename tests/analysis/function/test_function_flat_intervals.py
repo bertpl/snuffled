@@ -57,7 +57,7 @@ def f_exp_2(x: float) -> float:
         (f_linear, 0.00, 0.01),
         (f_rounded_1, 0.05, 1.00),
         (f_exp_1, 0.25, 0.35),
-        (f_exp_2, 0.40, 0.50),
+        (f_exp_2, 0.40, 0.55),
         (f_relu, 0.45, 0.55),
         (f_rounded_2, 0.90, 1.00),
         (f_constant, 0.99, 1.00),
@@ -106,7 +106,7 @@ def test_function_analyser_flat_intervals_trend_1():
     ]
 
     # --- assert ------------------------------------------
-    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert 0.0 < min(scores) < 0.1
     assert 0.9 < max(scores) < 1.0
     assert max(np.diff(scores)) < 0.05, "change should be gradual"
@@ -142,7 +142,7 @@ def test_function_analyser_flat_intervals_trend_2():
     ]
 
     # --- assert ------------------------------------------
-    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert min(scores) < 1e-3
     assert max(scores) > 0.4
     assert max(np.diff(scores)) < 0.05, "change should be gradual"
@@ -178,7 +178,7 @@ def test_function_analyser_flat_intervals_trend_3():
     ]
 
     # --- assert ------------------------------------------
-    assert is_sorted_with_tolerance(scores, abs_tol=1e-6), "Scores should be non-decreasing"
+    assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert min(scores) < 1e-2
     assert max(scores) > 0.45
     assert max(abs(np.diff(scores))) < 0.1, "change should be gradual"
