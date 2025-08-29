@@ -3,6 +3,8 @@ import random
 import numba
 import numpy as np
 
+from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES, SEED_OFFSET_SAMPLE_INTEGERS
+
 
 # =================================================================================================
 #  Multi-scale sampling
@@ -32,7 +34,7 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     w = get_fixed_sum_exponential_intervals(n=n_w, tgt_sum=x_max - x_min, dx_min=dx_min)
 
     # shuffle randomly
-    np.random.seed(seed)
+    np.random.seed(seed + SEED_OFFSET_MULTI_SCALE_SAMPLES)
     np.random.shuffle(w)
 
     # --- determine actual samples ------------------------
@@ -156,7 +158,7 @@ def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]
     Sample n integers (without replacement) from range [i_min, i_max).
     Result is returned as a list of sorted integers.
     """
-    random.seed(seed)
+    random.seed(seed + SEED_OFFSET_SAMPLE_INTEGERS)
     return sorted(random.sample(range(i_min, i_max), n))
 
 
@@ -177,7 +179,7 @@ def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -
         return np.zeros(shape=(0,), dtype=np.float64)
 
     # prep
-    np.random.seed(seed)
+    np.random.seed(seed + SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES)
     interval_width = (x_max - x_min) / n
     interval_lefts = np.linspace(x_min, x_max - interval_width, n)  # left edges of each sub-interval
 
