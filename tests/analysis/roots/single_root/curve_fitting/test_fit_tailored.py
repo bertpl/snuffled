@@ -45,7 +45,13 @@ def test_fit_curve_with_uncertainty_tailored(
 
     # --- act ---------------------------------------------
     a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_tailored(
-        x_values, fx_values, range_b, range_c, reg, rel_uncertainty_size=rel_uncertainty_size
+        x_values,
+        fx_values,
+        range_b,
+        range_c,
+        reg,
+        rel_uncertainty_size=rel_uncertainty_size,
+        debug_flag=True,
     )
 
     # --- assert ------------------------------------------
