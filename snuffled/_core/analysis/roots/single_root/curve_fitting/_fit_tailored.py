@@ -23,6 +23,7 @@ def fit_curve_with_uncertainty_tailored(
     reg: float,
     n_iters: int = 15,
     rel_uncertainty_size: float = 1.0,
+    debug_flag: bool = False,
 ):
     """
     Method for estimating optimal parameters (a,b,c) for curve fitting as well as uncertainties, similar to
@@ -49,6 +50,7 @@ def fit_curve_with_uncertainty_tailored(
     :param n_iters: (int, default=15) number of iterations (both for optimum finding as uncertainty exploration)
     :param rel_uncertainty_size: (float, default=1.0) factor to influence size of uncertainty region; this parameter
                                    maps to the 'relative_margin' parameter of the compute_threshold_cost function
+    :param debug_flag: (bool, default=False) if True, stdout output is generated to debug algorithm flow.
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
@@ -60,7 +62,7 @@ def fit_curve_with_uncertainty_tailored(
     a_lst, b_lst, c_lst, cost_lst = [], [], [], []
 
     # --- get optimal solution ----------------------------
-    a_opt, b_opt, c_opt = fit_curve_tailored(x, fx, range_b, range_c, reg, n_iters)
+    a_opt, b_opt, c_opt = fit_curve_tailored(x, fx, range_b, range_c, reg, n_iters, debug_flag)
     cost_opt = fitting_cost(x, fx, a_opt, b_opt, c_opt, reg)
 
     # remember this solution
@@ -81,9 +83,11 @@ def fit_curve_with_uncertainty_tailored(
     # Find edge points of uncertainty region by performing bisection over the step_size parameter in ±[0,1]
     # until we find the edge.  We know that for step_size==0.0 we are strictly below the threshold_cost.
     # If for step_size==1.0 we are still below, then we consider this an edge point; otherwise we can perform bisection.
-    print("=== UNCERTAINTY EXPLORATION ================================")
-    print(f"cost_opt       =", cost_opt)
-    print(f"cost_threshold =", cost_threshold)
+    if debug_flag:
+        print("=== UNCERTAINTY EXPLORATION ================================")
+        print(f"cost_opt       =", cost_opt)
+        print(f"cost_threshold =", cost_threshold)
+        print("============================================================")
     for step_method in ["a", "b", "c", "ac", "ba", "bc"]:
         for step_dir in [-1.0, 1.0]:
             # initialize bisection
@@ -98,7 +102,8 @@ def fit_curve_with_uncertainty_tailored(
                 )
                 cost_cand = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
 
-                print(f"direction '{step_method}', step_size=", step_dir * cand_step_size, " cost=", cost_cand)
+                if debug_flag:
+                    print(f"direction '{step_method}', step_size=", step_dir * cand_step_size, " cost=", cost_cand)
 
                 if cost_cand <= cost_threshold:
                     # remember this solution
@@ -141,6 +146,7 @@ def fit_curve_tailored(
     range_c: tuple[float, float],
     reg: float,
     n_iters: int = 15,
+    debug_flag: bool = False,
 ) -> tuple[float, float, float]:
     """
     Tailored approach to find approximately optimal initial parameters (according to 'fitting_cost' method)
@@ -211,52 +217,58 @@ def fit_curve_tailored(
         )
         current_cost = fitting_cost(x, fx, a_est, b_est, c_est, reg)
 
-        print(f"Method '{method}'  --> cost=", current_cost)
+        if debug_flag:
+            print(f"Method '{method}'  --> cost=", current_cost)
 
         if current_cost < optimal_cost:
             a_opt, b_opt, c_opt = a_est, b_est, c_est
             optimal_cost = current_cost
 
     # --- refine - step 2 - grid --------------------------
-    step_size = 1.0
-    for i in range(n_iters):
-        # start with step_size=1 and reduce with factor 2x each iteration
-        if i > 0:
-            step_size *= 0.5
+    for step_methods in (["a", "b", "c"], ["ac", "ba", "bc"], ["a", "b", "c"], ["ac", "ba", "bc"]):
+        # First optimize over primary directions, then over the combined directions.
+        # This should improve the odds of being able to take large steps in the combined directions in the 2nd phase.
+        # In order to get robust results, we perform this routine twice.
+        step_size = 1.0
+        for i in range(n_iters):
+            # start with step_size=1 and reduce with factor 2x each iteration
+            if i > 0:
+                step_size *= 0.5
 
-        # take discrete steps
-        for step_method in ["a", "b", "c", "ac", "ba", "bc"]:
-            for step_dir in [-1.0, 1.0]:
-                # compute candidate (a,b,c) values by taking a step from (a_opt, b_opt, c_opt)
-                a_cand, b_cand, c_cand = param_step(
-                    a=a_opt,
-                    b=b_opt,
-                    c=c_opt,
-                    method=step_method,
-                    step_size=step_dir * step_size,
-                    range_b=range_b,
-                    range_c=range_c,
-                )
+            # take discrete steps
+            for step_method in step_methods:
+                for step_dir in [-1.0, 1.0]:
+                    # compute candidate (a,b,c) values by taking a step from (a_opt, b_opt, c_opt)
+                    a_cand, b_cand, c_cand = param_step(
+                        a=a_opt,
+                        b=b_opt,
+                        c=c_opt,
+                        method=step_method,
+                        step_size=step_dir * step_size,
+                        range_b=range_b,
+                        range_c=range_c,
+                    )
 
-                # evaluate
-                if (a_cand != a_opt) or (b_cand != b_opt) or (c_cand != c_opt):
-                    # only evaluate if this is an actually new set of parameters
-                    # (can happen that there's no change if we're already at the boundary of the search space)
-                    current_cost = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
-                    if current_cost < optimal_cost:
-                        print(
-                            "Improved along ",
-                            step_size * step_dir,
-                            f"x {step_method}: ",
-                            optimal_cost,
-                            " --> ",
-                            current_cost,
-                        )
-                        a_opt = a_cand
-                        b_opt = b_cand
-                        c_opt = c_cand
-                        optimal_cost = current_cost
-                        break  # no need to explore the other step direction (back to where we came from)
+                    # evaluate
+                    if (a_cand != a_opt) or (b_cand != b_opt) or (c_cand != c_opt):
+                        # only evaluate if this is an actually new set of parameters
+                        # (can happen that there's no change if we're already at the boundary of the search space)
+                        current_cost = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
+                        if current_cost < optimal_cost:
+                            if debug_flag:
+                                print(
+                                    "Improved along ",
+                                    step_size * step_dir,
+                                    f"x {step_method}: ",
+                                    optimal_cost,
+                                    " --> ",
+                                    current_cost,
+                                )
+                            a_opt = a_cand
+                            b_opt = b_cand
+                            c_opt = c_cand
+                            optimal_cost = current_cost
+                            break  # no need to explore the other step direction (back to where we came from)
 
     # --- return ------------------------------------------
     return a_opt, b_opt, c_opt
