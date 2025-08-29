@@ -7,7 +7,7 @@ class RootProperty(StrEnum):
     DERIVATIVE_INFINITE = "root_derivative_infinite"
     NOISY = "root_noisy"
     DISCONTINUOUS = "root_discontinuous"
-    NON_DIFFERENTIABLE = "root_non_differentiable"
+    ASYMMETRIC = "root_asymmetric"
 
 
 class SnuffledRootProperties(NamedArray):
