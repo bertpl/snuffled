@@ -91,7 +91,7 @@ def test_function_analyser_non_monotonic_trend_1():
                 fun=get_f_lin_quad(c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
@@ -125,7 +125,7 @@ def test_function_analyser_non_monotonic_trend_2():
                 fun=get_f_exp_noisy(c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
@@ -159,7 +159,7 @@ def test_function_analyser_non_monotonic_trend_3():
                 fun=get_f_lin_cos(c * math.pi),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )

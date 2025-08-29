@@ -65,7 +65,7 @@ def f_exp_2(x: float) -> float:
 )
 def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange -----------------------------------------
-    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=1000, dx=1e-9, rel_tol_scale=10.0)
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, n_fun_samples=10000, dx=1e-9, rel_tol_scale=10.0)
     analyser = FunctionAnalyser(sampler)
 
     # --- act ---------------------------------------------
@@ -97,7 +97,7 @@ def test_function_analyser_flat_intervals_trend_1():
                 fun=get_f_relu(x0),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
@@ -133,7 +133,7 @@ def test_function_analyser_flat_intervals_trend_2():
                 fun=get_f_exp(c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
@@ -169,7 +169,7 @@ def test_function_analyser_flat_intervals_trend_3():
                 fun=get_f_noisy_exp(_c=c),
                 x_min=-1.0,
                 x_max=1.0,
-                n_fun_samples=1_000,
+                n_fun_samples=10_000,
                 dx=1e-9,
                 rel_tol_scale=10.0,
             )
