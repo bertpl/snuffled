@@ -4,7 +4,7 @@ from functools import cache
 
 import numpy as np
 
-from snuffled._core.utils.constants import EPS
+from snuffled._core.utils.constants import EPS, SEED_OFFSET_FUNCTION_SAMPLER
 from snuffled._core.utils.math import smooth_sign_array
 from snuffled._core.utils.root_finding import find_root_and_width
 from snuffled._core.utils.sampling import multi_scale_samples, sample_integers
@@ -34,7 +34,7 @@ class FunctionSampler:
         seed: int = 42,
     ):
         # --- randomization -------------------------------
-        self._seed = seed
+        self._seed = seed + SEED_OFFSET_FUNCTION_SAMPLER
 
         # --- function properties -------------------------
         self._fun = fun

@@ -1,15 +1,12 @@
-from functools import lru_cache
 from typing import Callable
 
 from snuffled._core.models import (
     Diagnostic,
     FunctionProperty,
     RootProperty,
-    SnuffledDiagnostics,
-    SnuffledFunctionProperties,
     SnuffledProperties,
-    SnuffledRootProperties,
 )
+from snuffled._core.utils.constants import SEED_OFFSET_SNUFFLER
 
 from ._function_sampler import FunctionSampler
 from ._property_extractor import PropertyExtractor
@@ -39,10 +36,11 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         rel_tol_scale: float = 10.0,
         seed: int = 42,
     ):
+        seed += SEED_OFFSET_SNUFFLER
         function_sampler = FunctionSampler(fun, x_min, x_max, dx, n_fun_samples, n_roots, rel_tol_scale, seed)
         super().__init__(function_sampler)
         self._function_analyser = FunctionAnalyser(function_sampler)
-        self._roots_analyser = RootsAnalyser(function_sampler, dx, n_root_samples)
+        self._roots_analyser = RootsAnalyser(function_sampler, dx, n_root_samples, seed)
         self._diagnostics_analyser = DiagnosticAnalyser(function_sampler)
 
     # -------------------------------------------------------------------------

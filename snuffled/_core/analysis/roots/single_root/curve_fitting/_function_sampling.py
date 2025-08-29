@@ -1,9 +1,9 @@
 import math
-import random
 
 import numba
 import numpy as np
 
+from snuffled._core.utils.constants import SEED_OFFSET_COMPUTE_X_DELTAS
 from snuffled._core.utils.sampling import pseudo_uniform_samples
 
 
@@ -36,6 +36,9 @@ def compute_x_deltas(dx: float, k: int, seed: int = 42) -> np.ndarray:
     :param seed: (int) seed for random number generator
     :return: np.ndarray with 3*(1+2k) x_delta values, sorted in increasing order
     """
+
+    # seed handling
+    seed += SEED_OFFSET_COMPUTE_X_DELTAS
 
     # initialize
     x_deltas = np.zeros(3 + 6 * k)
