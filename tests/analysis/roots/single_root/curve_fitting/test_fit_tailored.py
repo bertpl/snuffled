@@ -160,8 +160,8 @@ def test_param_step_a():
     a_p, b_p, c_p = param_step(a, b, c, "a", +1.0, range_b, range_c)
 
     # --- assert ------------------------------------------
-    assert a_m == pytest.approx(0.5 * a)
-    assert a_p == pytest.approx(2 * a)
+    assert a_m == pytest.approx(0.1 * a)
+    assert a_p == pytest.approx(10 * a)
     assert b_m == b_p == b
     assert c_m == c_p == c
 
