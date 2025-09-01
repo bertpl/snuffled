@@ -234,11 +234,6 @@ def f_near_underflow(x: float) -> float:
     return (1e-200) * (x - 0.1)
 
 
-def f_edge_roots(x: float) -> float:
-    """roots at -1 and 1"""
-    return x * (x - 1) * (x + 1)
-
-
 @pytest.mark.parametrize("n_roots", [1, 10, 100])
 @pytest.mark.parametrize(
     "fun",
@@ -263,29 +258,10 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
 
     # --- assert ------------------------------------------
     assert len(roots) == min(n_roots, len(candidate_root_intervals))
-    for root_min, root_max in roots:
-        f_min, f_max = fun(root_min), fun(root_max)
-        assert -1.0 <= root_min <= root_max <= 1.0
-        assert root_max - root_min < (4 * EPS)  # all roots are expected to be sharp
-        assert (f_min == f_max == 0.0) or (np.sign(f_min) * np.sign(f_max) < 0.0)
-
-
-@pytest.mark.parametrize(
-    "fun, expected_root",
-    [
-        (f_edge_roots, -1.0),
-        (f_edge_roots, 1.0),
-    ],
-)
-def test_function_sampler_roots_edge_cases(fun: Callable[[float], float], expected_root: float):
-    # --- arrange -----------------------------------------
-    sampler = FunctionSampler(
-        fun, x_min=-1, x_max=1, dx=1e-10, seed=42, n_fun_samples=1000, n_roots=100, rel_tol_scale=10.0
-    )
-    candidate_root_intervals, _ = sampler.candidate_root_intervals()
-
-    # --- act ---------------------------------------------
-    roots = sampler.roots()
-
-    # --- assert ------------------------------------------
-    assert any(root_min <= expected_root <= root_max for root_min, root_max in roots)
+    for root in roots:
+        fx_min, fx_max = fun(root.x_min), fun(root.x_max)
+        assert fx_min == root.fx_min
+        assert fx_max == root.fx_max
+        assert -1.0 <= root.x_min <= root.x_max <= 1.0
+        assert root.x_max - root.x_min < (4 * EPS)  # all roots are expected to be sharp
+        assert np.sign(fx_min) * np.sign(fx_max) == -1

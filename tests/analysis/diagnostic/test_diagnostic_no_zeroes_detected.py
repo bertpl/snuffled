@@ -37,7 +37,6 @@ def f_quadratic(x: float, c0: float) -> float:
         (partial(f_quadratic, c0=-0.9), 0.0),
         (partial(f_quadratic, c0=-0.99), 0.0),
         (partial(f_quadratic, c0=-0.99), 0.0),
-        (partial(f_quadratic, c0=-1.0), 0.0),
         (partial(f_quadratic, c0=-1.001), 1.0),
         (partial(f_quadratic, c0=-2), 1.0),
     ],

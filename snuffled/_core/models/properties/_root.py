@@ -3,9 +3,9 @@ from snuffled._core.models.base import NamedArray
 
 
 class RootProperty(StrEnum):
+    ILL_BEHAVED = "root_ill_behaved"
     DERIVATIVE_ZERO = "root_derivative_zero"
     DERIVATIVE_INFINITE = "root_derivative_infinite"
-    NOISY = "root_noisy"
     DISCONTINUOUS = "root_discontinuous"
     ASYMMETRIC = "root_asymmetric"
 

@@ -4,9 +4,10 @@ from functools import cache
 
 import numpy as np
 
+from snuffled._core.models.root_analysis import Root
 from snuffled._core.utils.constants import EPS, SEED_OFFSET_FUNCTION_SAMPLER
 from snuffled._core.utils.math import smooth_sign_array
-from snuffled._core.utils.root_finding import find_root_and_width
+from snuffled._core.utils.root_finding import find_odd_root
 from snuffled._core.utils.sampling import multi_scale_samples, sample_integers
 
 
@@ -203,10 +204,8 @@ class FunctionSampler:
         # multi-scale samples as (x, fx)-tuples
         samples = list(zip(self.x_values(), self.fx_values()))
 
-        # remove 0-valued samples, we are looking for strict sign flips,
-        # except for the edge intervals (we don't want to miss 0s at the exact edges)
-        n = len(samples)
-        samples = [(x, fx) for i, (x, fx) in enumerate(samples) if (fx != 0.0) or (i == 0) or (i == n - 1)]
+        # remove 0-valued samples, we are looking for strict sign flips
+        samples = [(x, fx) for i, (x, fx) in enumerate(samples) if (fx != 0.0)]
 
         # split in root- and non-root-intervals
         root_intervals = []
@@ -223,12 +222,12 @@ class FunctionSampler:
         return root_intervals, non_root_intervals
 
     @cache
-    def roots(self) -> list[tuple[float, float]]:
+    def roots(self) -> list[Root]:
         """
         Returns at most 'n_roots' root intervals [root_min, root_max] obtained using find_root_and_width().
         We start from the candidate_root_intervals and - if needed - sample 'n_roots' intervals randomly
         to if there are too many candidate intervals.
-        :return: list of (root_min, root_max)-tuples.
+        :return: list of Root objects, with deriv_sign != 0.
         """
 
         # get intervals
@@ -248,7 +247,7 @@ class FunctionSampler:
 
         # compute roots & return
         return [
-            find_root_and_width(
+            find_odd_root(
                 fun=self.f,
                 x_min=x_min,
                 x_max=x_max,
