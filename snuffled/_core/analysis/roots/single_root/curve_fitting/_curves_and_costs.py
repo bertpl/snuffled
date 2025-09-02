@@ -7,11 +7,11 @@ from snuffled._core.compatibility import numba
 def fitting_cost(x: np.ndarray, fx: np.ndarray, a: float, b: float, c: float, reg: float) -> float:
     """
     L1-cost of fitting fitting_curve to (x,fx)-values, where all x>0.
-    A regularization term is added that should help keep c=1.0 and b=0.0 unless the data convincingly says
+    A regularization term is added that should help keep abs(c)=1.0 and b=0.0 unless the data convincingly says
     otherwise.
     """
     fx_pred = fitting_curve(x, a, b, c)
-    reg_term = reg * (abs(b) + abs(np.log10(c)))
+    reg_term = reg * (abs(b) + abs(np.log10(abs(c))))
     return float(np.mean(np.abs(fx - fx_pred)) + reg_term)
 
 

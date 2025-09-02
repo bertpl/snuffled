@@ -18,6 +18,7 @@ __LN_R = math.log(2 * math.sqrt(2))  # ln(r) with r = 2*math.sqrt(2),   used in 
 def fit_curve_with_uncertainty_tailored(
     x: np.ndarray,
     fx: np.ndarray,
+    range_a: tuple[float, float],
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
@@ -44,8 +45,9 @@ def fit_curve_with_uncertainty_tailored(
 
     :param x: (n,)-sized numpy array containing x values, with each x>0
     :param fx: (n,)-sized numpy array containing corresponding f(x) values
-    :param range_c:  (c_min, c_max)    range of c values  (>0)
+    :param range_a: (a_min, a_max)  range of a values  (>0)
     :param range_b: (b_min, b_max)  range of b values
+    :param range_c: (c_min, c_max)  range of c values  (>0)
     :param reg: (float) regularization coefficient that helps favour c=1.0, b=0.0  (e.g. 1e-3)
     :param n_iters: (int, default=15) number of iterations (both for optimum finding as uncertainty exploration)
     :param rel_uncertainty_size: (float, default=1.0) factor to influence size of uncertainty region; this parameter
@@ -62,7 +64,7 @@ def fit_curve_with_uncertainty_tailored(
     a_lst, b_lst, c_lst, cost_lst = [], [], [], []
 
     # --- get optimal solution ----------------------------
-    a_opt, b_opt, c_opt = fit_curve_tailored(x, fx, range_b, range_c, reg, n_iters, debug_flag)
+    a_opt, b_opt, c_opt = fit_curve_tailored(x, fx, range_a, range_b, range_c, reg, n_iters, debug_flag)
     cost_opt = fitting_cost(x, fx, a_opt, b_opt, c_opt, reg)
 
     # remember this solution
@@ -98,7 +100,7 @@ def fit_curve_with_uncertainty_tailored(
             for i in range(n_iters):
                 # evaluate cand_step_size
                 a_cand, b_cand, c_cand = param_step(
-                    a_opt, b_opt, c_opt, step_method, step_dir * cand_step_size, range_b, range_c
+                    a_opt, b_opt, c_opt, step_method, step_dir * cand_step_size, range_a, range_b, range_c
                 )
                 cost_cand = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
 
@@ -142,6 +144,7 @@ def fit_curve_with_uncertainty_tailored(
 def fit_curve_tailored(
     x: np.ndarray,
     fx: np.ndarray,
+    range_a: tuple[float, float],
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
@@ -161,9 +164,9 @@ def fit_curve_tailored(
             - fx-values are rescaled such that their order of magnitude is ~1
      - fx-values can have any sign, however we assume...
         - not all fx-values are 0
-        - the dominant sign of fx is positive, i.e. we expect positive a-values.
+        - the dominant sign of fx is positive, i.e. we expect positive a-values, hence range_a should be positive
 
-    :return: (a,b,c)-tuple of parameters that are considered optimal, with a>0 and b, c in requested ranges.
+    :return: (a,b,c)-tuple of parameters that are considered optimal, with a, b, c in requested ranges.
     """
 
     # --- init --------------------------------------------
@@ -173,8 +176,10 @@ def fit_curve_tailored(
     fx_group_3 = fx[2 * n // 3 :]
 
     # --- initial point -----------------------------------
-    a_opt, b_opt, c_opt = 1.0, 0.0, 1.0
+    a_opt, b_opt, c_opt = initial_params(range_a, range_b, range_c)
     optimal_cost = fitting_cost(x, fx, a_opt, b_opt, c_opt, reg)
+    if debug_flag:
+        print(f"Method 'default'  --> cost=", optimal_cost)
     if np.min(fx) > 0.0:
         # if all fx are positive, we can use geomean-based approaches as well
         methods = ["median_local", "median_global", "geomean_local", "geomean_global"]
@@ -220,6 +225,7 @@ def fit_curve_tailored(
             fx_05=fx_05,
             fx_1=fx_1,
             fx_2=fx_2,
+            range_a=range_a,
             range_b=range_b,
             range_c=range_c,
         )
@@ -253,6 +259,7 @@ def fit_curve_tailored(
                         c=c_opt,
                         method=step_method,
                         step_size=step_dir * step_size,
+                        range_a=range_a,
                         range_b=range_b,
                         range_c=range_c,
                     )
@@ -282,6 +289,22 @@ def fit_curve_tailored(
     return a_opt, b_opt, c_opt
 
 
+@numba.njit(inline="always")
+def initial_params(range_a: tuple[float, float], range_b: tuple[float, float], range_c: tuple[float, float]):
+    """Return acceptable parameters within ranges"""
+
+    # A: geometric mid-point of range (range_a values should always be positive)
+    a = math.sqrt(range_a[0] * range_a[1])
+
+    # B: 0 if possible within range
+    b = clip_scalar(0.0, range_b[0], range_b[1])  # 0 if possible within range
+
+    # C: 1 with same sign as range_c values (they always have same signs)
+    c = clip_scalar(np.sign(range_c[0]) * 1.0, range_c[0], range_c[1])
+
+    return a, b, c
+
+
 @numba.njit
 def param_step(
     a: float,
@@ -289,6 +312,7 @@ def param_step(
     c: float,
     method: str,
     step_size: float,
+    range_a: tuple[float, float],
     range_b: tuple[float, float],
     range_c: tuple[float, float],
 ) -> tuple[float, float, float]:
@@ -299,6 +323,7 @@ def param_step(
 
     # --- init --------------------------------------------
     a_new, b_new, c_new = a, b, c
+    a_min, a_max = range_a
     b_min, b_max = range_b
     c_min, c_max = range_c
 
@@ -361,7 +386,7 @@ def param_step(
 
     # --- return clipped updates --------------------------
     return (
-        clip_scalar(float(a_new), 0.001 * a, 1000 * a),  # we don't have explicit ranges for a, we only want a>0
+        clip_scalar(float(a_new), a_min, a_max),
         clip_scalar(float(b_new), b_min, b_max),
         clip_scalar(float(c_new), c_min, c_max),
     )
@@ -375,6 +400,7 @@ def fit_curve_exact_three_points(
     fx_05: float,
     fx_1: float,
     fx_2: float,
+    range_a: tuple[float, float],
     range_b: tuple[float, float],
     range_c: tuple[float, float],
 ) -> tuple[float, float, float]:
@@ -390,14 +416,12 @@ def fit_curve_exact_three_points(
     """
 
     # initialize
+    a_min, a_max = range_a
     b_min, b_max = range_b
     c_min, c_max = range_c
 
     # computing a is straightforward
-    a = fx_1
-    if a == 0.0:
-        # we cannot infer anything about the shape -> assume linear (c=1) without discontinuity (b=0)
-        return a, 0.0, 1.0
+    a = clip_scalar(fx_1, a_min, a_max)
 
     # Computing c (the exponent) essentially looks at the ratio of (fx_2-fx_1)/(fx_1-fx_05), which is
     # expected to be 2.0 if the function is linear, larger if c>1 and smaller of c<1.
@@ -415,7 +439,7 @@ def fit_curve_exact_three_points(
             c = clip_scalar(np.log2(ratio), c_min, c_max)
 
     # Now we can compute b by simply filling in a, c and solving for b
-    b = 1 - (fx_2 - fx_05) / (fx_1 * (np.exp2(c) - np.exp2(-c)))
+    b = 1 - (fx_2 - fx_05) / (a * (np.exp2(c) - np.exp2(-c)))
     b = clip_scalar(b, b_min, b_max)
 
     # return results as a tuple

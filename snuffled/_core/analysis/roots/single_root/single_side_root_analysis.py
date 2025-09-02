@@ -8,7 +8,22 @@ from snuffled._core.analysis.roots.single_root.curve_fitting._fit_tailored impor
 from snuffled._core.utils.constants import EPS
 from snuffled._core.utils.numba import clip_scalar
 
+# =================================================================================================
+#  Constants
+# =================================================================================================
+_A_RANGE_MIN = EPS**0.25  # such that A_RANGE_MAX / A_RANGE_MIN is still well within bounds where
+_A_RANGE_MAX = 1 / _A_RANGE_MIN  # numerical accuracy of such ratios starts to break down
 
+_B_RANGE_MIN = -0.5  # this should allow the range of b-values to encompass 0.0 in case of no discontinuity
+_B_RANGE_MAX = 1.0  # this will max out the score for discontinuity
+
+_C_RANGE_MIN = 1 / 8.0  # smaller c-values will have g(1) > ~0.9*g(2), so c-estimation can become ill-conditioned
+_C_RANGE_MAX = 16.0  # larger c-values will get close to causing underflow for EPS^c
+
+
+# =================================================================================================
+#  Single-Side Root Analysis
+# =================================================================================================
 class SingleSideRootAnalysis:
     # -------------------------------------------------------------------------
     #  Constructor
@@ -48,8 +63,9 @@ class SingleSideRootAnalysis:
         a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_tailored(
             x=x,
             fx=fx,
-            range_b=(-0.5, 1.0),
-            range_c=(1 / 8, 16.0),
+            range_a=(_A_RANGE_MIN, _A_RANGE_MAX),
+            range_b=(_B_RANGE_MIN, _B_RANGE_MAX),
+            range_c=(_C_RANGE_MIN, _C_RANGE_MAX),
             reg=1e-3,
             n_iters=15,
             rel_uncertainty_size=1.0,
@@ -68,25 +84,34 @@ class SingleSideRootAnalysis:
 
         Roughly the following processing happens
             x  = x_deltas / x_scale                      (such that median(x)==1.0)
-            fx = clipped(fx_sign * fx_orig) / fx_scale
+            fx = fx_orig / (fx_sign * fx_scale)
 
         The goal is to avoid ill-conditioning during curve fitting and have scaling such that we expect
-        roughly ~1 values of parameter a.
+        roughly ~1 values of parameter a, such that it is safe to impose bounds (_A_RANGE_MIN, _A_RANGE_MAX) on a.
+
+        fx_scale, in most cases, will coincide with median(fx / x), but we take precautions for the case there are
+        some (or many) fx-values <= 0, to robustly deal with such corner/degenerate cases.
         """
 
-        # compute x
+        # compute x_scale & x
         x_scale = 2 * self.dx  # should coincide with median(x_deltas)
         x = self.x_deltas / x_scale
 
-        # clip fx-values   (to ensure all values have the correct sign)
-        fx_clipped = np.maximum(
-            self.fx_sign * self.fx_values,
-            math.sqrt(EPS) * max(abs(self.fx_values)),
+        # compute fx_scale
+        # NOTE: Ideally we want to choose the fx_scale, knowing that we will use range_a=(_A_RANGE_MIN, _A_RANGE_MAX).
+        #       So we will try to choose fx_scale such that for c=1.0, values of a ranging in 'range_a' can go
+        #       through most of the data points.
+        fx_pos = self.fx_sign * self.fx_values  # these should (mostly) be positive values
+        fx_x_ratios = [abs(fx / x) for fx, x in zip(fx_pos, x) if fx != 0]  # since not all fx==0, this is not empty
+        fx_scale_max = max(fx_x_ratios)
+        fx_scale = clip_scalar(
+            float(np.median(fx_x_ratios)),  # guaranteed to be a strictly positive value
+            fx_scale_max / _A_RANGE_MAX,
+            fx_scale_max,
         )
 
-        # apply scaling
-        fx_scale = np.median(fx_clipped / x)
-        fx = fx_clipped / fx_scale
+        # compute fx
+        fx = self.fx_values / (self.fx_sign * fx_scale)
 
         # return
         return (x, fx), (x_scale, fx_scale)
