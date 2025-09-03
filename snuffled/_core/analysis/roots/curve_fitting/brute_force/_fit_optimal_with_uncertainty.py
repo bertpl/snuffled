@@ -2,7 +2,7 @@ import numpy as np
 
 from snuffled._core.compatibility import numba
 
-from ._curves_and_costs import compute_threshold_cost, fitting_cost
+from ..shared import compute_threshold_cost, fitting_cost
 
 
 # =================================================================================================

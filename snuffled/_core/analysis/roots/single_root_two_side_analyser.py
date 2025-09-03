@@ -9,10 +9,10 @@ from snuffled._core.utils.numba import clip_scalar
 from snuffled._core.utils.signs import robust_sign_estimate
 
 from .curve_fitting import compute_x_deltas
-from .single_side_root_analysis import SingleSideRootAnalysis
+from .single_root_one_side_analysis import SingleRootOneSideAnalyser
 
 
-class SingleRootAnalyser(PropertyExtractor[SnuffledRootProperties]):
+class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
@@ -31,8 +31,8 @@ class SingleRootAnalyser(PropertyExtractor[SnuffledRootProperties]):
         self._seed = seed + SEED_OFFSET_SINGLE_ROOT_ANALYSER
 
         # actual analyses
-        self._analysis_left: SingleSideRootAnalysis
-        self._analysis_right: SingleSideRootAnalysis
+        self._analysis_left: SingleRootOneSideAnalyser
+        self._analysis_right: SingleRootOneSideAnalyser
         self._perform_analyses()
 
     # -------------------------------------------------------------------------
@@ -62,8 +62,8 @@ class SingleRootAnalyser(PropertyExtractor[SnuffledRootProperties]):
             fx_sign_right = self.root.deriv_sign
 
         # --- actual analyses -----------------------------
-        self._analysis_left = SingleSideRootAnalysis(self.dx, x_deltas, fx_values_left, -1, fx_sign_left)
-        self._analysis_right = SingleSideRootAnalysis(self.dx, x_deltas, fx_values_right, +1, fx_sign_right)
+        self._analysis_left = SingleRootOneSideAnalyser(self.dx, x_deltas, fx_values_left, -1, fx_sign_left)
+        self._analysis_right = SingleRootOneSideAnalyser(self.dx, x_deltas, fx_values_right, +1, fx_sign_right)
 
     # -------------------------------------------------------------------------
     #  Main Implementation

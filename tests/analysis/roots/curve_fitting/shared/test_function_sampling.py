@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import compute_x_deltas
+from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
 
 
 @pytest.mark.parametrize(

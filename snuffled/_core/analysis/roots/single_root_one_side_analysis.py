@@ -3,16 +3,16 @@ from functools import cached_property
 
 import numpy as np
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import fitting_curve
-from snuffled._core.analysis.roots.single_root.curve_fitting._fit_tailored import fit_curve_with_uncertainty_tailored
 from snuffled._core.utils.constants import EPS
 from snuffled._core.utils.numba import clip_scalar
+
+from .curve_fitting import fit_curve_with_uncertainty, fitting_curve
 
 # =================================================================================================
 #  Constants
 # =================================================================================================
-_A_RANGE_MIN = EPS**0.25  # such that A_RANGE_MAX / A_RANGE_MIN is still well within bounds where
-_A_RANGE_MAX = 1 / _A_RANGE_MIN  # numerical accuracy of such ratios starts to break down
+_A_RANGE_MIN = EPS**0.25  # such that A_RANGE_MAX / A_RANGE_MIN is still well within bounds where...
+_A_RANGE_MAX = 1 / _A_RANGE_MIN  # ...numerical accuracy of such ratios starts to break down
 
 _B_RANGE_MIN = -0.5  # this should allow the range of b-values to encompass 0.0 in case of no discontinuity
 _B_RANGE_MAX = 1.0  # this will max out the score for discontinuity
@@ -22,9 +22,9 @@ _C_RANGE_MAX = 16.0  # larger c-values will get close to causing underflow for E
 
 
 # =================================================================================================
-#  Single-Side Root Analysis
+#  Single Root - ONE SIDE Analyser
 # =================================================================================================
-class SingleSideRootAnalysis:
+class SingleRootOneSideAnalyser:
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
@@ -59,8 +59,7 @@ class SingleSideRootAnalysis:
         #       1) all fx_values are exactly 0.0
         #       2) regular curve fitting with positive c-values
         #       3) inverse curve fitting with negative c-values
-        #   - validate curve_fitting can handle negative-valued range_c argument
-        a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_tailored(
+        a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty(
             x=x,
             fx=fx,
             range_a=(_A_RANGE_MIN, _A_RANGE_MAX),
@@ -145,9 +144,9 @@ class SingleSideRootAnalysis:
     def _abc_opt(self) -> tuple[float, float, float]:
         i_opt = np.argmin(self._cost_values)
         return (
-            self._a_values[i_opt],
-            self._b_values[i_opt],
-            self._c_values[i_opt],
+            float(self._a_values[i_opt]),
+            float(self._b_values[i_opt]),
+            float(self._c_values[i_opt]),
         )
 
     def _f_min_max(self, z: float) -> tuple[float, float]:

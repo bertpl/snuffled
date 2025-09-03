@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting import fit_curve_with_uncertainty_brute_force
+from snuffled._core.analysis.roots.curve_fitting import fit_curve_with_uncertainty_brute_force
 from snuffled._core.utils.noise import noise_from_float
 
 

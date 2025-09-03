@@ -5,7 +5,7 @@ from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import SnuffledRootProperties
 from snuffled._core.utils.constants import SEED_OFFSET_ROOTS_ANALYSER
 
-from .single_root import SingleRootAnalyser
+from .single_root_two_side_analyser import SingleRootTwoSideAnalyser
 
 
 class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
@@ -43,7 +43,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     def _ensure_all_roots_analysed(self):
         if not self._root_analyses:
             self._root_analyses = {
-                root: SingleRootAnalyser(
+                root: SingleRootTwoSideAnalyser(
                     self.function_sampler,
                     root,
                     self.dx,

@@ -1,6 +1,6 @@
 import pytest
 
-from snuffled._core.analysis.roots.single_root.curve_fitting._curves_and_costs import compute_threshold_cost
+from snuffled._core.analysis.roots.curve_fitting import compute_threshold_cost
 
 
 def test_compute_threshold_cost():
