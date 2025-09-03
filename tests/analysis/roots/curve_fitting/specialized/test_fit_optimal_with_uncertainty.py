@@ -19,10 +19,8 @@ from snuffled._core.utils.noise import noise_from_float
 @pytest.mark.parametrize("b_true", [0.0, 0.2, 0.9])
 @pytest.mark.parametrize("c_true", [0.5, 1.0, 2.0, -2.0, -1.0, -0.5])
 @pytest.mark.parametrize("c_noise", [0.0, 1e-9, 1e-6, 1e-3, 1.0])
-@pytest.mark.parametrize("rel_uncertainty_size", [0.5, 0.75, 1.0])
-def test_fit_curve_with_uncertainty_tailored(
-    a_true: float, b_true: float, c_true: float, c_noise: float, rel_uncertainty_size: float
-):
+@pytest.mark.parametrize("uncertainty_size", [0.5, 0.75, 1.0])
+def test_fit_curve_with_uncertainty(a_true: float, b_true: float, c_true: float, c_noise: float, uncertainty_size):
     """Basic checks if all basic invariants are respected in the returned values."""
 
     # --- arrange -----------------------------------------
@@ -44,7 +42,7 @@ def test_fit_curve_with_uncertainty_tailored(
     # compute reference values to check correctness
     fx_q25, fx_q50, fx_q75 = np.quantile(fx_values, [0.25, 0.50, 0.75])
     a_opt, b_opt, c_opt, cost_opt = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg)
-    threshold_cost = compute_threshold_cost(rel_uncertainty_size, cost_opt, fx_q25, fx_q50, fx_q75)
+    threshold_cost = compute_threshold_cost(uncertainty_size, cost_opt, fx_q25, fx_q50, fx_q75)
 
     # --- act ---------------------------------------------
     a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty(
@@ -54,7 +52,7 @@ def test_fit_curve_with_uncertainty_tailored(
         range_b,
         range_c,
         reg,
-        rel_uncertainty_size=rel_uncertainty_size,
+        uncertainty_size=uncertainty_size,
         debug_flag=True,
     )
 

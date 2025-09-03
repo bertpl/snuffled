@@ -67,7 +67,7 @@ class SingleRootOneSideAnalyser:
             range_c=(_C_RANGE_MIN, _C_RANGE_MAX),
             reg=1e-3,
             n_iters=15,
-            rel_uncertainty_size=1.0,
+            uncertainty_size=1.0,
         )
         self._a_values = a_values
         self._b_values = b_values
