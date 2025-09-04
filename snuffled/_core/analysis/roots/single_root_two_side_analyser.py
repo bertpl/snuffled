@@ -9,7 +9,7 @@ from snuffled._core.utils.numba import clip_scalar
 from snuffled._core.utils.signs import robust_sign_estimate
 
 from .curve_fitting import compute_x_deltas
-from .single_root_one_side_analysis import SingleRootOneSideAnalyser
+from .single_root_one_side_analyser import SingleRootOneSideAnalyser
 
 
 class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):

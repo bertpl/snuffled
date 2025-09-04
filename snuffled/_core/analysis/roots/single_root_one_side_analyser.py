@@ -18,7 +18,7 @@ _B_RANGE_MIN = -0.5  # this should allow the range of b-values to encompass 0.0 
 _B_RANGE_MAX = 1.0  # this will max out the score for discontinuity
 
 _C_RANGE_MIN = 1 / 8.0  # smaller c-values will have g(1) > ~0.9*g(2), so c-estimation can become ill-conditioned
-_C_RANGE_MAX = 16.0  # larger c-values will get close to causing underflow for EPS^c
+_C_RANGE_MAX = 16.0  # larger c-values will get close to causing underflow for e.g. EPS**c
 
 
 # =================================================================================================
@@ -54,25 +54,31 @@ class SingleRootOneSideAnalyser:
         self.fx_scale = fx_scale
 
         # --- analysis ------------------------------------
-        # TODO:
-        #   - distinguish 3 cases:
-        #       1) all fx_values are exactly 0.0
-        #       2) regular curve fitting with positive c-values
-        #       3) inverse curve fitting with negative c-values
-        a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty(
-            x=x,
-            fx=fx,
-            range_a=(_A_RANGE_MIN, _A_RANGE_MAX),
-            range_b=(_B_RANGE_MIN, _B_RANGE_MAX),
-            range_c=(_C_RANGE_MIN, _C_RANGE_MAX),
-            reg=1e-3,
-            n_iters=15,
-            uncertainty_size=1.0,
-        )
-        self._a_values = a_values
-        self._b_values = b_values
-        self._c_values = c_values
-        self._cost_values = cost_values
+        if max(abs(fx_values)) == 0.0:
+            # edge case where all fx values are 0 -> set dummy values with a=0.0
+            self._a_values = np.array([0.0])
+            self._b_values = np.array([0.0])
+            self._c_values = np.array([1.0])
+            self._cost_values = np.array([1.0])
+        else:
+            # happy path where we try to find a 'regular' fit (positive c)
+            #                     as well as an 'inverse' fit (negative c)
+            a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty(
+                x=x,
+                fx=fx,
+                range_a=(_A_RANGE_MIN, _A_RANGE_MAX),
+                range_b=(_B_RANGE_MIN, _B_RANGE_MAX),
+                range_c=(_C_RANGE_MIN, _C_RANGE_MAX),
+                include_opposite_c_range=True,  # also check negative c-values
+                reg=1e-3,
+                n_iters=20,
+                uncertainty_size=1.0,
+                uncertainty_tol=1e-3,
+            )
+            self._a_values = a_values
+            self._b_values = b_values
+            self._c_values = c_values
+            self._cost_values = cost_values
 
     # -------------------------------------------------------------------------
     #  Internal analysis methods
@@ -103,11 +109,14 @@ class SingleRootOneSideAnalyser:
         fx_pos = self.fx_sign * self.fx_values  # these should (mostly) be positive values
         fx_x_ratios = [abs(fx / x) for fx, x in zip(fx_pos, x) if fx != 0]  # since not all fx==0, this is not empty
         fx_scale_max = max(fx_x_ratios)
-        fx_scale = clip_scalar(
-            float(np.median(fx_x_ratios)),  # guaranteed to be a strictly positive value
-            fx_scale_max / _A_RANGE_MAX,
-            fx_scale_max,
-        )
+        if fx_scale_max > 0.0:
+            fx_scale = clip_scalar(
+                float(np.median(fx_x_ratios)),  # guaranteed to be a strictly positive value
+                fx_scale_max / _A_RANGE_MAX,
+                fx_scale_max,
+            )
+        else:
+            fx_scale = 1.0
 
         # compute fx
         fx = self.fx_values / (self.fx_sign * fx_scale)
@@ -181,7 +190,7 @@ class SingleRootOneSideAnalyser:
 
         # map to score
         if norm_curve == 0.0:
-            # this is a degenerate case with all fx values 0 according to fit (i.e. a_opt=0)
+            # this is a degenerate case with all fx values 0 according to fit
             return 1.0
         else:
             # regular case
