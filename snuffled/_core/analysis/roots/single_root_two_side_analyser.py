@@ -20,13 +20,12 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         self,
         function_sampler: FunctionSampler,
         root: Root,
-        dx: float,
         n_root_samples: int,
         seed: int,
     ):
         super().__init__(function_sampler)
         self.root = root
-        self.dx = dx
+        self.dx = function_sampler.dx
         self.n_root_samples = n_root_samples
         self._seed = seed + SEED_OFFSET_SINGLE_ROOT_ANALYSER
 

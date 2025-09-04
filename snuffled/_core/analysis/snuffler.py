@@ -37,10 +37,10 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         rel_tol_scale: float = 10.0,
     ):
         seed += SEED_OFFSET_SNUFFLER
-        function_sampler = FunctionSampler(fun, x_min, x_max, dx, n_fun_samples, n_roots, rel_tol_scale, seed)
+        function_sampler = FunctionSampler(fun, x_min, x_max, dx, seed, n_fun_samples, n_roots, rel_tol_scale)
         super().__init__(function_sampler)
         self._function_analyser = FunctionAnalyser(function_sampler)
-        self._roots_analyser = RootsAnalyser(function_sampler, dx, n_root_samples, seed)
+        self._roots_analyser = RootsAnalyser(function_sampler, n_root_samples, seed)
         self._diagnostics_analyser = DiagnosticAnalyser(function_sampler)
 
     # -------------------------------------------------------------------------

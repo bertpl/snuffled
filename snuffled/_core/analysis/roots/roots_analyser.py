@@ -13,9 +13,8 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, function_sampler: FunctionSampler, dx: float, n_root_samples: int, seed: int):
+    def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int):
         super().__init__(function_sampler)
-        self.dx = dx
         self.n_root_samples = n_root_samples
         self._root_analyses: dict[Root, SnuffledRootProperties] = dict()
         self._seed = seed + SEED_OFFSET_ROOTS_ANALYSER
@@ -47,7 +46,6 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
                 root: SingleRootTwoSideAnalyser(
                     self.function_sampler,
                     root,
-                    self.dx,
                     self.n_root_samples,
                     self._seed + (i * SEED_OFFSET_ROOTS_ANALYSER),
                 ).extract_all()

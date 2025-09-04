@@ -10,7 +10,7 @@ def test_roots_analyser_supported_properties():
     sampler = FunctionSampler(
         fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
-    analyser = RootsAnalyser(sampler, dx=1e-9, n_root_samples=10, seed=43)
+    analyser = RootsAnalyser(sampler, n_root_samples=10, seed=43)
 
     # --- act ---------------------------------------------
     supported_properties = analyser.supported_properties()
@@ -24,7 +24,7 @@ def test_roots_analyser_extract_all():
     sampler = FunctionSampler(
         fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
-    analyser = RootsAnalyser(sampler, dx=1e-9, n_root_samples=10, seed=43)
+    analyser = RootsAnalyser(sampler, n_root_samples=10, seed=43)
 
     # --- act ---------------------------------------------
     _ = analyser.extract_all()
@@ -38,7 +38,7 @@ def test_roots_analyser_statistics():
     sampler = FunctionSampler(
         fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
-    analyser = RootsAnalyser(sampler, dx=1e-9, n_root_samples=10, seed=43)
+    analyser = RootsAnalyser(sampler, n_root_samples=10, seed=43)
 
     # --- act ---------------------------------------------
     t_start = time.perf_counter()
