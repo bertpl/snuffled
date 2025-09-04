@@ -46,6 +46,9 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
     # -------------------------------------------------------------------------
     #  Main Implementation
     # -------------------------------------------------------------------------
+    def _new_named_array(self) -> SnuffledProperties:
+        return SnuffledProperties()
+
     def supported_properties(self) -> list[str]:
         """Make sure function analysis is performed last, so it benefits from samples taken by other analyses."""
         diagnostic_props = self._diagnostics_analyser.supported_properties()
