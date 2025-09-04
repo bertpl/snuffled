@@ -42,7 +42,9 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         """Performs left- and right-sided root analysis and populates self._analysis_left, self._analysis_right."""
 
         # --- sample function around root -----------------
-        x_deltas = compute_x_deltas(dx=self.dx, k=self.n_root_samples, seed=self._seed)
+        # n_samples = 2 * n_samples_per_side = 2 * (3 + 6*k) = 6 + 12*k
+        k = max(1, round((self.n_root_samples - 6) / 12))
+        x_deltas = compute_x_deltas(dx=self.dx, k=k, seed=self._seed)
         fx_values_left = np.array([self.function_sampler.f(self.root.x - x_delta) for x_delta in x_deltas])
         fx_values_right = np.array([self.function_sampler.f(self.root.x + x_delta) for x_delta in x_deltas])
 

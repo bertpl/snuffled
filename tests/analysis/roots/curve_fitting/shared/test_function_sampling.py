@@ -12,8 +12,10 @@ from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
         (1e-3, 1),
         (1e-3, 2),
         (1e-6, 3),
-        (1e-9, 5),
-        (1e-9, 1000),
+        (1e-7, 5),
+        (1e-8, 10),
+        (1e-9, 100),
+        (1e-10, 1000),
     ],
 )
 def test_compute_x_deltas(dx: float, k: int):
