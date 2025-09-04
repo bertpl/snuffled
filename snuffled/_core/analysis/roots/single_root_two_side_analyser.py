@@ -104,10 +104,10 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         return 0.5 * (self._analysis_left.discontinuous + self._analysis_right.discontinuous)
 
     def _extract_asymmetric(self) -> float:
-        # --- aggregate norms & deltas of f0,f1,f2,f4 -----
+        # --- aggregate norms & deltas of f1,f2,f4 --------
         total_norm = 0.0
         total_delta = 0.0
-        for att in ["f0", "f1", "f2", "f4"]:
+        for att in ["f1", "f2", "f4"]:
             f_left_min, f_left_max = getattr(self._analysis_left, att)
             f_right_min, f_right_max = getattr(self._analysis_right, att)
 

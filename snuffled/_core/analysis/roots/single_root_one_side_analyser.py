@@ -108,8 +108,9 @@ class SingleRootOneSideAnalyser:
         #       through most of the data points.
         fx_pos = self.fx_sign * self.fx_values  # these should (mostly) be positive values
         fx_x_ratios = [abs(fx / x) for fx, x in zip(fx_pos, x) if fx != 0]  # since not all fx==0, this is not empty
-        fx_scale_max = max(fx_x_ratios)
-        if fx_scale_max > 0.0:
+        if len(fx_x_ratios) > 0:
+            # there's at least 1 non-zero value
+            fx_scale_max = max(fx_x_ratios)
             fx_scale = clip_scalar(
                 float(np.median(fx_x_ratios)),  # guaranteed to be a strictly positive value
                 fx_scale_max / _A_RANGE_MAX,
@@ -160,13 +161,9 @@ class SingleRootOneSideAnalyser:
 
     def _f_min_max(self, z: float) -> tuple[float, float]:
         """Return (min,max)-values for estimated f(root + z*2*dx) based on (a,b,c)-params in uncertainty range."""
-        if z == 0.0:
-            g_values = [a * b for a, b, c in self._abc_tuples]
-        else:
-            g_values = [a * (b + (1 - b) * (z**c)) for a, b, c in self._abc_tuples]
-        g_min, g_max = min(g_values), max(g_values)
-        f_min, f_max = self.fx_sign * self.fx_scale * g_min, self.fx_sign * self.fx_scale * g_max
-        return f_min, f_max
+        scale = self.fx_sign * self.fx_scale
+        f_values = [scale * a * (b + (1 - b) * (z**c)) for a, b, c in self._abc_tuples]
+        return min(f_values), max(f_values)
 
     # -------------------------------------------------------------------------
     #  Final property computation
@@ -218,18 +215,18 @@ class SingleRootOneSideAnalyser:
 
     @cached_property
     def discontinuous(self) -> float:
-        # Only consider b>0 values if the uncertainty range has evidence for it
+        # We consider a root discontinuous if EITHER we have evidence for c<0 or b>0
+        # Only consider b>0 or c<0 values if the uncertainty range has evidence for it
         b = self._b_min_max[0]  # b = b_min
-        # Map b --> score
-        #         b <=0.0    -->        score = 1.0
-        #   0.0 < b < 1.0    -->  0.0 < score < 1.0
-        #         b >=1.0    -->        score = 0.0
-        return clip_scalar(b, 0.0, 1.0)
-
-    @cached_property
-    def f0(self) -> tuple[float, float]:
-        """Return (min,max)-values for estimated f(root) based on (a,b,c)-params in uncertainty range."""
-        return self._f_min_max(z=0.0)
+        c = self._c_min_max[1]  # c = c_max
+        if c < 0:
+            return 1.0
+        else:
+            # Map b --> score
+            #         b <=0.0    -->        score = 1.0
+            #   0.0 < b < 1.0    -->  0.0 < score < 1.0
+            #         b >=1.0    -->        score = 0.0
+            return clip_scalar(b, 0.0, 1.0)
 
     @cached_property
     def f1(self) -> tuple[float, float]:

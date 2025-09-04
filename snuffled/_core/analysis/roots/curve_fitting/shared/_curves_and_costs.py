@@ -29,7 +29,7 @@ def compute_threshold_cost(
     fx_q50: float,
     fx_q75: float,
     _c_opt: float = 1.0,
-    _c_median: float = 1e-3,
+    _c_median: float = 1e-4,
     _c_range: float = 1e-3,
 ) -> float:
     """
@@ -52,7 +52,7 @@ def compute_threshold_cost(
     :param fx_q50: (float) 50%-quantile of fx-values
     :param fx_q75: (float) 75%-quantile of fx-values
     :param _c_opt: (float, default=1.0) coefficient of contribution of optimal_cost to cost_margin
-    :param _c_median: (float, default=1e-3) coefficient of contribution of fx-median to cost_margin
+    :param _c_median: (float, default=1e-4) coefficient of contribution of fx-median to cost_margin
     :param _c_range: (float, default=1e-3) coefficient of contribution of fx-range to cost_margin
     :return:
     """
