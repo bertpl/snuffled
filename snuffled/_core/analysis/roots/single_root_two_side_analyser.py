@@ -51,7 +51,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
 
         # get robust sign estimates from left & right fx-values
         sign_estimate_left = robust_sign_estimate(fx_values_left)
-        sign_estimate_right = robust_sign_estimate(fx_values_left)
+        sign_estimate_right = robust_sign_estimate(fx_values_right)
         if sign_estimate_left * sign_estimate_right == -1:
             # In most cases this test should be definitive
             fx_sign_left = sign_estimate_left
