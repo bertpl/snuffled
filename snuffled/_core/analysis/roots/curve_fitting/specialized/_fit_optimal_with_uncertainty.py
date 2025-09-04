@@ -17,8 +17,8 @@ def fit_curve_with_uncertainty(
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
-    include_negative_c: bool = False,
-    n_iters: int = 15,
+    include_opposite_c_range: bool = False,
+    n_iters: int = 20,
     uncertainty_size: float = 1.0,
     uncertainty_tol: float = 1e-3,
     debug_flag: bool = False,
@@ -46,7 +46,7 @@ def fit_curve_with_uncertainty(
     :param range_b: (b_min, b_max)  range of b values
     :param range_c: (c_min, c_max)  range of c values  (>0)
     :param reg: (float) regularization coefficient that helps favour c=1.0, b=0.0  (e.g. 1e-3)
-    :param include_negative_c: (bool, default=False) if True, also check for fit with c-range (-c_max, -c_min)
+    :param include_opposite_c_range: (bool, default=False) if True, also check for fit with c-range (-c_max, -c_min)
     :param n_iters: (int, default=15) number of iterations (both for optimum finding as uncertainty exploration)
     :param uncertainty_size: (float, default=1.0) factor to influence size of uncertainty region; this parameter
                                    maps to the 'relative_margin' parameter of the compute_threshold_cost function
@@ -57,7 +57,7 @@ def fit_curve_with_uncertainty(
     """
 
     # --- init --------------------------------------------
-    if include_negative_c:
+    if include_opposite_c_range:
         c_ranges = [range_c, (-range_c[1], -range_c[0])]
     else:
         c_ranges = [range_c]

@@ -18,7 +18,7 @@ from snuffled._core.utils.noise import noise_from_float
 @pytest.mark.parametrize("a_true", [1.0, 5.0])
 @pytest.mark.parametrize("b_true", [0.0, 0.2, 0.9])
 @pytest.mark.parametrize("c_true", [0.5, 1.0, 2.0, -2.0, -1.0, -0.5])
-@pytest.mark.parametrize("include_negative_c", [False, True])
+@pytest.mark.parametrize("include_opposite_c_range", [False, True])
 @pytest.mark.parametrize("c_noise", [0.0, 1e-6, 1e-3, 1.0])
 @pytest.mark.parametrize("uncertainty_size", [0.5, 1.0])
 @pytest.mark.parametrize("uncertainty_tol", [1e-2, 1e-3])
@@ -26,7 +26,7 @@ def test_fit_curve_with_uncertainty(
     a_true: float,
     b_true: float,
     c_true: float,
-    include_negative_c: bool,
+    include_opposite_c_range: bool,
     c_noise: float,
     uncertainty_size,
     uncertainty_tol,
@@ -50,7 +50,7 @@ def test_fit_curve_with_uncertainty(
     fx_q25, fx_q50, fx_q75 = np.quantile(fx_values, [0.25, 0.50, 0.75])
     _, _, _, cost_opt_pos_c = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg)
     _, _, _, cost_opt_neg_c = fit_curve(x_values, fx_values, range_a, range_b, (-range_c[1], -range_c[0]), reg)
-    if include_negative_c:
+    if include_opposite_c_range:
         cost_opt = min([cost_opt_neg_c, cost_opt_pos_c])
     else:
         cost_opt = cost_opt_pos_c
@@ -64,7 +64,7 @@ def test_fit_curve_with_uncertainty(
         range_b,
         range_c,
         reg,
-        include_negative_c=include_negative_c,
+        include_opposite_c_range=include_opposite_c_range,
         uncertainty_size=uncertainty_size,
         uncertainty_tol=uncertainty_tol,
         debug_flag=True,
@@ -81,7 +81,7 @@ def test_fit_curve_with_uncertainty(
     for a, b, c in zip(a_values, b_values, c_values):
         assert range_a[0] <= a <= range_a[1]
         assert range_b[0] <= b <= range_b[1]
-        if include_negative_c:
+        if include_opposite_c_range:
             assert (range_c[0] <= c <= range_c[1]) or (-range_c[1] <= c <= -range_c[0])
         else:
             assert range_c[0] <= c <= range_c[1]
@@ -91,3 +91,13 @@ def test_fit_curve_with_uncertainty(
         min(cost_values) <= cost_opt
     )  # <= not ==, because we can serendipitously a better optimum during uncertainty exploration
     assert max(cost_values) <= threshold_cost
+    if (np.sign(range_c[0]) == np.sign(c_true)) or include_opposite_c_range:
+        # we expect to find an accurate solution, with reasonably small cost
+        # so we expect the uncertainty boundary not to span the entire space, hence we should be able
+        # to accurately find the edge
+        assert (1 - uncertainty_tol) * threshold_cost <= max(cost_values)
+
+        # we should find an optimal solution with cost dominated by
+        #   -> max 1e-2 cost for regularization
+        #   -> max 'c_noise' cost due to noise
+        assert min(cost_values) <= 1e-2 + c_noise

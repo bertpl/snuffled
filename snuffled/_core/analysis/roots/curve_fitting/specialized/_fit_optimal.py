@@ -19,7 +19,7 @@ def fit_curve(
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
-    n_iters: int = 15,
+    n_iters: int = 20,
     debug_flag: bool = False,
 ) -> tuple[float, float, float, float]:
     """

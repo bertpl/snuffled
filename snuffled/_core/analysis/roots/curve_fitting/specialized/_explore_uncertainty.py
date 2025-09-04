@@ -19,7 +19,7 @@ def explore_uncertainty(
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
-    n_iters: int = 15,
+    n_iters: int = 20,
     tol: float = 1e-3,
     debug_flag: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
