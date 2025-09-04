@@ -27,13 +27,17 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
 
     def _extract(self, prop: str) -> float:
         # make sure we have analysed all roots provided by function_sampler.roots()
-        # such that self._root_analyses is populated
+        # such that self._root_analyses is populated (if there are >0 roots)
         self._ensure_all_roots_analysed()
 
         # compute overall score
         if prop in self.supported_properties():
             # take average of this property over all analysed roots
-            return float(np.mean([root_props[prop] for root_props in self._root_analyses.values()]))
+            if len(self._root_analyses) > 0:
+                return float(np.mean([root_props[prop] for root_props in self._root_analyses.values()]))
+            else:
+                # no roots to analyse  (can be early-detected in the Diagnostic properties)
+                return 0.0
         else:
             raise ValueError(f"Property {prop} not supported")
 
@@ -41,7 +45,8 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     #  Internal methods
     # -------------------------------------------------------------------------
     def _ensure_all_roots_analysed(self):
-        if not self._root_analyses:
+        roots = self.function_sampler.roots()
+        if len(self._root_analyses) < len(roots):
             self._root_analyses = {
                 root: SingleRootTwoSideAnalyser(
                     self.function_sampler,
@@ -49,5 +54,5 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
                     self.n_root_samples,
                     self._seed + (i * SEED_OFFSET_ROOTS_ANALYSER),
                 ).extract_all()
-                for i, root in enumerate(self.function_sampler.roots())
+                for i, root in enumerate(roots)
             }
