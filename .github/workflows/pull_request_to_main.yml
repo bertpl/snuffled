@@ -71,7 +71,7 @@ jobs:
 
 
   publish-to-dev:
-#    needs: test
+    needs: test
     runs-on: ubuntu-latest
     environment: dev
     permissions:

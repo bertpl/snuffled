@@ -62,10 +62,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - uses: ./.github/actions/publish_prod
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          uv_version: ${{ vars.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
+
+      - name: Build package with uv
+        shell: bash
+        run: uv build
+
+      - name: Publish package distributions to PyPI   [---PROD---]
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://upload.pypi.org/legacy/
 
 
   bump-version:
@@ -78,7 +88,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: ${{ inputs.uv_version }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Check current version
         run: |
