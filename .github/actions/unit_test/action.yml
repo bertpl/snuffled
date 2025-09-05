@@ -53,7 +53,7 @@ runs:
             uv python install ${{ env.PYTHON_EFFECTIVE_VERSION }}
             uv venv --python ${{ env.PYTHON_EFFECTIVE_VERSION }}
             source .venv/bin/activate
-            if [ "${{ input.include_all_extra_deps }}" = "true" ]; then
+            if [ "${{ inputs.include_all_extra_deps }}" = "true" ]; then
                 uv pip compile --resolution ${{ inputs.dependency_resolution }} --all-extras --group dev pyproject.toml
                 uv sync --all-extras --dev 
             else
