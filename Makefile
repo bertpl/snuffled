@@ -20,14 +20,14 @@ build:
 
 test:
 	# run all tests - with numba & just 1 python version
-	uv run --extra numba --python 3.13 pytest ./tests
+	uv run --all-extras --python 3.13 pytest ./tests
 
 coverage:
 	# run tests with Python 3.10; without numba & create new report
 	uv sync	# should remove numba
 	uv run --python 3.10 pytest ./tests --cov=./snuffled/ --cov-report=html
 	# run tests with Python 3.13; with numba & append to report
-	uv run --extra numba --python 3.13 pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
+	uv run --all-extras --python 3.13 pytest ./tests --cov=./snuffled/ --cov-append --cov-report=html
 
 format:
 	uvx ruff format .;

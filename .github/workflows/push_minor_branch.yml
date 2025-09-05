@@ -1,0 +1,12 @@
+name: Push to branch other than main or develop
+on:
+  push:
+    branches-ignore:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/unit_test
