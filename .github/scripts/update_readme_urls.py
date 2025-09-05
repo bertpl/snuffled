@@ -33,7 +33,7 @@ def render_template(python_versions: list[str], package_version: str) -> list[st
                 ![shields.io-python-versions](https://img.shields.io/badge/python-{url_python_versions}-blue)
                 ![genbadge-test-count](https://bertpl.github.io/snuffled/version_artifacts/v{package_version}/badge-test-count.svg)
                 ![genbadge-test-coverage](https://bertpl.github.io/snuffled/version_artifacts/v{package_version}/badge-coverage.svg)
-                ![snuffled logo](https://bertpl.github.io/snuffled/version_artifacts/v0.1.0/splash.webp)
+                ![snuffled logo](https://bertpl.github.io/snuffled/version_artifacts/v{package_version}/splash.webp)
             """
         ).splitlines()
         if line
