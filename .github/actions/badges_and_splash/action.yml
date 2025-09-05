@@ -43,7 +43,7 @@ runs:
         shell: bash
         run: |            
             PACKAGE_VERSION="$(uv version --short)"
-            uv run genbadge tests -i junit.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-tests.svg"
+            uv run genbadge tests -i junit.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-test-count.svg"
             uv run genbadge coverage -i coverage.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-coverage.svg"
 
       - name: Prepare splash screen
