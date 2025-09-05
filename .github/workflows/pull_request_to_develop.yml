@@ -23,6 +23,6 @@ jobs:
       - uses: ./.github/actions/unit_test
         with:
           uv_version: ${{ vars.UV_VERSION }}
-          python_version: $${{ matrix.python_version }}
-          dependency_resolution: $${{ matrix.dependency_resolution }}
-          include_all_extra_deps: $${{ matrix.include_all_extra_deps }}
+          python_version: ${{ matrix.python_version }}
+          dependency_resolution: ${{ matrix.dependency_resolution }}
+          include_all_extra_deps: ${{ matrix.include_all_extra_deps }}
