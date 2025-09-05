@@ -28,7 +28,7 @@ runs:
         shell: bash
         run: |
             PACKAGE_VERSION=$(uv version --short)
-            echo "PACAKGE_EFFECTIVE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+            echo "PACKAGE_EFFECTIVE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
 
       - name: Create coverage report
         shell: bash
