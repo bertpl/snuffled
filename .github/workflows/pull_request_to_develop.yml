@@ -1,11 +1,9 @@
-name: pull_request_to_develop.yml
+name: Pull Request to Develop
 on:
   pull_request:
     branches:
       - develop
     types: [opened, synchronize]
-  push:
-    branches: ["feature/*"]
 
 jobs:
   test:
