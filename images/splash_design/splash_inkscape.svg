@@ -9,7 +9,7 @@
    viewBox="0 0 1216 576"
    sodipodi:docname="splash_inkscape.svg"
    inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
-   inkscape:export-filename="logo_inkscape.webp"
+   inkscape:export-filename="../splash.webp"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -60,40 +60,686 @@
     <filter
        style="color-interpolation-filters:sRGB;"
        inkscape:label="Drop Shadow"
-       id="filter93"
-       x="-0.050140725"
-       y="-0.034788422"
-       width="1.1002814"
-       height="1.0695768">
+       id="filter632"
+       x="-0.52816591"
+       y="-0.31556831"
+       width="2.0563318"
+       height="1.6311366">
       <feFlood
          result="flood"
          in="SourceGraphic"
          flood-opacity="1.000000"
-         flood-color="rgb(0,0,0)"
-         id="feFlood92" />
+         flood-color="rgb(255,255,255)"
+         id="feFlood631" />
       <feGaussianBlur
          result="blur"
          in="SourceGraphic"
-         stdDeviation="5.000000"
-         id="feGaussianBlur92" />
+         stdDeviation="3.000000"
+         id="feGaussianBlur631" />
       <feOffset
          result="offset"
          in="blur"
          dx="0.000000"
          dy="0.000000"
-         id="feOffset92" />
+         id="feOffset631" />
       <feComposite
          result="comp1"
          operator="in"
          in="flood"
          in2="offset"
-         id="feComposite92" />
+         id="feComposite631" />
       <feComposite
          result="comp2"
          operator="over"
          in="SourceGraphic"
          in2="comp1"
-         id="feComposite93" />
+         id="feComposite632" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter634"
+       x="-0.32142822"
+       y="-0.22122582"
+       width="1.6428564"
+       height="1.4424516">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood632" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur632" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset632" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite633" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite634" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter636"
+       x="-0.3205121"
+       y="-0.21843371"
+       width="1.6410242"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood634" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur634" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset634" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite635" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite636" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter638"
+       x="-0.40467644"
+       y="-0.22122582"
+       width="1.8093529"
+       height="1.4424516">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood636" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur636" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset636" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite637" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite638" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter640"
+       x="-0.40467644"
+       y="-0.22122582"
+       width="1.8093529"
+       height="1.4424516">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood638" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur638" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset638" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite639" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite640" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter642"
+       x="-0.40467644"
+       y="-0.22122582"
+       width="1.8093529"
+       height="1.4424516">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood640" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur640" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset640" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite641" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite642" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter644"
+       x="-0.40467644"
+       y="-0.22122582"
+       width="1.8093529"
+       height="1.4424516">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood642" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur642" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset642" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite643" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite644" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter646"
+       x="-0.34722184"
+       y="-0.3275117"
+       width="1.6944437"
+       height="1.6550234">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(255,255,255)"
+         id="feFlood644" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur644" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset644" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite645" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite646" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter648"
+       x="-0.05451901"
+       y="-0.22233221"
+       width="1.109038"
+       height="1.4446644">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood646" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur646" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset646" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite647" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite648" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter650"
+       x="-0.05968169"
+       y="-0.21843371"
+       width="1.1193634"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood648" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur648" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset648" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite649" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite650" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter652"
+       x="-0.05982449"
+       y="-0.21843371"
+       width="1.119649"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood650" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur650" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset650" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite651" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite652" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter654"
+       x="-0.043630021"
+       y="-0.2199416"
+       width="1.08726"
+       height="1.4398832">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood652" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur652" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset652" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite653" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite654" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter656"
+       x="-0.050089041"
+       y="-0.22058855"
+       width="1.1001781"
+       height="1.4411771">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood654" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur654" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset654" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite655" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite656" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter658"
+       x="-0.048849338"
+       y="-0.17536188"
+       width="1.0976987"
+       height="1.3507238">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood656" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur656" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset656" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite657" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite658" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter660"
+       x="-0.073313777"
+       y="-0.1757729"
+       width="1.1466276"
+       height="1.3515458">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood658" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur658" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset658" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite659" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite660" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter662"
+       x="-0.21469459"
+       y="-0.21843371"
+       width="1.4293892"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood660" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur660" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset660" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite661" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite662" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter664"
+       x="-0.068555767"
+       y="-0.21843371"
+       width="1.1371115"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood662" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur662" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset662" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite663" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite664" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter666"
+       x="-0.14610381"
+       y="-0.21843371"
+       width="1.2922076"
+       height="1.4368674">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(0,0,0)"
+         id="feFlood664" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="3.000000"
+         id="feGaussianBlur664" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="0.000000"
+         dy="0.000000"
+         id="feOffset664" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite665" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite666" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -107,13 +753,13 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
      showgrid="false"
-     inkscape:zoom="1.0312167"
-     inkscape:cx="571.65485"
-     inkscape:cy="272.0088"
-     inkscape:window-width="1728"
-     inkscape:window-height="1080"
-     inkscape:window-x="0"
-     inkscape:window-y="37"
+     inkscape:zoom="1.4662987"
+     inkscape:cx="710.63284"
+     inkscape:cy="254.723"
+     inkscape:window-width="2752"
+     inkscape:window-height="1548"
+     inkscape:window-x="2048"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="g1">
     <inkscape:grid
@@ -131,14 +777,54 @@
        enabled="true"
        visible="false" />
     <sodipodi:guide
-       position="-88.730535,552.38623"
+       position="-93.093915,527.51359"
        orientation="0,-1"
        id="guide76"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="335.60178,193.88624"
+       position="583.60486,216.73126"
        orientation="0,-1"
        id="guide77"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="741.84214,638.06261"
+       orientation="1,0"
+       id="guide6"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,449.81801"
+       orientation="0,-1"
+       id="guide7"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,488.6658"
+       orientation="0,-1"
+       id="guide8"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,410.97021"
+       orientation="0,-1"
+       id="guide9"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,372.12242"
+       orientation="0,-1"
+       id="guide10"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,333.27463"
+       orientation="0,-1"
+       id="guide11"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,294.42685"
+       orientation="0,-1"
+       id="guide12"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="594.75674,255.57904"
+       orientation="0,-1"
+       id="guide13"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <g
@@ -165,164 +851,315 @@
          x="28.916168"
          y="74.285767"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1">SNUFFLED</tspan></text>
-    <g
-       id="g80"
-       transform="translate(38)"
-       style="filter:url(#filter93)">
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="694.71283"
-         y="47.517761"
-         id="text1-5"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           x="694.71283"
-           y="47.517761"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:#ffffff;fill-opacity:1"
-           id="tspan30"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:#000000;fill-opacity:1"
-   id="tspan31">S</tspan>ystematic</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="690.25146"
-         y="56.073288"
-         id="text1-5-1"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8"
-           x="690.25146"
-           y="56.073288"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="690.25146"
-           y="88.555252"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan32-5">N</tspan>umerical</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="690.59882"
-         y="96.020988"
-         id="text1-5-1-7"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8-5"
-           x="690.59882"
-           y="96.020988"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="690.59882"
-           y="128.50296"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan34-2-5">U</tspan>nivariate</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="695.73956"
-         y="135.96869"
-         id="text1-5-1-7-2"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8-5-4"
-           x="695.73956"
-           y="135.96869"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="695.73956"
-           y="168.45065"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1-6"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan35-6-3-9">F</tspan>ull</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="693.95807"
-         y="175.91638"
-         id="text1-5-1-7-2-6"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8-5-4-6"
-           x="693.95807"
-           y="175.91638"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="693.95807"
-           y="208.39835"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan71"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan35-6-3-9-1">F</tspan>unction</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="644.46106"
-         y="211.86407"
-         id="text1-5-1-7-2-4"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8-5-4-8"
-           x="644.46106"
-           y="211.86407"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="644.46106"
-           y="244.34604"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1-6-5">ana<tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan37-1-9-3-7">L</tspan>ysis for</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="693.05988"
-         y="251.76376"
-         id="text1-5-1-7-2-4-23-5"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           id="tspan1-2-8-5-4-8-8-0"
-           x="693.05988"
-           y="251.76376"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
-           sodipodi:role="line"
-           x="693.05988"
-           y="284.24573"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1-6-5-0-9"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan38-8-8-3-7-5-1">E</tspan>stablishing</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="716.84351"
-         y="359.98013"
-         id="text1-5-1-7-2-4-23-5-5"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           x="716.84351"
-           y="359.98013"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1-6-5-0-9-0">root-finding</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         x="691.46332"
-         y="322.08044"
-         id="text1-5-1-7-2-4-23-5-5-6"
-         inkscape:label="txt_right"><tspan
-           sodipodi:role="line"
-           x="691.46332"
-           y="322.08044"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
-           id="tspan30-7-1-6-5-0-9-0-1"><tspan
-   style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
-   id="tspan39-8-7-5-9-1-0-3-7">D</tspan>ifficulty of</tspan></text>
-    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter632)"
+       x="734.30731"
+       y="48.006428"
+       id="text1-5"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         x="734.30731"
+         y="48.006428"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:#ffffff;fill-opacity:1"
+         id="tspan30"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:#000000;fill-opacity:1"
+           id="tspan31">S</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter648)"
+       x="750.25977"
+       y="48.006428"
+       id="text1-5-4"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         x="750.25977"
+         y="48.006428"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';fill:#ffffff;fill-opacity:1"
+         id="tspan30-1">ystematic</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter634)"
+       x="729.66193"
+       y="54.788269"
+       id="text1-5-1"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8"
+         x="729.66193"
+         y="54.788269"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="729.66193"
+         y="87.270233"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan32-5">N</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter650)"
+       x="754.49622"
+       y="54.788269"
+       id="text1-5-1-9"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-1"
+         x="754.49622"
+         y="54.788269"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="754.49622"
+         y="87.270233"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-4">umerical</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter636)"
+       x="728.16449"
+       y="93.220047"
+       id="text1-5-1-7"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5"
+         x="728.16449"
+         y="93.220047"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="728.16449"
+         y="125.70201"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan34-2-5">U</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter652)"
+       x="753.00946"
+       y="93.220047"
+       id="text1-5-1-7-1"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-8"
+         x="753.00946"
+         y="93.220047"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="753.00946"
+         y="125.70201"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-5">nivariate</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter638)"
+       x="732.42426"
+       y="132.48386"
+       id="text1-5-1-7-2"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4"
+         x="732.42426"
+         y="132.48386"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="732.42426"
+         y="164.96582"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan35-6-3-9">F</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter662)"
+       x="748.42456"
+       y="132.48386"
+       id="text1-5-1-7-2-67"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-80"
+         x="748.42456"
+         y="132.48386"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="748.42456"
+         y="164.96582"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-6">ull</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter640)"
+       x="732.28326"
+       y="171.33165"
+       id="text1-5-1-7-2-6"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-6"
+         x="732.28326"
+         y="171.33165"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="732.28326"
+         y="203.81361"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan71"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan35-6-3-9-1">F</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter664)"
+       x="748.2406"
+       y="171.33165"
+       id="text1-5-1-7-2-6-6"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-6-0"
+         x="748.2406"
+         y="171.33165"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="748.2406"
+         y="203.81361"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan71-4">unction</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter642)"
+       x="731.57825"
+       y="210.17944"
+       id="text1-5-1-7-2-4"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-8"
+         x="731.57825"
+         y="210.17944"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="731.57825"
+         y="242.66141"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan37-1-9-3-7">L</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter666)"
+       x="681.61145"
+       y="210.17944"
+       id="text1-5-1-7-2-4-9"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-8-8"
+         x="681.61145"
+         y="210.17944"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">  </tspan><tspan
+         sodipodi:role="line"
+         x="681.61145"
+         y="242.66141"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-6">ana</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter660)"
+       x="746.62598"
+       y="210.06528"
+       id="text1-5-1-7-2-4-9-6"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-8-8-6"
+         x="746.62598"
+         y="210.06528"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">  </tspan><tspan
+         sodipodi:role="line"
+         x="746.62598"
+         y="242.54724"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-6-4">ysis for</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter644)"
+       x="732.00122"
+       y="249.02722"
+       id="text1-5-1-7-2-4-23-5"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-8-8-0"
+         x="732.00122"
+         y="249.02722"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="732.00122"
+         y="281.50919"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-0-9"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan38-8-8-3-7-5-1">E</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter658)"
+       x="748.06219"
+       y="249.02722"
+       id="text1-5-1-7-2-4-23-5-3"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         id="tspan1-2-8-5-4-8-8-0-1"
+         x="748.06219"
+         y="249.02722"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#000000;fill-opacity:1">   </tspan><tspan
+         sodipodi:role="line"
+         x="748.06219"
+         y="281.50919"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-0-9-1">stablishing</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter654)"
+       x="755.68958"
+       y="359.26874"
+       id="text1-5-1-7-2-4-23-5-5"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         x="755.68958"
+         y="359.26874"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-0-9-0">root-finding</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter646)"
+       x="731.03943"
+       y="320.35699"
+       id="text1-5-1-7-2-4-23-5-5-6"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         x="731.03943"
+         y="320.35699"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-0-9-0-1"><tspan
+           style="font-weight:bold;line-height:1;fill:#000000;fill-opacity:1"
+           id="tspan39-8-7-5-9-1-0-3-7">D</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:32px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;filter:url(#filter656)"
+       x="755.97382"
+       y="320.35699"
+       id="text1-5-1-7-2-4-23-5-5-6-1"
+       inkscape:label="txt_right"><tspan
+         sodipodi:role="line"
+         x="755.97382"
+         y="320.35699"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;line-height:1;font-family:Optima;-inkscape-font-specification:Optima;fill:#ffffff;fill-opacity:1"
+         id="tspan30-7-1-6-5-0-9-0-1-0">ifficulty of</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:10.6667px;line-height:1;font-family:Optima;-inkscape-font-specification:'Optima Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#2a7fff"
+       x="6.848639"
+       y="569.23053"
+       id="text2"><tspan
+         sodipodi:role="line"
+         x="6.848639"
+         y="569.23053"
+         id="tspan4"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;font-family:Optima;-inkscape-font-specification:'Optima Italic'"><tspan
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;font-family:Optima;-inkscape-font-specification:'Optima Italic';fill:#ffffff"
+   id="tspan5">DiffusionBee 2.5.3 (FLUX.1-dev)</tspan> </tspan></text>
   </g>
 </svg>

@@ -19,16 +19,16 @@ runs:
         with:
           ref: develop  # this always acts upon the develop branch
 
-      - name: Determine Package version
-        shell: bash
-        run: |
-            PACKAGE_VERSION=$(uv version --short)
-            echo "PACAKGE_EFFECTIVE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
           version: ${{ inputs.uv_version }}
+
+      - name: Determine Package version
+        shell: bash
+        run: |
+            PACKAGE_VERSION=$(uv version --short)
+            echo "PACKAGE_EFFECTIVE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
 
       - name: Create coverage report
         shell: bash
@@ -43,12 +43,15 @@ runs:
         shell: bash
         run: |            
             PACKAGE_VERSION="$(uv version --short)"
-            uv run genbadge tests -i junit.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-tests.svg"
+            uv run genbadge tests -i junit.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-test-count.svg"
             uv run genbadge coverage -i coverage.xml -o "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/badge-coverage.svg"
 
       - name: Prepare splash screen
         shell: bash
-        run: cp "./images/splash.webp" "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/splash.webp"
+        run: |
+            sudo apt-get update && sudo apt-get install -y imagemagick
+            convert "./images/splash.webp" -gravity West -pointsize 48 -fill white -annotate +100-590 "v${PACKAGE_EFFECTIVE_VERSION}" -quality 90 -define webp:lossless=false "./images/splash_with_version.webp"
+            cp "./images/splash_with_version.webp" "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/splash.webp"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -70,6 +73,7 @@ runs:
       - name: Update README URLs
         shell: bash
         run: |
+          git pull origin develop
           uv run --python 3.13 .github/scripts/update_readme_urls.py "$GITHUB_WORKSPACE/.python-versions" "$GITHUB_WORKSPACE/pyproject.toml" "$GITHUB_WORKSPACE/README.md"
           echo "----------------------------------------------------------"
           cat "$GITHUB_WORKSPACE/README.md" | head -n 10
