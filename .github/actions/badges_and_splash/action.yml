@@ -50,7 +50,7 @@ runs:
         shell: bash
         run: |
             sudo apt-get update && sudo apt-get install -y imagemagick
-            convert "./images/splash.webp" -gravity West -pointsize 48 -fill white -annotate +100-590 "v${PACKAGE_EFFECTIVE_VERSION}" -quality 90 -define webp:lossless=false "./images/splash_with_version.webp"
+            convert "./images/splash.webp" -gravity East -pointsize 80 -fill white -annotate +790+250 "v${PACKAGE_EFFECTIVE_VERSION}" -quality 90 -define webp:lossless=false "./images/splash_with_version.webp"
             cp "./images/splash_with_version.webp" "./pages/version_artifacts/v${PACKAGE_EFFECTIVE_VERSION}/splash.webp"
 
       - name: Setup Pages
