@@ -1,7 +1,7 @@
 [project]
 name = "snuffled"
-version = "0.1.0"
-description = "Systematic Numerical Univariate Full Function anaLysis for Establishing Root-finding difficulty"
+version = "0.1.1"
+description = "Systematic Numerical Univariate Full-Function anaLysis for Establishing Root-finding difficulty"
 readme = "README.md"
 authors = [
     { name = "Bert Pluymers", email = "bert.pluymers@gmail.com" }
