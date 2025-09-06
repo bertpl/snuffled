@@ -1,6 +1,6 @@
 [project]
 name = "snuffled"
-version = "0.1.1"
+version = "0.1.2"
 description = "Systematic Numerical Univariate Full-Function anaLysis for Establishing Root-finding difficulty"
 readme = "README.md"
 authors = [
