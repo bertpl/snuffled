@@ -1,5 +1,5 @@
 name: Unit Tests
-author: bertpluymers
+author: Bert Pluymers
 description: Run unit tests with specific python version, extras, dependency resolution
 
 inputs:
@@ -23,7 +23,7 @@ runs:
     using: "composite"
     steps:
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: ${{ inputs.uv_version }}
 

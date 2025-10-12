@@ -1,5 +1,5 @@
 name: Update package version
-author: bertpluymers
+author: Bert Pluymers
 description: Update package version to a specific version
 
 inputs:
@@ -32,7 +32,7 @@ runs:
           ref: ${{ inputs.git_ref }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: ${{ inputs.uv_version }}
 
