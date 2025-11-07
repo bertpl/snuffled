@@ -20,6 +20,7 @@ dev = [
     "notebook>=7.4.5",
     "pytest>=8.0",
     "pytest-cov>=6.0",
+    "pytest-xdist>=3.5.0",
 ]
 
 [project.urls]
@@ -59,3 +60,6 @@ exclude_also = [
     "@abstractmethod",
     "@abc.abstractmethod",
 ]
+
+[tool.pytest.ini_options]
+addopts = "-n auto --dist worksteal"
