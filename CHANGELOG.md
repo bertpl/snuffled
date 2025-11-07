@@ -2,8 +2,8 @@
 
 <!------------------------------------------------------------------------------------------------->
 > ## v0.1.4
-> *(under development)*
-> > TBD 
+> *(2025-11-07)*
+> > CI improvements.
 <!------------------------------------------------------------------------------------------------->
 
 ### What's New
@@ -12,6 +12,7 @@
 ### Improvements
 - Improve CI/CD pipeline for efficiency
 - Improve splash screen setup
+- Move to trunk-based development workflow with release branches
 
 ### Bug Fixes
 /
