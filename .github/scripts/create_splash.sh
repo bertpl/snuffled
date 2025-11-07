@@ -23,7 +23,7 @@ if [ ! -f ./images/splash/_splash_without_version.png ]; then
   magick "./images/splash/splash.png" "./images/_mask.mpc" -compose over -composite "./images/_splash_blended.mpc"
 
   # add top text
-  magick -pointsize 76 -background transparent \
+  magick -pointsize 98 -background transparent \
          -font "./images/splash/google_fonts_montserrat_bold.ttf" -fill "#ffffff" label:"S" \
          -font "./images/splash/google_fonts_montserrat_regular.ttf" -fill "#bbbbbb" label:"ystematic " \
          -font "./images/splash/google_fonts_montserrat_bold.ttf" -fill "#ffffff" label:"N" \
