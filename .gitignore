@@ -31,3 +31,6 @@ Thumbs.db
 # IDE files
 .idea
 .vscode
+# Only working_docs/README.md is committed; everything else here stays out of git.
+working_docs/*
+!working_docs/README.md
