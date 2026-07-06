@@ -56,16 +56,3 @@ magick -pointsize 128 -font "./images/splash/google_fonts_montserrat_bold.ttf" "
 echo "Cleaning up..."
 rm ./images/*.mpc
 rm ./images/*.cache
-
-
-
-
-
-
-
-
-
-
-
-
-
