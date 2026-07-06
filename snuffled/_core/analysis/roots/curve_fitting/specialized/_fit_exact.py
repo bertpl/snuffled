@@ -44,7 +44,7 @@ def fit_curve_exact_three_points(
         c = c_min
     else:
         ratio = (fx_2 - fx_1) / (fx_1 - fx_05)
-        if ratio <= 0:
+        if ratio <= 0:  # noqa: SIM108 -- branch comment below is clearer than a ternary
             # this might again be a sign of poor conditioning due to all f(x) being squished together
             c = c_min
         else:

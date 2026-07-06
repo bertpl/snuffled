@@ -15,7 +15,7 @@ class PropertyExtractor(ABC, Generic[NA]):
     # =================================================================================================
     def __init__(self, function_sampler: FunctionSampler):
         self.function_sampler = function_sampler
-        self.__stats: dict[str, PropertyExtractionStats] = dict()  # property -> stats
+        self.__stats: dict[str, PropertyExtractionStats] = {}  # property -> stats
 
     def supported_properties(self) -> list[str]:
         """Return list of all supported properties, in order in which they should be extracted by extract_all"""
@@ -68,8 +68,8 @@ class PropertyExtractor(ABC, Generic[NA]):
     @abstractmethod
     def _extract(self, prop: str) -> float:
         """Extract specific property."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def _new_named_array(self) -> NA:
-        raise NotImplementedError()
+        raise NotImplementedError

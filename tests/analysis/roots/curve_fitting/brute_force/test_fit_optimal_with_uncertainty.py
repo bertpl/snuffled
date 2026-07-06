@@ -15,7 +15,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: 
     fx_values = np.array([(x**true_c) + (c_noise * noise_from_float(x)) for x in x_values])
 
     # --- act ---------------------------------------------
-    a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_brute_force(
+    _a_values, b_values, c_values, _cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
         range_b=(-0.5, 1.0),
@@ -46,7 +46,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: 
     fx_values = np.array([true_b + (1 - true_b) * x + (c_noise * noise_from_float(x)) for x in x_values])
 
     # --- act ---------------------------------------------
-    a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty_brute_force(
+    _a_values, b_values, c_values, _cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
         range_b=(-0.5, 1.0),

@@ -50,10 +50,7 @@ def test_fit_curve_with_uncertainty(
     fx_q25, fx_q50, fx_q75 = np.quantile(fx_values, [0.25, 0.50, 0.75])
     _, _, _, cost_opt_pos_c = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg)
     _, _, _, cost_opt_neg_c = fit_curve(x_values, fx_values, range_a, range_b, (-range_c[1], -range_c[0]), reg)
-    if include_opposite_c_range:
-        cost_opt = min([cost_opt_neg_c, cost_opt_pos_c])
-    else:
-        cost_opt = cost_opt_pos_c
+    cost_opt = min([cost_opt_neg_c, cost_opt_pos_c]) if include_opposite_c_range else cost_opt_pos_c
     threshold_cost = compute_threshold_cost(uncertainty_size, cost_opt, fx_q25, fx_q50, fx_q75)
 
     # --- act ---------------------------------------------

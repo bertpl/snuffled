@@ -187,10 +187,7 @@ def test_roots_analyser_properties(
         else:
             _tmp = math.exp(2 * _x) - 0.5
 
-        if _tmp >= 0:
-            _fx = c_pos * (_tmp**e_pos)
-        else:
-            _fx = -c_neg * (abs(_tmp) ** e_neg)
+        _fx = c_pos * _tmp**e_pos if _tmp >= 0 else -c_neg * abs(_tmp) ** e_neg
 
         if _fx > 0:
             _fx += offset_pos

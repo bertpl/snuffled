@@ -44,10 +44,7 @@ def test_param_step_bounds(a: float, b: float, c: float, method: str, step_size:
     # --- arrange -----------------------------------------
     range_a = (0.1, 10.0)
     range_b = (-0.5, 1.0)
-    if c > 0.0:
-        range_c = (0.1, 10.0)
-    else:
-        range_c = (-10.0, -0.1)
+    range_c = (0.1, 10.0) if c > 0.0 else (-10.0, -0.1)
 
     # --- act ---------------------------------------------
     a_new, b_new, c_new = param_step(a, b, c, method, step_size, range_a, range_b, range_c)
@@ -68,10 +65,7 @@ def test_param_step_a(c: float):
     a, b = 1.0, 0.5
     range_a = (0.01, 100.0)
     range_b = (0.0, 1.0)
-    if c > 0.0:
-        range_c = (0.1, 10.0)
-    else:
-        range_c = (-10.0, -0.1)
+    range_c = (0.1, 10.0) if c > 0.0 else (-10.0, -0.1)
 
     # --- act ---------------------------------------------
     a_m, b_m, c_m = param_step(a, b, c, "a", -1.0, range_a, range_b, range_c)
@@ -90,10 +84,7 @@ def test_param_step_b(c: float):
     a, b = 1.0, 0.5
     range_a = (0.1, 10.0)
     range_b = (0.0, 1.0)
-    if c > 0.0:
-        range_c = (0.1, 10.0)
-    else:
-        range_c = (-10.0, -0.1)
+    range_c = (0.1, 10.0) if c > 0.0 else (-10.0, -0.1)
 
     # --- act ---------------------------------------------
     a_m, b_m, c_m = param_step(a, b, c, "b", -1.0, range_a, range_b, range_c)
@@ -112,10 +103,7 @@ def test_param_step_c(c: float):
     a, b = 1.0, 0.5
     range_a = (0.1, 10.0)
     range_b = (0.0, 1.0)
-    if c > 0.0:
-        range_c = (0.1, 10.0)
-    else:
-        range_c = (-10.0, -0.1)
+    range_c = (0.1, 10.0) if c > 0.0 else (-10.0, -0.1)
 
     # --- act ---------------------------------------------
     a_min, b_min, c_min = param_step(a, b, c, "c", -10.0, range_a, range_b, range_c)
@@ -141,10 +129,7 @@ def test_param_step_ac(c: float, step_size: float):
 
     range_a = (0.01, 100.0)
     range_b = (0.0, 1.0)
-    if c > 0.0:
-        range_c = (0.01, 100.0)
-    else:
-        range_c = (-100.0, -0.0)
+    range_c = (0.01, 100.0) if c > 0.0 else (-100.0, -0.0)
 
     gx_before = fitting_curve(np.array([1 / r, r]), a, b, c)
 
@@ -171,10 +156,7 @@ def test_param_step_ba(c: float, step_size: float):
 
     range_a = (0.01, 100.0)
     range_b = (0.0, 1.0)
-    if c > 0.0:
-        range_c = (0.01, 100.0)
-    else:
-        range_c = (-100.0, -0.0)
+    range_c = (0.01, 100.0) if c > 0.0 else (-100.0, -0.0)
 
     gx_before = fitting_curve(np.array([1 / r, r]), a, b, c)
 

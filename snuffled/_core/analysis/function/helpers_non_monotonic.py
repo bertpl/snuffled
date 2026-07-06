@@ -31,8 +31,7 @@ def non_monotonicity_score_up_down_fx(fx_diff: np.ndarray) -> float:
     total_down_fx = sum(np.maximum(0, -fx_diff))
     if (total_up_fx == 0.0) or (total_down_fx == 0.0):
         return 0.0
-    else:
-        return float(min(total_up_fx, total_down_fx) / max(total_up_fx, total_down_fx))
+    return float(min(total_up_fx, total_down_fx) / max(total_up_fx, total_down_fx))
 
 
 @numba.njit(inline="always")
@@ -41,8 +40,7 @@ def non_monotonicity_score_up_down_x(fx_diff_signs: np.ndarray) -> float:
     total_down_x = sum(np.maximum(0, -fx_diff_signs))
     if (total_up_x == 0.0) or (total_down_x == 0.0):
         return 0.0
-    else:
-        return float(min(total_up_x, total_down_x) / max(total_up_x, total_down_x))
+    return float(min(total_up_x, total_down_x) / max(total_up_x, total_down_x))
 
 
 @numba.njit(inline="always")
@@ -83,6 +81,5 @@ def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
         score = sum([min(abs(float(v1)), abs(float(v2))) for v1, v2 in zip(extrema[:-1], extrema[1:])])
         normalized_score = min(1.0, score / (0.5 * (len(fx_diff_signs) - 1)))
         return float(normalized_score)
-    else:
-        # no sign flips in fx_diff_signs
-        return 0.0
+    # no sign flips in fx_diff_signs
+    return 0.0

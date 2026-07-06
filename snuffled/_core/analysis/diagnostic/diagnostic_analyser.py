@@ -47,20 +47,18 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
         if fx_min_sign * fx_max_sign > 0:
             # interval end-point f-values have same sign -> NOT READY
             return 0.0
-        elif fx_min_sign * fx_max_sign == 0.0:
+        if fx_min_sign * fx_max_sign == 0.0:
             # one of the end-point f-values is 0         -> BORDERLINE
             return 0.5
-        else:
-            # end-point f-values have opposite sign      -> READY
-            return 1.0
+        # end-point f-values have opposite sign      -> READY
+        return 1.0
 
     def _extract_max_zero_width(self) -> float:
         return max([root.width for root in self.function_sampler.roots()])
 
     def _extract_no_zeros_detected(self) -> float:
-        root_intervals, no_root_intervals = self.function_sampler.candidate_root_intervals()
+        root_intervals, _no_root_intervals = self.function_sampler.candidate_root_intervals()
         if len(root_intervals) == 0:
             # no candidate intervals to find roots
             return 1.0
-        else:
-            return 0.0
+        return 0.0

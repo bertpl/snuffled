@@ -4,7 +4,7 @@ import numpy as np
 
 from snuffled._core.compatibility import numba
 from snuffled._core.utils.constants import EPS
-from snuffled._core.utils.numba import clip_scalar, geomean
+from snuffled._core.utils.numba import clip_scalar
 
 # pre-computed constant, to avoid unnecessary re-computation and to improve readability  (used in param_step(.))
 __LN_R = math.log(2 * math.sqrt(2))  # ln(r) with r = 2*math.sqrt(2)
@@ -82,10 +82,7 @@ def param_step(
                 # to satisfy an invariant
                 # -------------------------------
                 # STEP 1: modify 'b' in [b_min, b_max] with step_size=-1 -> b_min and step_size=+1 -> b_max  (LIN scale)
-                if step_size < 0:
-                    b_new = b + step_size * (b - b_min)
-                else:
-                    b_new = b + step_size * (b_max - b)
+                b_new = b + step_size * (b - b_min) if step_size < 0 else b + step_size * (b_max - b)
                 # STEP 2: modify 'c' if needed
                 match method:
                     case "b":

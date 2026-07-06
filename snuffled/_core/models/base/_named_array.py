@@ -31,13 +31,16 @@ class NamedArray:
         Convert the NamedArray to a dictionary with names as keys and values as values.
         :return: Dictionary representation of the NamedArray.
         """
-        return {name: value for name, value in zip(self._names, self._values)}
+        return dict(zip(self._names, self._values))
 
     # -------------------------------------------------------------------------
     #  Overridden methods
     # -------------------------------------------------------------------------
     def __eq__(self, other) -> bool:
         return isinstance(other, NamedArray) and (self._names == other._names) and (self._values == other._values)
+
+    # mutable container (see __setitem__): intentionally unhashable
+    __hash__ = None
 
     def __len__(self) -> int:
         return len(self._values)
@@ -59,10 +62,8 @@ class NamedArray:
         """
         if isinstance(key, int):
             return key
-        elif isinstance(key, str):
+        if isinstance(key, str):
             if key in self._names:
                 return self._names.index(key)
-            else:
-                raise KeyError(f"Name '{key}' not found in NamedArray.")
-        else:
-            raise TypeError(f"Invalid key type {type(key)}")
+            raise KeyError(f"Name '{key}' not found in NamedArray.")
+        raise TypeError(f"Invalid key type {type(key)}")

@@ -62,10 +62,8 @@ def fit_curve_with_uncertainty_brute_force(
     fx_q25, fx_q50, fx_q75 = np.quantile(fx, [0.25, 0.5, 0.75])
 
     # --- determine a -------------------------------------
-    if fixed_a_value is not None:
-        a = fixed_a_value
-    else:
-        a = float(fx_q50)  # should be a reasonable value for 'a' given that median(x) == 1.0 and g(1)==a
+    # float(fx_q50) is a reasonable value for 'a' given that median(x) == 1.0 and g(1)==a
+    a = fixed_a_value if fixed_a_value is not None else float(fx_q50)
 
     # --- grid search -------------------------------------
     cost_arr = np.zeros(shape=(n_grid, n_grid))

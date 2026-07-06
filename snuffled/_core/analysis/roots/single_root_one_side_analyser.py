@@ -189,9 +189,8 @@ class SingleRootOneSideAnalyser:
         if norm_curve == 0.0:
             # this is a degenerate case with all fx values 0 according to fit
             return 1.0
-        else:
-            # regular case
-            return clip_scalar(norm_error / norm_curve, 0.0, 1.0)
+        # regular case
+        return clip_scalar(norm_error / norm_curve, 0.0, 1.0)
 
     @cached_property
     def deriv_zero(self) -> float:
@@ -221,12 +220,11 @@ class SingleRootOneSideAnalyser:
         c = self._c_min_max[1]  # c = c_max
         if c < 0:
             return 1.0
-        else:
-            # Map b --> score
-            #         b <=0.0    -->        score = 1.0
-            #   0.0 < b < 1.0    -->  0.0 < score < 1.0
-            #         b >=1.0    -->        score = 0.0
-            return clip_scalar(b, 0.0, 1.0)
+        # Map b --> score
+        #         b <=0.0    -->        score = 1.0
+        #   0.0 < b < 1.0    -->  0.0 < score < 1.0
+        #         b >=1.0    -->        score = 0.0
+        return clip_scalar(b, 0.0, 1.0)
 
     @cached_property
     def f1(self) -> tuple[float, float]:

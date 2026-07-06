@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import SnuffledRootProperties
-from snuffled._core.models.root_analysis import Root
 from snuffled._core.utils.constants import SEED_OFFSET_ROOTS_ANALYSER
 
 from .single_root_two_side_analyser import SingleRootTwoSideAnalyser
+
+if TYPE_CHECKING:
+    from snuffled._core.models.root_analysis import Root
 
 
 class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
@@ -16,7 +20,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int):
         super().__init__(function_sampler)
         self.n_root_samples = n_root_samples
-        self._root_analyses: dict[Root, SnuffledRootProperties] = dict()
+        self._root_analyses: dict[Root, SnuffledRootProperties] = {}
         self._seed = seed + SEED_OFFSET_ROOTS_ANALYSER
 
     # -------------------------------------------------------------------------
@@ -35,11 +39,9 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
             # take average of this property over all analysed roots
             if len(self._root_analyses) > 0:
                 return float(np.mean([root_props[prop] for root_props in self._root_analyses.values()]))
-            else:
-                # no roots to analyse  (can be early-detected in the Diagnostic properties)
-                return 0.0
-        else:
-            raise ValueError(f"Property {prop} not supported")
+            # no roots to analyse  (can be early-detected in the Diagnostic properties)
+            return 0.0
+        raise ValueError(f"Property {prop} not supported")
 
     # -------------------------------------------------------------------------
     #  Internal methods

@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 
 from ..shared import compute_threshold_cost
@@ -57,10 +55,7 @@ def fit_curve_with_uncertainty(
     """
 
     # --- init --------------------------------------------
-    if include_opposite_c_range:
-        c_ranges = [range_c, (-range_c[1], -range_c[0])]
-    else:
-        c_ranges = [range_c]
+    c_ranges = [range_c, (-range_c[1], -range_c[0])] if include_opposite_c_range else [range_c]
 
     # --- get optimal solutions ---------------------------
     abc_opt_lst: list[tuple[float, float, float]] = []

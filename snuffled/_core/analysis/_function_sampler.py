@@ -49,7 +49,7 @@ class FunctionSampler:
         self.rel_tol = EPS * rel_tol_scale
 
         # --- cache ---------------------------------------
-        self._fun_cache: dict[float, float] = dict()
+        self._fun_cache: dict[float, float] = {}
 
     # -------------------------------------------------------------------------
     #  Low-level generic functionality
@@ -62,22 +62,20 @@ class FunctionSampler:
             for single_x in x:
                 if not (self.x_min <= single_x <= self.x_max):
                     raise ValueError(f"x={single_x} is out of bounds [{self.x_min}, {self.x_max}]")
-                elif single_x not in self._fun_cache:
+                if single_x not in self._fun_cache:
                     self._fun_cache[single_x] = fx = self._fun(single_x)
                 else:
                     fx = self._fun_cache[single_x]
                 fx_values.append(fx)
             return fx_values
-        else:
-            # --- get SINGLE f(x) values --------
-            if x in self._fun_cache:
-                return self._fun_cache[x]
-            elif self.x_min <= x <= self.x_max:
-                fx = self._fun(x)
-                self._fun_cache[x] = fx
-                return fx
-            else:
-                raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
+        # --- get SINGLE f(x) values --------
+        if x in self._fun_cache:
+            return self._fun_cache[x]
+        if self.x_min <= x <= self.x_max:
+            fx = self._fun(x)
+            self._fun_cache[x] = fx
+            return fx
+        raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
 
     @cache
     def x_values(self) -> np.ndarray:
@@ -124,8 +122,7 @@ class FunctionSampler:
         """
         if absolute:
             return float(np.quantile(abs(self.fx_values()), q))
-        else:
-            return float(np.quantile(self.fx_values(), q))
+        return float(np.quantile(self.fx_values(), q))
 
     @cache
     def robust_estimated_fx_max(self) -> float:
