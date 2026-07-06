@@ -55,7 +55,46 @@ line-length = 120
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["I"]
+# The reference rule set is rolled out in batches (each batch lands green):
+#   batch 1 (here): mechanical / autofix families
+#   batch 2: D      (docstrings)
+#   batch 3: ANN, N, PT, B, S, C901  (annotations + judgment/behavior cases)
+select = [
+    "F",       # pyflakes
+    "E", "W",  # pycodestyle (incl. E501 line-too-long)
+    "I",       # isort
+    "UP",      # pyupgrade
+    "C4",      # flake8-comprehensions
+    "PIE",     # flake8-pie
+    "SIM",     # flake8-simplify
+    "RET",     # flake8-return
+    "PTH",     # flake8-use-pathlib
+    "TC",      # flake8-type-checking
+    "RUF",     # ruff-native
+    "PLE", "PLW",  # pylint errors + warnings (PLC/PLR excluded — noisy on this domain)
+    "PGH",     # pygrep-hooks: no blanket `noqa` / `type: ignore`
+    "BLE",     # flake8-blind-except
+    "A",       # flake8-builtins: shadowing
+    "RSE",     # flake8-raise: no needless parens on `raise`
+    "FLY",     # flynt: static str-join → f-string
+    "INP",     # flake8-no-pep420: every package dir has an __init__.py
+]
+ignore = [
+    "RUF001", "RUF002", "RUF003",  # intentional typography, not "ambiguous"
+    "RUF007",  # numba nopython mode can't compile itertools.pairwise; keep zip(x[:-1], x[1:])
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["SLF001", "S101", "S311", "D", "ANN"]  # AAA tests: asserts, private access, random data, no docstring/annotation duty
+"__init__.py" = ["F401"]                 # re-export modules: naked imports, no `as` alias
+".github/scripts/**" = ["INP001", "S"]   # maintainer tooling, not the shipped library
+"notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901"]  # exploratory notebooks, not held to shipped-source style
 
 [tool.coverage.run]
 source = ["snuffled"]

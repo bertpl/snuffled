@@ -83,7 +83,7 @@ def estimate_sign_flip_frequency(
     log_lambda_min = np.log(lambda_min)
     log_lambda_max = np.log(lambda_max)
 
-    results: dict[float, float] = dict()  # log_lambda -> loss
+    results: dict[float, float] = {}  # log_lambda -> loss
 
     # --- main loop ---------------------------------------
     for i in range(n_iters):

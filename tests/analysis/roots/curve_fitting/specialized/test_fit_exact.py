@@ -54,10 +54,7 @@ def test_fit_curve_exact_three_points_simple_cases(a_true: float, b_true: float,
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
 
     # set range_c such that it has correct sign for capturing exact c
-    if c_true > 0:
-        range_c = (1e-10, 1e10)
-    else:
-        range_c = (-1e10, -1e-10)
+    range_c = (1e-10, 10000000000.0) if c_true > 0 else (-10000000000.0, -1e-10)
 
     # --- act ---------------------------------------------
     a_fit, b_fit, c_fit = fit_curve_exact_three_points(
@@ -112,10 +109,7 @@ def test_fit_curve_exact_three_points_bounds(a_true: float, b_true: float, c_tru
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
 
     # set range_c such that it has correct sign for capturing exact c
-    if c_true > 0:
-        range_c = (0.5, 2.0)
-    else:
-        range_c = (-2.0, -0.5)
+    range_c = (0.5, 2.0) if c_true > 0 else (-2.0, -0.5)
 
     # --- act ---------------------------------------------
     a_fit, b_fit, c_fit = fit_curve_exact_three_points(

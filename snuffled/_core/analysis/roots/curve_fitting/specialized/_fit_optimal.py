@@ -143,7 +143,7 @@ def fit_curve_approx(
     optimal_method = "default"
 
     if debug_flag:
-        print(f"Method 'default'  --> cost=", optimal_cost)
+        print("Method 'default'  --> cost=", optimal_cost)
 
     # --- heuristics --------------------------------------
 

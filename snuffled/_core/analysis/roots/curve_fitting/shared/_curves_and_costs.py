@@ -39,7 +39,7 @@ def compute_threshold_cost(
 
     The 'cost_margin' is computed based on 3 elements, each of which contribute to the threshold cost additively
       - optimal cost:     the worse the optimal fit, the more noisy / non-ideal the data is, and hence more uncertainty
-      - median fx:        contributes a fixed amount proportional to overall magnitude of fx-values, even if optimal cost = 0
+      - median fx:        contributes a fixed amount proportional to magnitude of fx-values, even if optimal cost = 0
       - interquartile fx: contributes a fixed amount proportional to spread of fx-values, even if optimal cost = 0
                             --> this is complementary to using median fx, since the spread can vary vastly.
                                 --> if exponent is very close to 0, spread is much lower than median

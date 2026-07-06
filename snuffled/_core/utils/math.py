@@ -31,40 +31,39 @@ def smooth_sign(x: float, inner_tol: float, outer_tol: float) -> float:
 
     if x == 0:
         return 0
-    elif (inner_tol == 0) and (outer_tol == 0):
+    if (inner_tol == 0) and (outer_tol == 0):
         # regular np.sign is desired?
         return np.sign(x)
+    # split off sign and add back later
+    x_abs, x_sign = abs(x), np.sign(x)
+
+    # process inner_tol or outer_tol
+    if inner_tol == 0:
+        # we know for sure that outer_tol cannot be 0 in this case, which we'd catch earlier
+        inner_tol = 0.25 * outer_tol
+    elif inner_tol >= 0.25 * outer_tol:
+        # we know that inner_tol > 0, in which case also inner_tol > 0
+        mid_tol = math.sqrt(inner_tol * outer_tol)
+        inner_tol = 0.5 * mid_tol
+        outer_tol = 2.0 * mid_tol
+
+    # compute f(x_abs) = math.tanh(g(z)) with z=x_abs/inner
+    # with g(z) = exp2(s(log2(z)))
+    #  and s a spline function
+    if x_abs >= 100 * outer_tol:
+        # shortcut -> this will always be 1.0
+        abs_result = 1.0
     else:
-        # split off sign and add back later
-        x_abs, x_sign = abs(x), np.sign(x)
+        # regular case
+        log2_z = np.log2(x_abs / inner_tol)
+        log2_t = np.log2(outer_tol / inner_tol)  # t = outer_tol/inner_tol
 
-        # process inner_tol or outer_tol
-        if inner_tol == 0:
-            # we know for sure that outer_tol cannot be 0 in this case, which we'd catch earlier
-            inner_tol = 0.25 * outer_tol
-        elif inner_tol >= 0.25 * outer_tol:
-            # we know that inner_tol > 0, in which case also inner_tol > 0
-            mid_tol = math.sqrt(inner_tol * outer_tol)
-            inner_tol = 0.5 * mid_tol
-            outer_tol = 2.0 * mid_tol
+        c = (__LOG2_ATANH_075 - __LOG2_ATANH_025) / log2_t
+        s = __LOG2_ATANH_025 + (c * log2_z) + (1 - c) * (_base_spline(log2_z - log2_t) - _base_spline(-log2_z))
+        abs_result = math.tanh(np.exp2(s))
 
-        # compute f(x_abs) = math.tanh(g(z)) with z=x_abs/inner
-        # with g(z) = exp2(s(log2(z)))
-        #  and s a spline function
-        if x_abs >= 100 * outer_tol:
-            # shortcut -> this will always be 1.0
-            abs_result = 1.0
-        else:
-            # regular case
-            log2_z = np.log2(x_abs / inner_tol)
-            log2_t = np.log2(outer_tol / inner_tol)  # t = outer_tol/inner_tol
-
-            c = (__LOG2_ATANH_075 - __LOG2_ATANH_025) / log2_t
-            s = __LOG2_ATANH_025 + (c * log2_z) + (1 - c) * (_base_spline(log2_z - log2_t) - _base_spline(-log2_z))
-            abs_result = math.tanh(np.exp2(s))
-
-        # add sign again
-        return x_sign * abs_result
+    # add sign again
+    return x_sign * abs_result
 
 
 @numba.njit
@@ -91,7 +90,6 @@ def _base_spline(_x: float) -> float:
     """
     if _x <= 0:
         return 0.0
-    elif _x <= 1:
+    if _x <= 1:
         return 0.5 * _x * _x
-    else:
-        return _x - 0.5
+    return _x - 0.5

@@ -30,7 +30,7 @@ def test_function_analyser_extract_all():
     _ = analyser.extract_all()
 
     # --- assert ------------------------------------------
-    pass  # if it doesn't fail, that's good enough for this test
+    # if it doesn't fail, that's good enough for this test
 
 
 def test_function_analyser_statistics():

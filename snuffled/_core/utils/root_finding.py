@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 import numpy as np
 
@@ -39,19 +39,18 @@ def find_odd_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_
         if root.deriv_sign != 0:
             # this is an ODD root, we can return this one
             return root
+        # this is an EVEN root, we should look further in a sub-interval
+        if np.sign(root.fx_min) != np.sign(fx_min):
+            # --> [x_min, root.x_min] is an appropriate interval to look further
+            x_max = root.x_min
+            fx_max = root.fx_min
+            print(f"Found EVEN root.  Continuing search in [{x_min},{x_max}]")
         else:
-            # this is an EVEN root, we should look further in a sub-interval
-            if np.sign(root.fx_min) != np.sign(fx_min):
-                # --> [x_min, root.x_min] is an appropriate interval to look further
-                x_max = root.x_min
-                fx_max = root.fx_min
-                print(f"Found EVEN root.  Continuing search in [{x_min},{x_max}]")
-            else:
-                # in this case we know sign(fx_min) == sign(root.fx_min) == sign(root.fx_max) != sign(fx_max).
-                # --> [root.x_max, x_max] is an appropriate interval to look further
-                x_min = root.x_max
-                fx_min = root.fx_max
-                print(f"Found EVEN root.  Continuing search in [{x_min},{x_max}]")
+            # in this case we know sign(fx_min) == sign(root.fx_min) == sign(root.fx_max) != sign(fx_max).
+            # --> [root.x_max, x_max] is an appropriate interval to look further
+            x_min = root.x_max
+            fx_min = root.fx_max
+            print(f"Found EVEN root.  Continuing search in [{x_min},{x_max}]")
 
     # --- edge case ---------------------------------------
     # We can end up in this case if after 100 tries we only found even roots.  This can only reasonably happen
@@ -102,11 +101,11 @@ def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min:
         if fx_mid == 0.0:
             # found an exact root -> determine width & return
             return determine_root_width(fun, x_mid, orig_x_min, orig_x_max, dx_min)
-        elif (x_mid == x_min) or (x_mid == x_max) or (x_max - x_min <= dx_min):
+        if x_mid in (x_min, x_max) or x_max - x_min <= dx_min:
             # fx_min & fx_max are so close to each other that fx_mid coincides with either due to rounding
             # OR interval width is <= dx_min
             return Root(x_min, x_mid, x_max, fx_min, fx_mid, fx_max)
-        elif np.sign(fx_mid) == np.sign(fx_min):
+        if np.sign(fx_mid) == np.sign(fx_min):
             x_min = x_mid
             fx_min = fx_mid
         else:
@@ -135,12 +134,12 @@ def determine_root_width(fun: Callable[[float], float], root: float, x_min: floa
     """
 
     # --- validation --------------------------------------
-    if (root == x_min) or (root == x_max):
+    if root in (x_min, x_max):
         raise ValueError("We expect x_min < root < x_max, since we assume f(x_min)!=0, f(root)==0, f(x_max)!=0.")
     if fun(root) != 0.0:
         raise ValueError(f"We expect fun(root)==0.0, here {fun(root)}.")
     if np.sign(fun(x_min)) * np.sign(fun(x_max)) != -1.0:
-        raise ValueError(f"We expect fun(x_min) and fun(x_max) to have opposite signs.")
+        raise ValueError("We expect fun(x_min) and fun(x_max) to have opposite signs.")
 
     # --- init --------------------------------------------
     dx_start = max(
@@ -159,9 +158,8 @@ def determine_root_width(fun: Callable[[float], float], root: float, x_min: floa
         if froot_max != 0.0:
             # we reached the edge of the root
             break
-        else:
-            # fun(root_max) is still 0.0, so we continue increasing dx
-            dx += max(dx_start, 0.1 * dx)  # increment dx in steps of 10% or dx_start (whichever is largest)
+        # fun(root_max) is still 0.0, so we continue increasing dx
+        dx += max(dx_start, 0.1 * dx)  # increment dx in steps of 10% or dx_start (whichever is largest)
 
     # --- search in - direction ----------------------------
     dx = dx_start
@@ -171,9 +169,8 @@ def determine_root_width(fun: Callable[[float], float], root: float, x_min: floa
         if froot_min != 0.0:
             # we reached the edge of the root
             break
-        else:
-            # fun(root_min) is still 0.0, so we continue increasing dx
-            dx += max(dx_start, 0.1 * dx)  # increment dx in steps of 10% or dx_start (whichever is largest)
+        # fun(root_min) is still 0.0, so we continue increasing dx
+        dx += max(dx_start, 0.1 * dx)  # increment dx in steps of 10% or dx_start (whichever is largest)
 
     # construct Root object & return
     return Root(

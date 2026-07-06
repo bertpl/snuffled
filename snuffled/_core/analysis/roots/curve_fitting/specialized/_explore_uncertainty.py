@@ -39,11 +39,12 @@ def explore_uncertainty(
     if cost_threshold > cost_opt:
         # Find edge points of uncertainty region by performing bisection over the step_size parameter in ±[0,1]
         # until we find the edge.  We know that for step_size==0.0 we are strictly below the threshold_cost.
-        # If for step_size==1.0 we are still below, then we consider this an edge point; otherwise we can perform bisection.
+        # If for step_size==1.0 we are still below, then we consider this an edge point;
+        # otherwise we can perform bisection.
         if debug_flag:
             print("=== UNCERTAINTY EXPLORATION ================================")
-            print(f"cost_opt       =", cost_opt)
-            print(f"cost_threshold =", cost_threshold)
+            print("cost_opt       =", cost_opt)
+            print("cost_threshold =", cost_threshold)
             print("============================================================")
         for step_method in ["a", "b", "c", "ac", "ba", "bc"]:
             for step_dir in [-1.0, 1.0]:

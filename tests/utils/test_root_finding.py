@@ -1,6 +1,6 @@
 import math
+from collections.abc import Callable
 from functools import partial
-from typing import Callable
 
 import pytest
 
@@ -26,8 +26,7 @@ def f_exp(x: float, root: float) -> float:
 def f_step(x: float, root: float) -> float:
     if x >= root:
         return 1.0
-    else:
-        return -1.0
+    return -1.0
 
 
 def f_near_underflow(x: float) -> float:
@@ -39,8 +38,7 @@ def f_near_underflow(x: float) -> float:
 def f_lin_with_wide_zero(x: float, root: float, zero_width: float) -> float:
     if abs(x - root) <= (zero_width / 2):
         return 0.0
-    else:
-        return x - root
+    return x - root
 
 
 def f_with_wide_even_zero_1(x: float) -> float:
@@ -48,13 +46,12 @@ def f_with_wide_even_zero_1(x: float) -> float:
     # wide even root in [-0.8, 0.9]
     if x >= 0.9:
         return x - 0.9
-    elif -0.8 <= x < 0.9:
+    if -0.8 <= x < 0.9:
         return 0.0
-    elif -0.9 <= x < -0.8:
+    if -0.9 <= x < -0.8:
         return 0.9 - x
-    else:
-        # x < -0.9
-        return 2 * (x + 0.95)
+    # x < -0.9
+    return 2 * (x + 0.95)
 
 
 def f_with_wide_even_zero_2(x: float) -> float:
@@ -173,10 +170,9 @@ def test_determine_root_width_edge_case():
         # all 0's except at the edge
         if x == -1:
             return -1
-        elif x == 1:
+        if x == 1:
             return 1
-        else:
-            return 0
+        return 0
 
     x_min = -1.0
     x_max = 1.0

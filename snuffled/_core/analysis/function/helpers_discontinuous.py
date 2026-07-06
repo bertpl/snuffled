@@ -126,13 +126,12 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
                 _dx_rel = _dx / dx_total
                 _dfx_rel = _dfx / dfx_total
                 return (_dfx_rel * _dfx_rel / _dx_rel) + (_dx_rel * _dx_rel)
-            else:
-                return 0.0
+            return 0.0
 
         scores = [heuristic(dx, dfx) for _, _, dx, dfx in intervals]
 
         # sort by score and generate new candidate x-values for sampling
-        scored_intervals = sorted(list(zip(scores, intervals)), reverse=True)
+        scored_intervals = sorted(zip(scores, intervals), reverse=True)
         new_x_values = [
             0.5 * (x_left + x_right)
             for (score, (x_left, x_right, dx, dfx)) in scored_intervals[:n_samples_i]

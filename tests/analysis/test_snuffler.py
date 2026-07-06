@@ -1,8 +1,6 @@
 import time
 
 from snuffled import Diagnostic, FunctionProperty, Snuffler
-from snuffled._core.analysis import FunctionSampler
-from snuffled._core.analysis.roots import RootsAnalyser
 from snuffled._core.models import RootProperty
 
 
@@ -45,7 +43,7 @@ def test_snuffler_extract_all():
     _ = snuffler.extract_all()
 
     # --- assert ------------------------------------------
-    pass  # if it doesn't fail, that's good enough for this test
+    # if it doesn't fail, that's good enough for this test
 
 
 def test_snuffler_statistics():

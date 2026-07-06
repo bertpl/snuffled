@@ -155,7 +155,7 @@ def test_sample_n_integers(i_min: int, i_max: int, n: int):
     # --- assert ------------------------------------------
     assert isinstance(samples, list)
     assert len(samples) == n
-    assert all([i_min <= s < i_max for s in samples])
+    assert all(i_min <= s < i_max for s in samples)
     assert sorted(samples) == samples
     assert len(set(samples)) == n
 

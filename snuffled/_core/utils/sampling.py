@@ -119,7 +119,7 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
         raise ValueError(f"we need tgt_min > 0.0, here {tgt_sum}")
     if dx_min > tgt_sum / n:
         raise ValueError(f"we need dx_min <= tgt_sum/n, here {dx_min} > {tgt_sum}/{n}={tgt_sum / n}")
-    elif dx_min == tgt_sum / n:
+    if dx_min == tgt_sum / n:
         return 1.0  # in this corner case we have c==1.0 as exact solution
 
     # --- solve -------------------------------------------
@@ -136,17 +136,16 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
         if not c_min < c_mid < c_max:
             # iterate until we numerically cannot split [c_min, c_max] interval further
             break
+        fc_mid = f_bisect(c_mid)
+        if fc_mid == 0:
+            # c_mid is spot on
+            return c_mid
+        if fc_mid < 0:
+            # c_mid is too small
+            c_min = c_mid
         else:
-            fc_mid = f_bisect(c_mid)
-            if fc_mid == 0:
-                # c_mid is spot on
-                return c_mid
-            elif fc_mid < 0:
-                # c_mid is too small
-                c_min = c_mid
-            else:
-                # c_mid is too large
-                c_max = c_mid
+            # c_mid is too large
+            c_max = c_mid
 
     return c_mid
 
@@ -176,7 +175,7 @@ def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -
     # take care of corner cases
     if n < 0:
         raise ValueError("n should be >= 0")
-    elif n == 0:
+    if n == 0:
         return np.zeros(shape=(0,), dtype=np.float64)
 
     # prep

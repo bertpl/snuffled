@@ -1,6 +1,6 @@
 import math
+from collections.abc import Callable
 from functools import partial
-from typing import Callable
 
 import numpy as np
 import pytest
@@ -158,7 +158,9 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
 @pytest.mark.parametrize("n", [100, 1_000, 10_000, 100_000])
 def test_function_sampler_robust_estimated_fx_max(n: int):
     # --- arrange -----------------------------------------
-    f_linear = lambda x: x
+    def f_linear(x):
+        return x
+
     x_min = -1.0
     x_max = 1.0
     dx = 1e-9
@@ -220,8 +222,7 @@ def f_roots_linear(x: float) -> float:
 def f_roots_step(x: float) -> float:
     if x >= 0.1232465789:
         return 1.0
-    else:
-        return -1.0
+    return -1.0
 
 
 def f_roots_sine(x: float, c: float) -> float:

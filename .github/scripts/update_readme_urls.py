@@ -12,14 +12,14 @@ import tomllib
 #  Helpers
 # -------------------------------------------------------------------------
 def get_package_version(pyproject_toml_file: Path) -> str:
-    with open(pyproject_toml_file, "rb") as f:
+    with pyproject_toml_file.open("rb") as f:
         pyproject = tomllib.load(f)
     return pyproject["project"]["version"]
 
 
 def get_python_versions(python_versions_file: Path) -> list[str]:
     """Reads the python versions from .python-versions file."""
-    with open(python_versions_file, "r") as f:
+    with python_versions_file.open() as f:
         return [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
 
@@ -62,8 +62,8 @@ def update_readme_urls():
     args = sys.argv[1:]
     if len(args) != 4:
         print(f"expected 4 arguments, got {len(args)}.")
-        print(f"Syntax:")
-        print(f"  update_readme_urls.py <python_versions_file> <pyproject_toml_file> <readme_file> <build_type>")
+        print("Syntax:")
+        print("  update_readme_urls.py <python_versions_file> <pyproject_toml_file> <readme_file> <build_type>")
         exit(1)
     else:
         python_versions_file = Path(args[0])
@@ -83,5 +83,5 @@ def update_readme_urls():
 
 
 if __name__ == "__main__":
-    print(f"Updating README badge URLs...")
+    print("Updating README badge URLs...")
     update_readme_urls()

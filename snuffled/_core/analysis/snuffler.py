@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from snuffled._core.models import (
     Diagnostic,
@@ -60,9 +60,8 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
     def _extract(self, prop: str) -> float:
         if isinstance(prop, Diagnostic):
             return self._diagnostics_analyser.extract(prop)
-        elif isinstance(prop, RootProperty):
+        if isinstance(prop, RootProperty):
             return self._roots_analyser.extract(prop)
-        elif isinstance(prop, FunctionProperty):
+        if isinstance(prop, FunctionProperty):
             return self._function_analyser.extract(prop)
-        else:
-            raise ValueError(f"Property {prop} not supported.")
+        raise ValueError(f"Property {prop} not supported.")

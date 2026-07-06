@@ -22,10 +22,7 @@ def test_fit_curve_accurate(a_true: float, b_true: float, c_true: float, c_noise
 
     range_a = (0.1, 10.0)
     range_b = (-0.5, 1.0)
-    if c_true > 0.0:
-        range_c = (0.25, 4.0)
-    else:
-        range_c = (-4.0, -0.25)
+    range_c = (0.25, 4.0) if c_true > 0.0 else (-4.0, -0.25)
 
     # --- act ---------------------------------------------
     a_est, b_est, c_est, cost = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg=0.0, debug_flag=True)
