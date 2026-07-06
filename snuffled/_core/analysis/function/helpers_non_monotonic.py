@@ -45,7 +45,7 @@ def non_monotonicity_score_up_down_x(fx_diff_signs: np.ndarray) -> float:
 
 @numba.njit(inline="always")
 def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
-    """Analyse fx_diff_sign and count how often its sign flips from <0 to >0 or vice versa.
+    """Analyze fx_diff_sign and count how often its sign flips from <0 to >0 or vice versa.
 
     Based on the smooth_sign function.  Each time a flip happens, we count the smallest of the two extrema as
     contribution of that flip.

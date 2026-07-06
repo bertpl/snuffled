@@ -16,7 +16,7 @@ class FunctionSampler:
 
     All the following classes make use of this class to access the data they need for their analyses:
       - FunctionAnalyser
-      - RootAnalyser
+      - RootsAnalyser
       - DiagnosticAnalyser.
     """
 
