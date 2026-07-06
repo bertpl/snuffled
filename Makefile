@@ -33,13 +33,6 @@ test:
 lint:
 	uv run pre-commit run --all-files
 
-coverage:
-	# run tests with Python 3.10; without numba & create new report
-	uv sync	# should remove numba
-	uv run --python 3.10 pytest ./tests --cov --cov-report=html
-	# run tests with Python 3.13; with numba & append to report
-	uv run --all-extras --python 3.13 pytest ./tests --cov --cov-append --cov-report=html
-
 format:
 	uv run ruff format .;
 	uv run ruff check --fix .;
