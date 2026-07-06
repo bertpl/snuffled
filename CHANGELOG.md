@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Package now ships type information (`py.typed`) for downstream type checkers
+- PyPI classifiers (supported Python versions, typing, audience, topic)
 
 ### Changed
 - Supported Python versions are now 3.11–3.14 (3.10 dropped, 3.14 added)

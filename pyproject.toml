@@ -14,6 +14,20 @@ dependencies = [
     "numpy>=2.1.0; python_version == '3.13'",
     "numpy>=2.3.2; python_version >= '3.14'",
 ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    # Python versions kept in sync with .python-versions (release.py enforces this)
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
 
 [dependency-groups]
 dev = [
@@ -112,6 +126,7 @@ raises-require-match-for = ["Exception", "BaseException"]  # only the truly broa
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["SLF001", "S101", "S311", "D", "ANN"]  # AAA tests: asserts, private access, random data, no docstring/annotation duty
 "__init__.py" = ["F401"]                 # re-export modules: naked imports, no `as` alias
+"scripts/**" = ["INP001", "S"]   # maintainer tooling, not the shipped library
 ".github/scripts/**" = ["INP001", "S", "D", "ANN"]   # maintainer tooling, not held to shipped-source style
 "notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901", "B"]  # exploratory notebooks, not held to shipped-source style
 # @cache on FunctionSampler's computed-array methods is deliberate; the resulting instance
