@@ -8,10 +8,9 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    # Per-Python numpy floors: each is the earliest version shipping a wheel for that CPython,
-    # so `lowest-direct` installs (not source-builds) across the whole matrix.
-    "numpy>=1.23.2; python_version < '3.12'",
-    "numpy>=1.26.0; python_version == '3.12'",
+    # Per-Python numpy floors on a numpy 2.0 baseline: each is the earliest 2.x shipping a wheel
+    # for that CPython, so `lowest-direct` installs (not source-builds) across the whole matrix.
+    "numpy>=2.0.0; python_version < '3.13'",
     "numpy>=2.1.0; python_version == '3.13'",
     "numpy>=2.3.2; python_version >= '3.14'",
 ]
