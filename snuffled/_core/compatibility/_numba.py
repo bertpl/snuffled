@@ -1,7 +1,7 @@
 from collections.abc import Callable
 
 try:
-    import numba
+    import numba  # ty: ignore[unresolved-import] -- optional extra; absent in the numba-off env
 
 
 except ImportError:
