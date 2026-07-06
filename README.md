@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/bertpl/snuffled/blob/main/LICENSE)
 [![code style: ruff](https://img.shields.io/badge/code%20style-ruff-261230)](https://github.com/astral-sh/ruff)
 
-![snuffled logo](https://raw.githubusercontent.com/bertpl/snuffled/main/images/splash_with_version.webp)
+![snuffled logo](images/splash_with_version.webp)
 
 # SNUFFLED
 **S**ystematic **N**umerical **U**nivariate **F**ull-**F**unction ana**L**ysis for **E**stablishing **D**ifficulty of root-finding.
