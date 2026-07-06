@@ -3,7 +3,7 @@
 ### 1.1 One-Sided
 
 We have values x_i, f(x_i), where...
-- f represents a shifted function such that f(0) = 0.  
+- f represents a shifted function such that f(0) = 0.
 - values x_i are chosen to be in [2/3, 4/3] and include [2/3, 1.0, 4/3]
 - we assume f(x_i) >= 0, or at least generally trend upwards
 
@@ -24,7 +24,7 @@ Going the other way (computing a,b,c from g(0), g(1), g(2)), we get
 
 ### 1.2. Two-Sided
 
-Given a function f(x) with f(0)=0, we can analyse the local properties of 
+Given a function f(x) with f(0)=0, we can analyse the local properties of
 around the root at the left side and the right side of the root by solving the
 **one-sided** curve fitting problem **twice**:
 - once by considering f_left(x) = |f(-x)|, leading to a_l, b_l, c_l
@@ -53,7 +53,7 @@ Generally speaking, we'll approach this as follows:
 
 ### 2.1. 3-point solution
 
-We assume we have 3 data points (which could be based on robust aggregates 
+We assume we have 3 data points (which could be based on robust aggregates
 of a larger set of points, such as medians or quantiles) as follows:
 - f(x0)
 - f(1)
@@ -80,18 +80,18 @@ Simple:
 
 We can write:
 
-    (f(x1) - f(1)) / (f(x1) - f(x0)) = ( x1^c - 1) / (x1^c - x0^c) 
+    (f(x1) - f(1)) / (f(x1) - f(x0)) = ( x1^c - 1) / (x1^c - x0^c)
 
 For the special case of x0=0.5 and x1=2.0, we get...
 
     (f(2) - f(1)) / (f(1) - f(0.5)) = ( 2^c - 1) / (1 - 0.5^c)
                                     = ( 2^c - 1) / (1 - 2^-c)
-                                    =    (l - 1) / (1 - 1/l) 
+                                    =    (l - 1) / (1 - 1/l)
                                     =  l*(l - 1) / (l - 1)
                                     =  l
-                                    =  2^c     
+                                    =  2^c
 
-Hence 
+Hence
 
     c = log2((f(2) - f(1)) / (f(1) - f(0.5)))
 
@@ -119,7 +119,7 @@ before compute c, we can more easily compute c:
 
     (f(x1) - f(1)) / (f(1) * (1-b)) = (x1^c - 1)
 hence
-    
+
     x1^c = 1 + (f(x1) - f(1)) / (f(1) * (1-b))
 
 and
@@ -144,7 +144,7 @@ And derive
 
 dg/dx = a*(1-b)*c*x^(c-1)
 
-Which results in 
+Which results in
 
 dg/dx(x=1) = a*(1-b)*c
 
@@ -160,7 +160,7 @@ Let's first determine g(x1) for reference parameters a',b',c':
 
 We will keep a=a' constant as well, so we need to make sure that
 
-b + (1-b)*(x1^c) = (cte/a') 
+b + (1-b)*(x1^c) = (cte/a')
 
 x1^c = ((cte/a') - b) / (1-b)
 
@@ -238,7 +238,7 @@ If we now want to vary a,c (keeping b=b' constant) such that g(r) - g(1/r) stays
           a*(1-b)*2*sinh(ln(r)*c)  =         a'*(1-b')*2 * sinh(ln(r)*c')
                   a*sinh(ln(r)*c)  =         a'          * sinh(ln(r)*c')
                     sinh(ln(r)*c)  =        (a'/a)       * sinh(ln(r)*c')
-                               c   = asinh( (a'/a)       * sinh(ln(r)*c') ) / ln(r) 
+                               c   = asinh( (a'/a)       * sinh(ln(r)*c') ) / ln(r)
 
 Again, in the special case when we choose `r=e`, we get:
 
