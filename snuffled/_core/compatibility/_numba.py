@@ -23,4 +23,4 @@ except ImportError:
         jit = dummy_decorator
         njit = dummy_decorator
 
-    numba = Numba
+    numba = Numba  # ty: ignore[invalid-assignment] -- fallback shim replaces the real numba module

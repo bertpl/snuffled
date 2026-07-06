@@ -1,6 +1,7 @@
 import math
 from collections.abc import Callable
 from functools import cache
+from typing import overload
 
 import numpy as np
 
@@ -54,6 +55,10 @@ class FunctionSampler:
     # -------------------------------------------------------------------------
     #  Low-level generic functionality
     # -------------------------------------------------------------------------
+    @overload
+    def f(self, x: float) -> float: ...
+    @overload
+    def f(self, x: list[float]) -> list[float]: ...
     def f(self, x: float | list[float]) -> float | list[float]:
         # simple cached version of fun(x), without size limit (and simpler than lru_cache, so less overhead)
         if isinstance(x, list):
