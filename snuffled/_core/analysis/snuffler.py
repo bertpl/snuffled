@@ -16,10 +16,7 @@ from .roots import RootsAnalyser
 
 
 class Snuffler(PropertyExtractor[SnuffledProperties]):
-    """
-    Class for analyzing a function, returning either SnuffledRootProperties,
-    SnuffledFunctionProperties, or all SnuffledProperties.
-    """
+    """Analyze a function, returning SnuffledRootProperties, SnuffledFunctionProperties, or all SnuffledProperties."""
 
     # -------------------------------------------------------------------------
     #  Constructor

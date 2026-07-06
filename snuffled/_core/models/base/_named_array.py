@@ -1,15 +1,11 @@
 class NamedArray:
-    """
-    Class representing an array of numbers that can also be accessed by means of str-valued identifiers, pretty
-    much like a dict.
-    """
+    """Array of numbers that can also be accessed by means of str-valued identifiers, much like a dict."""
 
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
     def __init__(self, names: list[str], values: list[float] | None = None):
-        """
-        Initialize the NamedArray with names and values.
+        """Initialize the NamedArray with names and values.
 
         :param names: List of names (str) for the array elements.
         :param values: List of values (float) corresponding to the names.
@@ -27,8 +23,8 @@ class NamedArray:
         return self._values.copy()
 
     def as_dict(self) -> dict[str, float]:
-        """
-        Convert the NamedArray to a dictionary with names as keys and values as values.
+        """Convert the NamedArray to a dictionary with names as keys and values as values.
+
         :return: Dictionary representation of the NamedArray.
         """
         return dict(zip(self._names, self._values))
@@ -55,8 +51,8 @@ class NamedArray:
     #  Internals
     # -------------------------------------------------------------------------
     def _key_to_index(self, key) -> int:
-        """
-        Convert a key (name or index) to an index.
+        """Convert a key (name or index) to an index.
+
         :param key: The key to convert.
         :return: The index corresponding to the key.
         """

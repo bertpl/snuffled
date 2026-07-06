@@ -78,6 +78,7 @@ select = [
     "RSE",     # flake8-raise: no needless parens on `raise`
     "FLY",     # flynt: static str-join → f-string
     "INP",     # flake8-no-pep420: every package dir has an __init__.py
+    "D",       # pydocstyle (Google convention)
 ]
 ignore = [
     "RUF001", "RUF002", "RUF003",  # intentional typography, not "ambiguous"
@@ -93,7 +94,7 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["SLF001", "S101", "S311", "D", "ANN"]  # AAA tests: asserts, private access, random data, no docstring/annotation duty
 "__init__.py" = ["F401"]                 # re-export modules: naked imports, no `as` alias
-".github/scripts/**" = ["INP001", "S"]   # maintainer tooling, not the shipped library
+".github/scripts/**" = ["INP001", "S", "D", "ANN"]   # maintainer tooling, not held to shipped-source style
 "notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901"]  # exploratory notebooks, not held to shipped-source style
 
 [tool.coverage.run]

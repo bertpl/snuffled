@@ -11,9 +11,7 @@ class FunctionProperty(StrEnum):
 
 
 class SnuffledFunctionProperties(NamedArray):
-    """
-    Object providing detected (snuffled) values for all FunctionProperty members.
-    """
+    """Object providing detected (snuffled) values for all FunctionProperty members."""
 
     def __init__(self, values: list[float] | None = None):
         super().__init__(names=list(FunctionProperty), values=values)

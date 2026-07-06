@@ -21,9 +21,9 @@ def fit_curve_with_uncertainty(
     uncertainty_tol: float = 1e-3,
     debug_flag: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Method for estimating optimal parameters (a,b,c) for curve fitting as well as uncertainties, similar to
-    fit_curve_with_uncertainty_brute_force.
+    """Estimate optimal parameters (a,b,c) for curve fitting as well as their uncertainties.
+
+    Similar to fit_curve_with_uncertainty_brute_force.
 
     The returned method is different in that we use an approach specifically tailored to the problem structure at hand
       - first compute the optimum (a_opt, b_opt, c_opt) using fit_curve_tailored
@@ -53,7 +53,6 @@ def fit_curve_with_uncertainty(
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
-
     # --- init --------------------------------------------
     c_ranges = [range_c, (-range_c[1], -range_c[0])] if include_opposite_c_range else [range_c]
 

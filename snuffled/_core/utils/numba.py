@@ -1,6 +1,4 @@
-"""
-Numba-specific helper functions, e.g. due to lack of support for existing ones, such as np.clip..
-"""
+"""Numba-specific helper functions, e.g. due to lack of support for existing ones, such as np.clip.."""
 
 import numpy as np
 

@@ -5,11 +5,12 @@ from snuffled._core.compatibility import numba
 
 @numba.njit
 def non_monotonicity_score(fx_diff: np.ndarray, fx_diff_signs: np.ndarray) -> float:
-    """
-    Computes the non-monotonicity score, by computing the equally weighted mean of the following 3 scores:
+    """Computes the non-monotonicity score.
+
+    Computed as the equally weighted mean of the following 3 scores:
       - up/down ratio in terms of f(x)       (equal up and down = 1.0)
       - up/down ratio in terms of x          (equal up and down = 1.0)
-      - number of up/down flips              (>=50% of samples have flips = 1.0)
+      - number of up/down flips              (>=50% of samples have flips = 1.0).
 
     Note that it is perfectly possible for this score to be 1.0 or very, very close, e.g. in case of an extremely noisy
     function.
@@ -17,7 +18,6 @@ def non_monotonicity_score(fx_diff: np.ndarray, fx_diff_signs: np.ndarray) -> fl
     :param fx_diff_signs: smooth_sign_array(np.diff(fx_values))
     :return: (float) score in [0, 1]
     """
-
     return (
         non_monotonicity_score_up_down_fx(fx_diff)
         + non_monotonicity_score_up_down_x(fx_diff_signs)
@@ -45,10 +45,10 @@ def non_monotonicity_score_up_down_x(fx_diff_signs: np.ndarray) -> float:
 
 @numba.njit(inline="always")
 def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
-    """
-    Analyse fx_diff_sign (based on smooth_sign function) and check how often this sign flips from a value
-    <0 to >0 or vice versa.  Each time this happens, we count the smallest of the two extrema as contribution of that
-    flip.
+    """Analyze fx_diff_sign and count how often its sign flips from <0 to >0 or vice versa.
+
+    Based on the smooth_sign function.  Each time a flip happens, we count the smallest of the two extrema as
+    contribution of that flip.
 
     The theoretical maximum we could obtain that way is (n-1), which would happen for sign sequence [-1, 1, -1, ...].
     In practice, even for perfectly noisy sequence (with random sign flips with 50% chance) we would expect only a
@@ -56,7 +56,6 @@ def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
     just to be sure).
 
     Examples:
-
         [-1,  1, -1,  1, -1]                ->    1.0      (Because we clip to [0,1])
         [-1, -1,  1,  1, -1]                ->    1.0
         [-1,  1,  1,  1,  1]                ->    0.5

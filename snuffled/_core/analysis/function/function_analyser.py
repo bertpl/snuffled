@@ -52,9 +52,9 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
     #  Internal methods
     # -------------------------------------------------------------------------
     def _extract_high_dynamic_range(self) -> float:
-        """
-        Looks at q10, q90 percentiles of abs(f(x)) for x in [x_min, x_max] and
-        looks at the ratio q90/q10.  High dynamic range score is calibrated as:
+        """Score the dynamic range of the function from the q90/q10 ratio of abs(f(x)) over [x_min, x_max].
+
+        High dynamic range score is calibrated as:
 
             q90/q10     score
 
@@ -69,9 +69,9 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         return float(np.interp(np.log2(q90 / q10), [10.0, 94.0], [0.0, 1.0], left=0.0, right=1.0))
 
     def _extract_many_zeroes(self) -> float:
-        """
-        The MANY_ZEROES score indicates if we're 'suffering' from a large number of zeroes,
-        and is calibrated on a log scale as follows:
+        """Score whether the function suffers from a large number of zeroes.
+
+        The MANY_ZEROES score is calibrated on a log scale as follows:
 
             estimated # of zeroes            score
 
@@ -82,7 +82,6 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
 
         :return: (float) score in [0,1]
         """
-
         # Estimate 'zero frequency' lambda = # of zeroes estimated to occur in a unit interval
 
         #  STEP 1: build list of observations (w, p) with w the interval width and p indicating if we have a sign flip

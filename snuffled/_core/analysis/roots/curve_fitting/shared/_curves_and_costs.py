@@ -5,8 +5,8 @@ from snuffled._core.compatibility import numba
 
 @numba.njit(inline="always")
 def fitting_cost(x: np.ndarray, fx: np.ndarray, a: float, b: float, c: float, reg: float) -> float:
-    """
-    L1-cost of fitting fitting_curve to (x,fx)-values, where all x>0.
+    """L1-cost of fitting fitting_curve to (x,fx)-values, where all x>0.
+
     A regularization term is added that should help keep abs(c)=1.0 and b=0.0 unless the data convincingly says
     otherwise.
     """
@@ -17,7 +17,7 @@ def fitting_cost(x: np.ndarray, fx: np.ndarray, a: float, b: float, c: float, re
 
 @numba.njit(inline="always")
 def fitting_curve(x: np.ndarray, a: float, b: float, c: float) -> np.ndarray:
-    """curve g(x) = a * (b + (1-b)**(x^c), assuming x>0"""
+    """Curve g(x) = a * (b + (1-b)**(x^c), assuming x>0."""
     return a * (b + (1 - b) * (np.pow(x, c)))
 
 
@@ -32,10 +32,10 @@ def compute_threshold_cost(
     _c_median: float = 1e-4,
     _c_range: float = 1e-3,
 ) -> float:
-    """
-    Compute threshold_cost=optimal_cost+cost_margin for curve fitting, to be used to determine which solutions are
-    considered to be 'acceptable', which in turn is used to determine uncertainty ranges on parameters
-    and derivative properties.
+    """Compute threshold_cost = optimal_cost + cost_margin for curve fitting.
+
+    Used to determine which solutions are considered 'acceptable', which in turn is used to determine uncertainty
+    ranges on parameters and derivative properties.
 
     The 'cost_margin' is computed based on 3 elements, each of which contribute to the threshold cost additively
       - optimal cost:     the worse the optimal fit, the more noisy / non-ideal the data is, and hence more uncertainty
@@ -56,7 +56,6 @@ def compute_threshold_cost(
     :param _c_range: (float, default=1e-3) coefficient of contribution of fx-range to cost_margin
     :return:
     """
-
     cost_margin_1 = _c_opt * optimal_cost
     cost_margin_2 = _c_median * abs(fx_q50)
     cost_margin_3 = _c_range * (fx_q75 - fx_q25)

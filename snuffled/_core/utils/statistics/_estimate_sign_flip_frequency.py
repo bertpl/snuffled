@@ -11,10 +11,10 @@ def estimate_sign_flip_frequency(
     lambda_max: float,
     n_iters: int = 5,
 ) -> float:
-    """
-    ---------------------
-     PROBLEM DESCRIPTION
-    ---------------------
+    """Estimate the frequency of sign flips of a function.
+
+    PROBLEM DESCRIPTION
+    -------------------
 
     We consider some function g(x) that is assumed to exhibit 'sign flips' with some regularity.
     A sign flip means the sign of g(x) flips from - to + or + to -.
@@ -76,7 +76,6 @@ def estimate_sign_flip_frequency(
     :param n_iters: (int) number of iteratively-refined grid search iterations
     :return: (float) optimal lambda value
     """
-
     # --- init --------------------------------------------
     n_per_iter = 20
     n_per_iter_per_side = int(n_per_iter / 2)

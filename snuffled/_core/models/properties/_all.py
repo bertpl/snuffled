@@ -6,11 +6,11 @@ from ._root import RootProperty, SnuffledRootProperties
 
 
 class SnuffledProperties(NamedArray):
-    """
-    Class merging the root, function & diagnostic properties
-      - SnuffledRootProperties
-      - SnuffledFunctionProperties
-      - SnuffledDiagnostics
+    """Class merging the root, function & diagnostic properties.
+
+    - SnuffledRootProperties
+    - SnuffledFunctionProperties
+    - SnuffledDiagnostics.
     """
 
     def __init__(
@@ -32,9 +32,7 @@ class SnuffledProperties(NamedArray):
 
     @property
     def function_props(self) -> SnuffledFunctionProperties:
-        """
-        Returns the function properties as a SnuffledFunctionProperties object.
-        """
+        """Returns the function properties as a SnuffledFunctionProperties object."""
         props = SnuffledFunctionProperties()
         for name in FunctionProperty:
             props[name] = self[name]
@@ -42,9 +40,7 @@ class SnuffledProperties(NamedArray):
 
     @property
     def root_props(self) -> SnuffledRootProperties:
-        """
-        Returns the root properties as a SnuffledRootProperties object.
-        """
+        """Returns the root properties as a SnuffledRootProperties object."""
         props = SnuffledRootProperties()
         for name in RootProperty:
             props[name] = self[name]
@@ -52,9 +48,7 @@ class SnuffledProperties(NamedArray):
 
     @property
     def diagnostics(self) -> SnuffledDiagnostics:
-        """
-        Returns the diagnostics as a SnuffledDiagnostics object.
-        """
+        """Returns the diagnostics as a SnuffledDiagnostics object."""
         props = SnuffledDiagnostics()
         for name in Diagnostic:
             props[name] = self[name]

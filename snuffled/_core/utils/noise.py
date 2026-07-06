@@ -7,9 +7,9 @@ __SCALE = (1 << 128) - 1  # max value of 128-bit hash
 
 
 def noise_from_float(x: float) -> float:
-    """
-    Computes a noise value in [-1, 1] from a float value.  The function is pseudo-random, but deterministic,
-    based on a hash of the string representation of the float.
+    """Computes a noise value in [-1, 1] from a float value.
+
+    The function is pseudo-random, but deterministic, based on a hash of the string representation of the float.
     """
     hex_hash = hashlib.md5(str(x).encode("utf-8")).hexdigest()
     int_hash = int(hex_hash, 16)

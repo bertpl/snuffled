@@ -9,9 +9,7 @@ class Diagnostic(StrEnum):
 
 
 class SnuffledDiagnostics(NamedArray):
-    """
-    Object providing detected (snuffled) values for all Diagnostic members.
-    """
+    """Object providing detected (snuffled) values for all Diagnostic members."""
 
     def __init__(self, values: list[float] | None = None):
         super().__init__(names=list(Diagnostic), values=values)
