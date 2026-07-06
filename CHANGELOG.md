@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Supported Python versions are now 3.11–3.14 (3.10 dropped, 3.14 added)
 - Now requires numpy ≥ 2.0
+- README badges and splash are now served from the repo / shields.io instead of gh-pages
 
 ### Deprecated
 
@@ -21,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix broken splash screen CI job by committing a locally generated splash image
-- Fix a crash in the curve-fitting path on numpy < 2.0 (used `np.pow`, added only in numpy 2.0)
 
 ### Security
 

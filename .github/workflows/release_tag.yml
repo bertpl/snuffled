@@ -1,87 +1,63 @@
 name: Release tag created
+
 on:
   push:
     tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate-tag-version:
     name: Validate tag name matches package version
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v8.3.0
         with:
           version: ${{ vars.UV_VERSION }}
-
       - name: Validate tag and version match
+        env:
+          TAG_NAME: ${{ github.ref_name }}
         run: |
           PACKAGE_VERSION=$(uv version --short)
-          TAG_NAME="${{ github.ref_name }}"
           EXPECTED_TAG="v${PACKAGE_VERSION}"
-
-          echo "Package version: ${PACKAGE_VERSION}"
-          echo "Current tag: ${TAG_NAME}"
-          echo "Expected tag: ${EXPECTED_TAG}"
-
+          echo "Package version: ${PACKAGE_VERSION}; tag: ${TAG_NAME}; expected: ${EXPECTED_TAG}"
           if [[ "${TAG_NAME}" != "${EXPECTED_TAG}" ]]; then
-            echo "ERROR: Tag name does not match package version!"
-            echo "  Tag: ${TAG_NAME}"
-            echo "  Expected: ${EXPECTED_TAG}"
+            echo "::error::tag ${TAG_NAME} does not match package version ${EXPECTED_TAG}"
             exit 1
-          else
-            echo "✓ Tag name matches package version"
           fi
 
-  publish-to-prod:
+  # Re-run the full matrix on the tagged commit before publishing (release.py
+  # already requires green main CI, so this is belt-and-suspenders).
+  test:
     needs: validate-tag-version
+    uses: ./.github/workflows/_unit_tests.yml
+
+  publish-to-prod:
+    needs: test
     runs-on: ubuntu-latest
     environment: prod
     permissions:
-      # IMPORTANT: this permission is mandatory for Trusted Publishing
-      id-token: write
+      contents: read
+      id-token: write  # mandatory for Trusted Publishing
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v8.3.0
         with:
           version: ${{ vars.UV_VERSION }}
-
       - name: Build package with uv
         shell: bash
         run: uv build
-
       - name: Publish package distributions to PyPI   [---PROD---]
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
-
-
-  bump-version:
-    needs: publish-to-prod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          version: ${{ vars.UV_VERSION }}
-
-      - name: Check current version
-        run: |
-            PACKAGE_VERSION=$( uv version --short )
-            echo "CURRENT_PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-
-      - uses: ./.github/actions/bump_version
-        with:
-          uv_version: ${{ vars.UV_VERSION }}
-          github_token: ${{ secrets.GIT_ADMIN_TOKEN }}
-          git_ref: 'main'
-          bump_type: 'patch'
-          only_if_equal_to_version: ${{ env.CURRENT_PACKAGE_VERSION }}
