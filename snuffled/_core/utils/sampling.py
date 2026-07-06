@@ -66,7 +66,7 @@ def get_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
 
 
 @numba.njit
-def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -> float:
+def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -> float:  # noqa: C901 -- iterative solver with several convergence branches
     """PROBLEM STATEMENT.
 
         This function tries to split an interval of size 'tgt_sum' (=target sum of sub-interval sizes) into 'n'

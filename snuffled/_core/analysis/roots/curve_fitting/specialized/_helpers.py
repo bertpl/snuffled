@@ -14,7 +14,9 @@ __LN_R = math.log(2 * math.sqrt(2))  # ln(r) with r = 2*math.sqrt(2)
 #  Parameter initialization
 # =================================================================================================
 @numba.njit(inline="always")
-def initialize_params(range_a: tuple[float, float], range_b: tuple[float, float], range_c: tuple[float, float]):
+def initialize_params(
+    range_a: tuple[float, float], range_b: tuple[float, float], range_c: tuple[float, float]
+) -> tuple[float, float, float]:
     """Return acceptable parameters within ranges."""
     # A: geometric mid-point of range (range_a values should always be positive)
     a = math.sqrt(range_a[0] * range_a[1])

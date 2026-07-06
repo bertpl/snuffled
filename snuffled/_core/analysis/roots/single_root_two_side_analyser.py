@@ -22,7 +22,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         root: Root,
         n_root_samples: int,
         seed: int,
-    ):
+    ) -> None:
         super().__init__(function_sampler)
         self.root = root
         self.dx = function_sampler.dx
@@ -37,7 +37,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Internal - Root Analysis
     # -------------------------------------------------------------------------
-    def _perform_analyses(self):
+    def _perform_analyses(self) -> None:
         """Performs left- and right-sided root analysis and populates self._analysis_left, self._analysis_right."""
         # --- sample function around root -----------------
         # n_samples = 2 * n_samples_per_side = 2 * (3 + 6*k) = 6 + 12*k

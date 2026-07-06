@@ -11,7 +11,7 @@ def noise_from_float(x: float) -> float:
 
     The function is pseudo-random, but deterministic, based on a hash of the string representation of the float.
     """
-    hex_hash = hashlib.md5(str(x).encode("utf-8")).hexdigest()
+    hex_hash = hashlib.md5(str(x).encode("utf-8"), usedforsecurity=False).hexdigest()
     int_hash = int(hex_hash, 16)
 
     return -1.0 + 2.0 * (int_hash / __SCALE)

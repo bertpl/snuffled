@@ -17,7 +17,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int):
+    def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int) -> None:
         super().__init__(function_sampler)
         self.n_root_samples = n_root_samples
         self._root_analyses: dict[Root, SnuffledRootProperties] = {}
@@ -46,7 +46,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     #  Internal methods
     # -------------------------------------------------------------------------
-    def _ensure_all_roots_analysed(self):
+    def _ensure_all_roots_analysed(self) -> None:
         roots = self.function_sampler.roots()
         if len(self._root_analyses) < len(roots):
             self._root_analyses = {

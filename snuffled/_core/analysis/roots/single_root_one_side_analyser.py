@@ -28,7 +28,7 @@ class SingleRootOneSideAnalyser:
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, dx: float, x_deltas: np.ndarray, fx_values: np.ndarray, dx_sign: int, fx_sign: int):
+    def __init__(self, dx: float, x_deltas: np.ndarray, fx_values: np.ndarray, dx_sign: int, fx_sign: int) -> None:
         """Initialize the single-root one-side analyser.
 
         :param dx: (float > 0) dx-value used to generate x_deltas

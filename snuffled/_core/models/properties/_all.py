@@ -18,7 +18,7 @@ class SnuffledProperties(NamedArray):
         function_props: SnuffledFunctionProperties | None = None,
         root_props: SnuffledRootProperties | None = None,
         diagnostics: SnuffledDiagnostics | None = None,
-    ):
+    ) -> None:
         super().__init__(names=list(FunctionProperty) + list(RootProperty) + list(Diagnostic))
         if function_props:
             for key, value in function_props.as_dict().items():
