@@ -32,7 +32,7 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         n_roots: int = 100,
         n_root_samples: int = 100,
         rel_tol_scale: float = 10.0,
-    ):
+    ) -> None:
         seed += SEED_OFFSET_SNUFFLER
         function_sampler = FunctionSampler(fun, x_min, x_max, dx, seed, n_fun_samples, n_roots, rel_tol_scale)
         super().__init__(function_sampler)

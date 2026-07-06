@@ -7,7 +7,7 @@ from ._helpers import param_step
 
 
 @numba.njit
-def explore_uncertainty(
+def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-based uncertainty exploration
     x: np.ndarray,
     fx: np.ndarray,
     a_opt: float,

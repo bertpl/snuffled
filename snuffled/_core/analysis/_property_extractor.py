@@ -13,7 +13,7 @@ class PropertyExtractor(ABC, Generic[NA]):
     # =================================================================================================
     #  Main API
     # =================================================================================================
-    def __init__(self, function_sampler: FunctionSampler):
+    def __init__(self, function_sampler: FunctionSampler) -> None:
         self.function_sampler = function_sampler
         self.__stats: dict[str, PropertyExtractionStats] = {}  # property -> stats
 

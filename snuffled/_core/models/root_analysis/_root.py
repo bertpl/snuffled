@@ -34,7 +34,7 @@ class Root:
     fx: float
     fx_max: float
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.x_min > self.x:
             raise ValueError(f"x_min<=x expected; here {self.x_min}>{self.x}")
         if self.x > self.x_max:

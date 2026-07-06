@@ -123,7 +123,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
         def heuristic(_dx: float, _dfx: float) -> float:
             if _dx > dx_min:
                 _dx_rel = _dx / dx_total
-                _dfx_rel = _dfx / dfx_total
+                _dfx_rel = _dfx / dfx_total  # noqa: B023 -- called immediately in-iteration; no late binding
                 return (_dfx_rel * _dfx_rel / _dx_rel) + (_dx_rel * _dx_rel)
             return 0.0
 

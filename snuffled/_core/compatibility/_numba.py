@@ -6,14 +6,14 @@ try:
 
 except ImportError:
     # dummy decorator that will replace numba.jit and numba.njit
-    def dummy_decorator(*args, **kwargs):
+    def dummy_decorator(*args: object, **kwargs: object) -> Callable:
         # dummy decorator that does nothing and can be used with or without arguments
         if len(args) == 1 and isinstance(args[0], Callable):
             # decorator used without arguments
             return args[0]
 
         # decorator used with arguments
-        def decorator(func):
+        def decorator(func: Callable) -> Callable:
             return func
 
         return decorator

@@ -9,7 +9,7 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, function_sampler: FunctionSampler):
+    def __init__(self, function_sampler: FunctionSampler) -> None:
         super().__init__(function_sampler)
 
     # -------------------------------------------------------------------------

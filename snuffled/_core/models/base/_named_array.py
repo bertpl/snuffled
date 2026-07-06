@@ -4,7 +4,7 @@ class NamedArray:
     # -------------------------------------------------------------------------
     #  Constructor
     # -------------------------------------------------------------------------
-    def __init__(self, names: list[str], values: list[float] | None = None):
+    def __init__(self, names: list[str], values: list[float] | None = None) -> None:
         """Initialize the NamedArray with names and values.
 
         :param names: List of names (str) for the array elements.
@@ -32,7 +32,7 @@ class NamedArray:
     # -------------------------------------------------------------------------
     #  Overridden methods
     # -------------------------------------------------------------------------
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, NamedArray) and (self._names == other._names) and (self._values == other._values)
 
     # mutable container (see __setitem__): intentionally unhashable
@@ -41,16 +41,16 @@ class NamedArray:
     def __len__(self) -> int:
         return len(self._values)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str | int) -> float:
         return self._values[self._key_to_index(key)]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str | int, value: float) -> None:
         self._values[self._key_to_index(key)] = value
 
     # -------------------------------------------------------------------------
     #  Internals
     # -------------------------------------------------------------------------
-    def _key_to_index(self, key) -> int:
+    def _key_to_index(self, key: str | int) -> int:
         """Convert a key (name or index) to an index.
 
         :param key: The key to convert.
