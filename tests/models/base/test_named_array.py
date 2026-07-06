@@ -1,6 +1,7 @@
+from enum import StrEnum
+
 import pytest
 
-from snuffled._core.compatibility import StrEnum
 from snuffled._core.models.base import NamedArray
 
 
