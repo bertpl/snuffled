@@ -1,6 +1,6 @@
 [project]
 name = "snuffled"
-version = "0.1.4"
+version = "0.1.5"
 description = "Systematic Numerical Univariate Full-Function anaLysis for Establishing Difficulty of root-finding"
 # readme is dynamic: hatch-fancy-pypi-readme builds the PyPI long-description from README.md,
 # rewriting the relative splash link to a tag-pinned absolute URL (config below).

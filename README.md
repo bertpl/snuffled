@@ -1,5 +1,5 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/bertpl/snuffled/push_to_main.yml?branch=main&label=CI)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
-[![Coverage](https://img.shields.io/badge/coverage-98.00%25-brightgreen)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
+[![Coverage](https://img.shields.io/badge/coverage-98.34%25-brightgreen)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
 [![Tests](https://img.shields.io/badge/tests-3150-blue)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
 [![PyPI](https://img.shields.io/pypi/v/snuffled.svg)](https://pypi.org/project/snuffled/)
 [![Python](https://img.shields.io/pypi/pyversions/snuffled.svg)](https://pypi.org/project/snuffled/)
