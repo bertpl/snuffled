@@ -11,9 +11,7 @@ class RootProperty(StrEnum):
 
 
 class SnuffledRootProperties(NamedArray):
-    """
-    Object providing detected (snuffled) values for all RootProperty members.
-    """
+    """Object providing detected (snuffled) values for all RootProperty members."""
 
     def __init__(self, values: list[float] | None = None):
         super().__init__(names=list(RootProperty), values=values)

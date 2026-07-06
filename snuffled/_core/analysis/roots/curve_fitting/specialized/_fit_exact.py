@@ -16,9 +16,9 @@ def fit_curve_exact_three_points(
     range_b: tuple[float, float],
     range_c: tuple[float, float],
 ) -> tuple[float, float, float]:
-    """
-    Compute a,b,c exactly based on 3 data points  (0.5, fx_05), (1.0, fx_1), (2.0, fx_2),
-    with solution being guaranteed to lie inside imposed b & c ranges.
+    """Compute a,b,c exactly based on 3 data points (0.5, fx_05), (1.0, fx_1), (2.0, fx_2).
+
+    The solution is guaranteed to lie inside imposed b & c ranges.
 
     Reminder, we're trying to fit this function:
 
@@ -26,7 +26,6 @@ def fit_curve_exact_three_points(
 
     Solution is returned as tuple (a,b,c).
     """
-
     # initialize
     a_min, a_max = range_a
     b_min, b_max = range_b

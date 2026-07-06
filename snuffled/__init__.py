@@ -1,3 +1,5 @@
+"""snuffled: systematic analysis of univariate functions to establish root-finding difficulty."""
+
 from ._core import (
     Diagnostic,
     FunctionProperty,

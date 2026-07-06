@@ -2,8 +2,7 @@ import numpy as np
 
 
 def robust_sign_estimate(values: list[float] | np.ndarray) -> int:
-    """
-    Makes robust estimate of dominant sign of list of values, in presence of noise, underflow, ...
+    """Makes robust estimate of dominant sign of list of values, in presence of noise, underflow, ...
 
     We use sign(q25+q75) as a robust estimate.
       -> In presence of noise, some values might have opposite sign as the underlying data, but we should still

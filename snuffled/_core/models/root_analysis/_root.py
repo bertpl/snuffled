@@ -6,8 +6,7 @@ import numpy as np
 
 @dataclass(frozen=True)
 class Root:
-    """
-     Class to describe a root of a function and a few elementary properties.
+    """Class to describe a root of a function and a few elementary properties.
 
      (x_min, x_max)  Describes an interval that encloses the root (see also fx_min, fx_max below).
                      Except during the initial stages of root finding, this interval can be assumed to be the tightest

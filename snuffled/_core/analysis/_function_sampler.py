@@ -12,12 +12,12 @@ from snuffled._core.utils.sampling import multi_scale_samples, sample_integers
 
 
 class FunctionSampler:
-    """
-    Class holding (cached) data related to a specific function, shared across different analyses.
+    """Class holding (cached) data related to a specific function, shared across different analyses.
+
     All the following classes make use of this class to access the data they need for their analyses:
       - FunctionAnalyser
       - RootAnalyser
-      - DiagnosticAnalyser
+      - DiagnosticAnalyser.
     """
 
     # -------------------------------------------------------------------------
@@ -79,10 +79,10 @@ class FunctionSampler:
 
     @cache
     def x_values(self) -> np.ndarray:
-        """
-        Returns an array of x-values in [x_min, x_max] that we use to sample the function and infer its properties.
+        """Returns an array of x-values in [x_min, x_max] that we use to sample the function and infer its properties.
+
         This is based on the multi_scale_samples function and does not include any other cached x-values resulting
-        from other calls to .f(.)
+        from other calls to .f(.).
         """
         return multi_scale_samples(
             x_min=self.x_min,
@@ -98,8 +98,8 @@ class FunctionSampler:
         return np.array(self.f(list(self.x_values())), dtype=np.float64)
 
     def function_cache(self) -> list[tuple[float, float]]:
-        """
-        Returns contents of the function cache as a list of (x, f(x))-tuples.
+        """Returns contents of the function cache as a list of (x, f(x))-tuples.
+
         Note this might return more information than .x_values() and .fx_values(), since those methods
         only return information related to the initial multiscale sampling.
         """
@@ -115,10 +115,10 @@ class FunctionSampler:
 
     @cache
     def fx_quantile(self, q: float, absolute: bool) -> float:
-        """
-        Returns the requested quantile f(x).
-            absolute==False    --> quantile of f(x)
-            absolute==True     --> quantile of abs(f(x))
+        """Returns the requested quantile f(x).
+
+        absolute==False    --> quantile of f(x)
+        absolute==True     --> quantile of abs(f(x)).
         """
         if absolute:
             return float(np.quantile(abs(self.fx_values()), q))
@@ -126,9 +126,9 @@ class FunctionSampler:
 
     @cache
     def robust_estimated_fx_max(self) -> float:
-        """
-        Robust, approximate estimate of max(f(x)), without being susceptible to single-sample outliers, which might
-        arise in certain corner cases.
+        """Robust, approximate estimate of max(f(x)), not susceptible to single-sample outliers.
+
+        Such outliers might arise in certain corner cases.
 
         NOTE: this value is not guaranteed to be equal or larger than abs(f(x)), but should provide a reasonable
               estimate under most regular circumstances.
@@ -141,32 +141,31 @@ class FunctionSampler:
     # -------------------------------------------------------------------------
     @cache
     def tol_array_local(self) -> np.ndarray:
-        """
-        Return (n_fun_samples, )-sized array with absolute tolerance values > 0, representing the LOCAL tolerance wrt
-        numerical rounding errors on a LOCAL per-sample basis, i.e. computed based on the magnitude of each f(x) sample.
+        """Return (n_fun_samples,)-sized array with absolute (>0) LOCAL tolerance values.
+
+        These represent the tolerance wrt numerical rounding errors on a LOCAL per-sample basis, i.e. computed
+        based on the magnitude of each f(x) sample.
         """
         return self.rel_tol * abs(self.fx_values())
 
     @cache
     def tol_array_global(self) -> np.ndarray:
-        """
-        Return (n_fun_samples, )-sized array with absolute tolerance values > 0, representing the GLOBAL tolerance wrt
-        numerical rounding errors on a GLOBAL basis, i.e. computed based on the overall (~maximum) magnitude of f(x).
-        This is a constant matrix.
+        """Return (n_fun_samples,)-sized array with absolute (>0) GLOBAL tolerance values.
+
+        These represent the tolerance wrt numerical rounding errors on a GLOBAL basis, i.e. computed based on the
+        overall (~maximum) magnitude of f(x).  This is a constant array.
         """
         return np.full(self.n_fun_samples, self.rel_tol * self.robust_estimated_fx_max())
 
     @cache
     def fx_diff_smooth_sign(self) -> np.ndarray:
-        """
-        Returns an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values())).
+        """Returns an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values())).
 
         Local and global tolerances are used to determine the threshold around which differences transition
         (smoothly) from 0 to 1 or 0 to -1.
 
         See also smooth_sign().
         """
-
         # determine inner_tol, outer_tol
         tol_global = self.tol_array_global()
         tol_local = self.tol_array_local()
@@ -190,14 +189,14 @@ class FunctionSampler:
     # -------------------------------------------------------------------------
     @cache
     def candidate_root_intervals(self) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
-        """
-        Return a list of 'root intervals' and 'non-root intervals', with the root intervals serving as candidates
-        (but potentially too many) for root finding.
+        """Return a list of 'root intervals' and 'non-root intervals' for root finding.
+
+        The root intervals serve as candidates (but potentially too many) for root finding.
+
         :return: (root_intervals, non_root_intervals)-tuple
                     root_intervals      : list of (x_left, x_right)-tuples   WITH    sign flip
-                    non_root_intervals  : list of (x_left, x_right)-tuples   WITHOUT sign flip
+                    non_root_intervals  : list of (x_left, x_right)-tuples   WITHOUT sign flip.
         """
-
         # multi-scale samples as (x, fx)-tuples
         samples = list(zip(self.x_values(), self.fx_values()))
 
@@ -220,13 +219,12 @@ class FunctionSampler:
 
     @cache
     def roots(self) -> list[Root]:
-        """
-        Returns at most 'n_roots' root intervals [root_min, root_max] obtained using find_root_and_width().
+        """Returns at most 'n_roots' root intervals [root_min, root_max] obtained using find_root_and_width().
+
         We start from the candidate_root_intervals and - if needed - sample 'n_roots' intervals randomly
         to if there are too many candidate intervals.
         :return: list of Root objects, with deriv_sign != 0.
         """
-
         # get intervals
         cand_intervals, _ = self.candidate_root_intervals()
 

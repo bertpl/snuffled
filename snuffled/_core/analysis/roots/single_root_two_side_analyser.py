@@ -39,7 +39,6 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     def _perform_analyses(self):
         """Performs left- and right-sided root analysis and populates self._analysis_left, self._analysis_right."""
-
         # --- sample function around root -----------------
         # n_samples = 2 * n_samples_per_side = 2 * (3 + 6*k) = 6 + 12*k
         k = max(1, round((self.n_root_samples - 6) / 12))
@@ -125,9 +124,9 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
 #  Helpers
 # =================================================================================================
 def range_diff(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
-    """
-    Computes distance between range (x_min, x_max) and (y_min, y_max), as the absolute difference between
-    closest two points.
+    """Computes distance between ranges (x_min, x_max) and (y_min, y_max).
+
+    Defined as the absolute difference between the closest two points.
     """
     if x_max < y_min:
         # (x_min, x_max) < (y_min, y_max)  --> closest 2 points are x_max, y_min

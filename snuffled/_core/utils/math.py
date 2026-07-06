@@ -10,9 +10,9 @@ __LOG2_ATANH_075 = math.log2(math.atanh(0.75))
 
 @numba.njit(inline="always")
 def smooth_sign(x: float, inner_tol: float, outer_tol: float) -> float:
-    """
-    Implements a smooth version of np.sign where 2 tolerances are used to determine when and how fast to transition
-    for 0 to ±1.
+    """Implements a smooth version of np.sign.
+
+    Two tolerances are used to determine when and how fast to transition from 0 to ±1.
 
             x                smooth_sign
 
@@ -28,7 +28,6 @@ def smooth_sign(x: float, inner_tol: float, outer_tol: float) -> float:
 
     If this is not the case, we correct this such that outer_tol = 4*inner_tol.
     """
-
     if x == 0:
         return 0
     if (inner_tol == 0) and (outer_tol == 0):
@@ -79,8 +78,7 @@ def smooth_sign_array(x: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarra
 # =================================================================================================
 @numba.njit(inline="always")
 def _base_spline(_x: float) -> float:
-    """
-    smoothed RELU-like spline basis function:
+    """Smoothed RELU-like spline basis function.
 
                                0 for x <= 0
         quadratically increasing for x in [0,1]

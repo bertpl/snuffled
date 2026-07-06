@@ -18,7 +18,7 @@ class PropertyExtractor(ABC, Generic[NA]):
         self.__stats: dict[str, PropertyExtractionStats] = {}  # property -> stats
 
     def supported_properties(self) -> list[str]:
-        """Return list of all supported properties, in order in which they should be extracted by extract_all"""
+        """Return list of all supported properties, in order in which they should be extracted by extract_all."""
         return self._new_named_array().names()
 
     def extract_all(self) -> NA:
@@ -30,7 +30,6 @@ class PropertyExtractor(ABC, Generic[NA]):
 
     def extract(self, prop: str) -> float:
         """Extract specific property, while tracking time and duration of extraction."""
-
         # --- timed property extraction -------------------
         t_start_ns_epoch = time_ns()  # ns since epoch
         t_start_ns = perf_counter_ns()
@@ -51,9 +50,9 @@ class PropertyExtractor(ABC, Generic[NA]):
         return result
 
     def statistics(self) -> dict[str, PropertyExtractionStats]:
-        """
-        Return dictionary with property extraction stats by property name.  Entries are sorted by
-        order of extraction.
+        """Return dictionary with property extraction stats by property name.
+
+        Entries are sorted by order of extraction.
         """
         return dict(
             sorted(

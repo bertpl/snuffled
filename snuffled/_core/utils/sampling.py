@@ -12,8 +12,7 @@ from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFO
 # =================================================================================================
 @numba.njit
 def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed: int = 42) -> np.ndarray:
-    """
-    Returns n 'multiscale' samples across interval [x_min, x_max], with minimum distance between samples 'dx_min'.
+    """Returns n 'multiscale' samples across interval [x_min, x_max], with minimum distance between samples 'dx_min'.
 
     Distribution of distances between subsequent samples will be uniformly distributed (on a log-scale)
     in the interval [dx_min, dx_max], with dx_max computed in [(x_max-x_min)/n, (x_max-x_min)].
@@ -27,7 +26,6 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
 
     Results across multiple runs are deterministic, but can be controlled by a seed.
     """
-
     # --- determine interval widths -----------------------
 
     # get interval widths   (n samples -> n-1 sub-intervals)
@@ -59,9 +57,9 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
 # =================================================================================================
 @numba.njit
 def get_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -> np.ndarray:
-    """
-    Similar to fit_fixed_sum_exponential_intervals(...) but returns numpy array with actual interval sizes,
-    instead of just factor c.
+    """Similar to fit_fixed_sum_exponential_intervals(...) but returns a numpy array of actual interval sizes.
+
+    Returns the interval sizes instead of just factor c.
     """
     c = fit_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
     return dx_min * (c ** np.linspace(0, n - 1, n))
@@ -69,8 +67,7 @@ def get_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
 
 @numba.njit
 def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -> float:
-    """
-    PROBLEM STATEMENT
+    """PROBLEM STATEMENT.
 
         This function tries to split an interval of size 'tgt_sum' (=target sum of sub-interval sizes) into 'n'
         sub-intervals, the sizes of which grow exponentially starting from 'dx_min' with a fixed scaling factor.
@@ -109,7 +106,6 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
         This problem is only well-defined if dx_min <= tgt_sum/n.  If not, we raise a ValueError
 
     """
-
     # --- argument handling -------------------------------
     if n < 2:
         raise ValueError(f"n should be >=2, here {n}")
@@ -154,8 +150,8 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
 #  Integer sampling
 # =================================================================================================
 def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]:
-    """
-    Sample n integers (without replacement) from range [i_min, i_max).
+    """Sample n integers (without replacement) from range [i_min, i_max).
+
     Result is returned as a list of sorted integers.
     """
     random.seed(seed + SEED_OFFSET_SAMPLE_INTEGERS)
@@ -167,11 +163,10 @@ def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]
 # =================================================================================================
 @numba.njit
 def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -> np.ndarray:
-    """
-    Return n random numbers in interval [x_min, x_max), with 1 random sample in each of n uniform
-    sub-intervals of width (x_max-x_min)/n.  Within each sub-interval uniform sampling is used.
-    """
+    """Return n random numbers in [x_min, x_max), one per uniform sub-interval of width (x_max-x_min)/n.
 
+    There are n such sub-intervals; within each, uniform sampling is used.
+    """
     # take care of corner cases
     if n < 0:
         raise ValueError("n should be >= 0")

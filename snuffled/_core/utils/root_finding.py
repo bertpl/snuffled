@@ -6,8 +6,7 @@ from snuffled._core.models.root_analysis import Root
 
 
 def find_odd_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min: float) -> Root:
-    """
-    Finds a root of fun(x) in interval [x_min, x_max], assuming fun(x_min) * fun(x_max) < 0.
+    """Finds a root of fun(x) in interval [x_min, x_max], assuming fun(x_min) * fun(x_max) < 0.
 
     NOTE: This function only returns ODD roots, i.e. with sign(fx_min) != sign(fx_max).  Use find_root(.) for
           finding any root, including even ones.
@@ -17,7 +16,6 @@ def find_odd_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_
     :param x_max: (float) right edge of interval [x_min, x_max] in which to search for root
     :param dx_min: (float > 0) smallest interval to consider when looking for a root or determining its width
     """
-
     # --- error checking ----------------------------------
     fx_min, fx_max = fun(x_min), fun(x_max)
     if np.sign(fx_min) * np.sign(fx_max) != -1.0:
@@ -68,8 +66,7 @@ def find_odd_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_
 
 
 def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min: float) -> Root:
-    """
-    Finds a root of fun(x) in interval [x_min, x_max], assuming fun(x_min) * fun(x_max) < 0.
+    """Finds a root of fun(x) in interval [x_min, x_max], assuming fun(x_min) * fun(x_max) < 0.
 
     NOTE 1: This function can return both ODD or EVEN roots, i.e. with derig_sign!=0 or deriv_sign==0.
             Use find_odd_root(.) for finding any root, including even ones.
@@ -81,7 +78,6 @@ def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min:
     :param x_max: (float) right edge of interval [x_min, x_max] in which to search for root
     :param dx_min: (float > 0) smallest interval to consider when looking for a root or determining its width
     """
-
     # --- error checking ----------------------------------
     fx_min, fx_max = fun(x_min), fun(x_max)
     if np.sign(fx_min) * np.sign(fx_max) != -1.0:
@@ -114,10 +110,10 @@ def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min:
 
 
 def determine_root_width(fun: Callable[[float], float], root: float, x_min: float, x_max: float, dx_min: float) -> Root:
-    """
-    Determine the 'width' of a function root.  This function is only used in case find_root finds a root with
-    fun(root)==0.0.  In this case we try to find the largest interval around root (starting from interval size dx_min)
-    for which fun(x)==0.0.
+    """Determine the 'width' of a function root.
+
+    This function is only used in case find_root finds a root with fun(root)==0.0.  In this case we try to find
+    the largest interval around root (starting from interval size dx_min) for which fun(x)==0.0.
 
     This is a critical property to detect, since this determines how 'well-defined' the roots of the function are.
     If a root is considered 'wide' (i.e. order of magnitude close to the root-finding abs tolerance) they can start to
@@ -132,7 +128,6 @@ def determine_root_width(fun: Callable[[float], float], root: float, x_min: floa
     NOTE: we assume fun(x_min) and fun(x_max) are !=0 and have opposite signs, which is guaranteed by how find_root
           calls this function.
     """
-
     # --- validation --------------------------------------
     if root in (x_min, x_max):
         raise ValueError("We expect x_min < root < x_max, since we assume f(x_min)!=0, f(root)==0, f(x_max)!=0.")

@@ -20,8 +20,7 @@ def fit_curve_with_uncertainty_brute_force(
     rel_uncertainty_size: float = 1.0,
     fixed_a_value: float | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Fits a curve of the following form to a list of (x, fx)-tuples:
+    """Fits a curve of the following form to a list of (x, fx)-tuples.
 
         g(x) = a * (b + (1-b)*(x^c))
 
@@ -33,7 +32,7 @@ def fit_curve_with_uncertainty_brute_force(
     This function does not return a single optimal (a, b, c)-value, but returns all tuples in the search grid
     whose cost is 'close enough' (as determined by tol_c0, tol_c1) to the optimal cost.
 
-    NOTE:
+    Note:
       - we assume median(x) == 1
 
     :param x: (n,)-sized numpy array containing x values, with each x>0
@@ -51,7 +50,6 @@ def fit_curve_with_uncertainty_brute_force(
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
-
     # --- init --------------------------------------------
     b_min, b_max = range_b
     c_min, c_max = range_c

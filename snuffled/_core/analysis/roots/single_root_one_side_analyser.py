@@ -29,7 +29,7 @@ class SingleRootOneSideAnalyser:
     #  Constructor
     # -------------------------------------------------------------------------
     def __init__(self, dx: float, x_deltas: np.ndarray, fx_values: np.ndarray, dx_sign: int, fx_sign: int):
-        """
+        """Initialize the single-root one-side analyser.
 
         :param dx: (float > 0) dx-value used to generate x_deltas
         :param x_deltas: (n,)-sized numpy array; x_deltas > 0 as generated using compute_x_deltas()
@@ -38,7 +38,6 @@ class SingleRootOneSideAnalyser:
         :param fx_sign: (int; +1 or -1) expected dominant sign of fx_values on this side of the root.
                                         We'll multiply the fx-values with this sign before we apply curve fitting.
         """
-
         # --- store data ----------------------------------
         self.dx = dx
         self.x_deltas = x_deltas
@@ -84,8 +83,7 @@ class SingleRootOneSideAnalyser:
     #  Internal analysis methods
     # -------------------------------------------------------------------------
     def preprocess_x_fx(self) -> tuple[tuple[np.ndarray, np.ndarray], tuple[float, float]]:
-        """
-        Returns (x, fx), (x_scale, fx_scale)-tuples, such that (x, fx) can be used directly in curve fitting methods.
+        """Returns (x, fx), (x_scale, fx_scale)-tuples, such that (x, fx) can be used directly in curve fitting methods.
 
         Roughly the following processing happens
             x  = x_deltas / x_scale                      (such that median(x)==1.0)
@@ -97,7 +95,6 @@ class SingleRootOneSideAnalyser:
         fx_scale, in most cases, will coincide with median(fx / x), but we take precautions for the case there are
         some (or many) fx-values <= 0, to robustly deal with such corner/degenerate cases.
         """
-
         # compute x_scale & x
         x_scale = 2 * self.dx  # should coincide with median(x_deltas)
         x = self.x_deltas / x_scale
@@ -170,12 +167,11 @@ class SingleRootOneSideAnalyser:
     # -------------------------------------------------------------------------
     @cached_property
     def ill_behaved(self) -> float:
-        """
-        0 if curve fitting produced a perfect fit (with 0 error), or 1.0 if |e| ~= |f(x)|
-        The larger the relative error, the more pronounced are the properties of the function around the root
-        that cannot be capture with our fitting curve.
-        """
+        """Relative fit error: 0 for a perfect fit (0 error), or ~1.0 if |e| ~= |f(x)|.
 
+        The larger the relative error, the more pronounced are the properties of the function around the root
+        that cannot be captured with our fitting curve.
+        """
         # generate predictions based on optimal (a,b,c)
         a_opt, b_opt, c_opt = self._abc_opt
         gx_values = fitting_curve(self.x_pre, a_opt, b_opt, c_opt)

@@ -9,9 +9,7 @@ from snuffled._core.utils.sampling import pseudo_uniform_samples
 
 @numba.njit
 def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
-    """
-    Computes x_delta-array, containing values that can be used to sample function values around
-    a root:    f(root ± x_delta).
+    """Computes x_delta-array of values used to sample function values around a root: f(root ± x_delta).
 
     x_delta values are constructed such that...
         - we will have 3*(1 + 2*k) values
@@ -36,7 +34,6 @@ def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
     :param seed: (int) seed for random number generator
     :return: np.ndarray with 3*(1+2k) x_delta values, sorted in increasing order
     """
-
     # seed handling
     seed += SEED_OFFSET_COMPUTE_X_DELTAS
 

@@ -10,12 +10,12 @@ from snuffled._core.compatibility import numba
 #  Main computation
 # =================================================================================================
 def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> float:
-    """
-    Compute discontinuity score (value in [0,1]) for the given function indicating to what extent it suffers
-    from discontinuities, where...
+    """Compute discontinuity score (value in [0,1]) for the given function.
+
+    The score indicates to what extent the function suffers from discontinuities, where...
       - a purely linear function          --> score 0.0
       - a pure step function              --> score 1.0
-      - a linear combination of the above --> score >0.0 and <1.0
+      - a linear combination of the above --> score >0.0 and <1.0.
 
     We only examine the function f(x) in interval [x_min, x_max] and zoom in up to zoom level dx_min, i.e.
     we do not consider sub-intervals [x_l, x_r] with x_r - x_l < dx_min.
@@ -79,7 +79,6 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     :param n_samples: (int) number of additional samples we can take to zoom in on suspected discontinuities.
     :return score: (int) value in [0,1]
     """
-
     # --- init --------------------------------------------
 
     # extract sampling settings
@@ -161,9 +160,9 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
 # =================================================================================================
 @numba.njit
 def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: np.ndarray, dx_min: float) -> float:
-    """
-    Computes final discontinuity score (value in [0,1]) based on the provided (x,fx)-samples
-    and minimum interval width dx_min.
+    """Computes final discontinuity score (value in [0,1]) from the provided samples.
+
+    Based on the provided (x,fx)-samples and minimum interval width dx_min.
 
     The provided x_values are assumed to be sorted and to span the entire interval of interest, but
     we do not assume interval widths are >= dx_min.
@@ -173,7 +172,6 @@ def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: 
     :param dx_min: (float > 0) smallest relevant interval size.
     :return: score in [0,1]
     """
-
     # --- init --------------------------------------------
     dx_values = np.diff(x_values)
     dfx_values = np.abs(np.diff(fx_values))
