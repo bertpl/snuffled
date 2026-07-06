@@ -110,6 +110,15 @@ raises-require-match-for = ["Exception", "BaseException"]  # only the truly broa
 # retention is tracked as a parked behavior item, not silently refactored here.
 "snuffled/_core/analysis/_function_sampler.py" = ["B019"]
 
+[tool.ty.src]
+include = ["snuffled"]
+
+[tool.ty.rules]
+# The numba shim needs `ty: ignore`s that are used only when the optional numba
+# extra is absent from the env; flagging them as unused in the other env would
+# make `ty check` results depend on which extras happen to be installed.
+unused-ignore-comment = "ignore"
+
 [tool.coverage.run]
 source = ["snuffled"]
 

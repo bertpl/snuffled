@@ -7,7 +7,7 @@
 <!------------------------------------------------------------------------------------------------->
 
 ### What's New
-/
+- Package now ships type information (`py.typed`) for downstream type checkers
 
 ### Improvements
 /
