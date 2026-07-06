@@ -15,6 +15,8 @@ help:
 	@echo ''
 	@echo '  splash       			        Build splash screen using current version of package.'
 	@echo ''
+	@echo '  release       		            Release a version: make release VERSION=X.Y.Z (validates, stamps, tags, pushes).'
+	@echo ''
 	@echo 'Options:'
 	@echo ''
 	@echo '  format-single-file             - accepts `file_path=<path>` to pass the relative path of the file to be formatted.'
@@ -43,3 +45,8 @@ format-single-file:
 
 splash:
 	./.github/scripts/create_splash.sh "$$(uv version --short)-dev";
+
+release:
+	@test -n "$(VERSION)" || (echo "Usage: make release VERSION=X.Y.Z" && exit 1)
+	$(MAKE) test
+	uv run python scripts/release.py $(VERSION)
