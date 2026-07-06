@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+- Releases now ship SLSA build provenance and a GitHub Release with the changelog excerpt
 
 ## 0.1.5 (2026-07-06)
 

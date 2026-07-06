@@ -170,7 +170,8 @@ exclude_also = [
 
 [tool.codespell]
 # "didactical" is an intentional (valid) adjective in a package docstring.
-ignore-words-list = "didactical"
+# "intoto": the in-toto attestation format (provenance.intoto.jsonl).
+ignore-words-list = "didactical,intoto"
 # Notebooks embed base64 image outputs that codespell misreads as typos.
 skip = "*.ipynb"
 
