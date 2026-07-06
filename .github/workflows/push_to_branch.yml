@@ -4,7 +4,6 @@ on:
   push:
     branches-ignore:
       - main
-      - release/*  # handled by push_to_release_branch.yml until the old release flow is retired
 
 permissions:
   contents: read

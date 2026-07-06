@@ -1,7 +1,12 @@
-![shields.io-python-versions](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)
-![genbadge-test-count](https://bertpl.github.io/snuffled/version_artifacts/develop/v0.1.5/badge-test-count.svg)
-![genbadge-test-coverage](https://bertpl.github.io/snuffled/version_artifacts/develop/v0.1.5/badge-coverage.svg)
-![snuffled logo](https://bertpl.github.io/snuffled/version_artifacts/develop/v0.1.5/splash.webp)
+[![CI](https://img.shields.io/github/actions/workflow/status/bertpl/snuffled/push_to_main.yml?branch=main&label=CI)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
+[![Coverage](https://img.shields.io/badge/coverage-98.00%25-brightgreen)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
+[![Tests](https://img.shields.io/badge/tests-3150-blue)](https://github.com/bertpl/snuffled/actions/workflows/push_to_main.yml)
+[![PyPI](https://img.shields.io/pypi/v/snuffled.svg)](https://pypi.org/project/snuffled/)
+[![Python](https://img.shields.io/pypi/pyversions/snuffled.svg)](https://pypi.org/project/snuffled/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/bertpl/snuffled/blob/main/LICENSE)
+[![code style: ruff](https://img.shields.io/badge/code%20style-ruff-261230)](https://github.com/astral-sh/ruff)
+
+![snuffled logo](https://raw.githubusercontent.com/bertpl/snuffled/main/images/splash_with_version.webp)
 
 # SNUFFLED
 **S**ystematic **N**umerical **U**nivariate **F**ull-**F**unction ana**L**ysis for **E**stablishing **D**ifficulty of root-finding.

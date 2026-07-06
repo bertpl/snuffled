@@ -73,9 +73,6 @@ repos:
     rev: v1.7.12
     hooks:
       - id: actionlint
-        # push_to_release_branch.yml and release_tag.yml are the old release flow,
-        # reshaped/retired in the old-flow-retirement PR; lint them there.
-        exclude: ^\.github/workflows/(push_to_release_branch|release_tag)\.yml$
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.37.2
