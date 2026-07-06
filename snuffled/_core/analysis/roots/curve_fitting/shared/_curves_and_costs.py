@@ -18,7 +18,7 @@ def fitting_cost(x: np.ndarray, fx: np.ndarray, a: float, b: float, c: float, re
 @numba.njit(inline="always")
 def fitting_curve(x: np.ndarray, a: float, b: float, c: float) -> np.ndarray:
     """Curve g(x) = a * (b + (1-b)**(x^c), assuming x>0."""
-    return a * (b + (1 - b) * (np.pow(x, c)))
+    return a * (b + (1 - b) * (np.power(x, c)))
 
 
 @numba.njit(inline="always")

@@ -10,7 +10,7 @@
 - Package now ships type information (`py.typed`) for downstream type checkers
 
 ### Improvements
-/
+- Supported Python versions are now 3.11–3.14 (3.10 dropped, 3.14 added)
 
 ### Bug Fixes
 - Fix broken splash screen CI job by committing a locally generated splash image

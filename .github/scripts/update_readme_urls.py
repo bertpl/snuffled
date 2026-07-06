@@ -3,9 +3,8 @@
 #  python3 update_readme_urls.py <python_versions_file> <pyproject_toml_file> <readme_file> <build_type>
 import re
 import sys
-from pathlib import Path
-
 import tomllib
+from pathlib import Path
 
 
 # -------------------------------------------------------------------------

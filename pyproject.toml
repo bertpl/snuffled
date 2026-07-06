@@ -6,10 +6,13 @@ readme = "README.md"
 authors = [
     { name = "Bert Pluymers", email = "bert.pluymers@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "backports-strenum>=1.3.1",
-    "numpy>=1.20",
+    # Per-Python numpy floors on a numpy 2.0 baseline: each is the earliest 2.x shipping a wheel
+    # for that CPython, so `lowest-direct` installs (not source-builds) across the whole matrix.
+    "numpy>=2.0.0; python_version < '3.13'",
+    "numpy>=2.1.0; python_version == '3.13'",
+    "numpy>=2.3.2; python_version >= '3.14'",
 ]
 
 [dependency-groups]
@@ -37,7 +40,12 @@ Roadmap = "https://github.com/bertpl/snuffled/milestones"
 
 [project.optional-dependencies]
 numba = [
-    "numba>=0.50",
+    # Per-Python floors: earliest numba with a wheel for that CPython (so `lowest-direct`
+    # installs a wheel, and numba is available on the newest CPython in the matrix).
+    "numba>=0.57; python_version < '3.12'",
+    "numba>=0.59; python_version == '3.12'",
+    "numba>=0.61; python_version == '3.13'",
+    "numba>=0.63; python_version >= '3.14'",
 ]
 
 [build-system]
@@ -52,7 +60,7 @@ packages = ["snuffled"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 # Broad rule set; PLC/PLR (pylint conventions/refactors) are deliberately excluded as
@@ -121,8 +129,11 @@ unused-ignore-comment = "ignore"
 
 [tool.coverage.run]
 source = ["snuffled"]
+relative_files = true  # so per-combo matrix data files combine without a [paths] map
 
 [tool.coverage.report]
+precision = 2
+fail_under = 95        # cumulative gate, enforced on the combined matrix data
 exclude_also = [
     "@abstractmethod",
     "@abc.abstractmethod",
