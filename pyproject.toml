@@ -55,10 +55,8 @@ line-length = 120
 target-version = "py310"
 
 [tool.ruff.lint]
-# The reference rule set is rolled out in batches (each batch lands green):
-#   batch 1 (here): mechanical / autofix families
-#   batch 2: D      (docstrings)
-#   batch 3: ANN, N, PT, B, S, C901  (annotations + judgment/behavior cases)
+# Broad rule set; PLC/PLR (pylint conventions/refactors) are deliberately excluded as
+# noisy on this numerical domain, and specific carve-outs live in `ignore` below.
 select = [
     "F",       # pyflakes
     "E", "W",  # pycodestyle (incl. E501 line-too-long)
