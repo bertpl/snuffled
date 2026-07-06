@@ -43,9 +43,11 @@ runs:
           echo "PYTHON_EFFECTIVE_VERSION=$PY" >> "$GITHUB_ENV"
           echo "Using Python $PY."
 
-      - name: Drop the lockfile so --resolution takes effect
+      - name: Drop the checked-out lock so each combo resolves fresh from pyproject
         shell: bash
-        run: rm -f uv.lock  # with the tracked lock present, uv reuses its pins and ignores --resolution
+        # `uv run --resolution` re-resolves per the requested strategy even with a lock present,
+        # but removing the committed lock guarantees the matrix leg is never pinned by it.
+        run: rm -f uv.lock
 
       - name: Run tests
         shell: bash
