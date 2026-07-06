@@ -1,6 +1,6 @@
 name: Upload updated badges & splash screen to gh-pages to appropriate version folder
 author: Bert Pluymers
-description: Runs after update-badges & update-splash, uploads generated images to gh-pages branch.
+description: Runs after update-badges, uploads generated badges and the repo-committed splash to gh-pages branch.
 
 inputs:
     uv_version:
@@ -43,17 +43,11 @@ runs:
           name: badges
           path: ./badges
 
-      - name: Download splash artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: splash
-          path: ./splash
-
       - name: Copy all artifacts to version folder
         shell: bash
         run: |
             cp -r ./badges/* "$VERSION_FOLDER"
-            cp -r ./splash/* "$VERSION_FOLDER"        
+            cp ./images/splash_with_version.webp "$VERSION_FOLDER/splash.webp"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
