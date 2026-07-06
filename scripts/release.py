@@ -134,8 +134,13 @@ def step_5_check_pypi_doesnt_have(version: str) -> None:
         with urllib.request.urlopen(url, timeout=10):
             fail_with_message(f"version {version} is already published on PyPI")
     except urllib.error.HTTPError as e:
+        # 404 = not published yet (the good case); any other status is a check failure.
         if e.code != 404:
             fail_with_message(f"PyPI check returned HTTP {e.code}")
+    except urllib.error.URLError as e:
+        # HTTPError is a subclass of URLError, so this only catches transport failures
+        # (DNS, connection reset, the 10s timeout) — fail cleanly instead of a raw traceback.
+        fail_with_message(f"could not reach PyPI to check {version}: {e.reason}")
 
 
 def step_6_check_classifiers_match() -> None:
@@ -358,11 +363,11 @@ def step_15_push(version: str) -> None:
 # ==================================================================================================
 #  orchestration
 # ==================================================================================================
-def post_tag_recovery_hint(failed_step: int, version: str, also_next_cycle: bool) -> None:
+def post_tag_recovery_hint(version: str, also_next_cycle: bool) -> None:
     """Print recovery instructions after a post-tag failure."""
     reset_count = 2 if also_next_cycle else 1
     print(
-        f"\nERROR: step {failed_step} failed.\n"
+        f"\nERROR: a post-tag step failed.\n"
         f"Local state: release commit and tag v{version} created, not pushed.\n"
         f"To abort and retry:\n"
         f"  git tag -d v{version}\n"
@@ -405,10 +410,10 @@ def main() -> None:
         also_next_cycle = True
         step_15_push(version)
     except subprocess.CalledProcessError:
-        post_tag_recovery_hint(13, version, also_next_cycle)
+        post_tag_recovery_hint(version, also_next_cycle)
         sys.exit(1)
     except SystemExit:
-        post_tag_recovery_hint(13, version, also_next_cycle)
+        post_tag_recovery_hint(version, also_next_cycle)
         raise
 
 
