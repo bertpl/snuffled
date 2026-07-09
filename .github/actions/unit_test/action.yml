@@ -61,6 +61,9 @@ runs:
         run: |
           EXTRA_FLAG=""
           [ "$EXTRAS" = "true" ] && EXTRA_FLAG="--all-extras"
+          # numba is a core dependency, so 'false' legs emulate the former numba-absent
+          # runs by disabling JIT — keeping their per-line coverage of the kernel bodies.
+          [ "$EXTRAS" = "false" ] && export NUMBA_DISABLE_JIT=1
           COV_FLAG=""
           # --cov-fail-under=0: the gate is cumulative (coverage job), not per-combo
           [ "$COV" = "true" ] && COV_FLAG="--cov --cov-report= --cov-fail-under=0"
