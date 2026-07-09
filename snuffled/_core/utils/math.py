@@ -1,8 +1,7 @@
 import math
 
+import numba
 import numpy as np
-
-from snuffled._core.compatibility import numba
 
 __LOG2_ATANH_025 = math.log2(math.atanh(0.25))
 __LOG2_ATANH_075 = math.log2(math.atanh(0.75))

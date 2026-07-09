@@ -1,6 +1,6 @@
+import numba
 import numpy as np
 
-from snuffled._core.compatibility import numba
 from snuffled._core.utils.numba import geomean
 
 from ..shared import fitting_cost

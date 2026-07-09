@@ -15,6 +15,12 @@ dependencies = [
     "numpy>=2.0.0; python_version < '3.13'",
     "numpy>=2.1.0; python_version == '3.13'",
     "numpy>=2.3.2; python_version >= '3.14'",
+    # Per-Python numba floors: earliest numba with a wheel for that CPython (so `lowest-direct`
+    # installs a wheel, and numba is available on the newest CPython in the matrix).
+    "numba>=0.57; python_version < '3.12'",
+    "numba>=0.59; python_version == '3.12'",
+    "numba>=0.61; python_version == '3.13'",
+    "numba>=0.63; python_version >= '3.14'",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -53,16 +59,6 @@ ChangeLog = "https://github.com/bertpl/snuffled/blob/main/CHANGELOG.md"
 Issues = "https://github.com/bertpl/snuffled/issues"
 Roadmap = "https://github.com/bertpl/snuffled/milestones"
 
-
-[project.optional-dependencies]
-numba = [
-    # Per-Python floors: earliest numba with a wheel for that CPython (so `lowest-direct`
-    # installs a wheel, and numba is available on the newest CPython in the matrix).
-    "numba>=0.57; python_version < '3.12'",
-    "numba>=0.59; python_version == '3.12'",
-    "numba>=0.61; python_version == '3.13'",
-    "numba>=0.63; python_version >= '3.14'",
-]
 
 [build-system]
 requires = ["hatchling", "hatch-fancy-pypi-readme"]
@@ -149,12 +145,6 @@ raises-require-match-for = ["Exception", "BaseException"]  # only the truly broa
 
 [tool.ty.src]
 include = ["snuffled"]
-
-[tool.ty.rules]
-# The numba shim needs `ty: ignore`s that are used only when the optional numba
-# extra is absent from the env; flagging them as unused in the other env would
-# make `ty check` results depend on which extras happen to be installed.
-unused-ignore-comment = "ignore"
 
 [tool.coverage.run]
 source = ["snuffled"]

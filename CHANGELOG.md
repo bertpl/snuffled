@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- **breaking:** numba is now a required dependency (was the optional `snuffled[numba]` extra); pure-Python execution remains available for development via `NUMBA_DISABLE_JIT=1`
 
 ### Deprecated
 
