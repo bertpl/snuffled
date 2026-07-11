@@ -19,9 +19,13 @@ updates:
       semver-major-days: 14
 
   - package-ecosystem: "uv"
-    # Bumps uv.lock (and pyproject pins) for the runtime + dev/lint/type tooling
-    # the lockfile deliberately pins — those rot without automated updates.
+    # Refreshes uv.lock for the runtime + dev/lint/type tooling the lockfile
+    # deliberately pins — those rot without automated updates. lockfile-only:
+    # the pyproject floors are hand-tuned per-Python markers (earliest wheel
+    # per CPython, keeping lowest-direct legs installable) and must never be
+    # rewritten by automation.
     directory: "/"
+    versioning-strategy: "lockfile-only"
     schedule:
       interval: "weekly"
     groups:
