@@ -166,4 +166,7 @@ ignore-words-list = "didactical,intoto"
 skip = "*.ipynb"
 
 [tool.pytest.ini_options]
-addopts = "-n auto --dist worksteal"
+addopts = "-n auto --dist worksteal --strict-markers"
+markers = [
+    "only_with_numba_jit: requires numba JIT compilation; auto-skipped when NUMBA_DISABLE_JIT is set (see tests/conftest.py)",
+]

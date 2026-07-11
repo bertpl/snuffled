@@ -1,6 +1,6 @@
 name: Unit Tests
 author: Bert Pluymers
-description: Run unit tests at a specific Python version, extras, and dependency resolution.
+description: Run unit tests at a specific Python version, JIT mode, and dependency resolution.
 
 inputs:
     uv_version:
@@ -14,14 +14,13 @@ inputs:
         required: false
         description: "uv resolution strategy: 'highest' (default) or 'lowest-direct'."
         default: "highest"
-    include_all_extra_deps:
+    jit:
         required: false
-        description: "'true' (default) installs all optional extras (numba); 'false' installs none."
-        default: "true"
-    coverage:
-        required: false
-        description: "'true' runs under coverage and uploads the per-combo data file for a cross-matrix combine; 'false' (default) runs plain pytest."
-        default: "false"
+        # Single knob: 'off' both disables compilation and is when per-line coverage is
+        # collected (coverage.py can only see inside @njit bodies with JIT off). See the
+        # tests/conftest.py module docstring for why the suite runs in two modes.
+        description: "'on' (default) runs the full suite compiled; 'off' sets NUMBA_DISABLE_JIT=1 (so only_with_numba_jit tests skip) and collects per-line coverage for the cross-matrix combine."
+        default: "on"
 
 runs:
     using: composite
@@ -32,7 +31,7 @@ runs:
           version: ${{ inputs.uv_version }}
           # Distinct cache key per combo (incl. Python, since wheels are cpXY-specific) so
           # parallel legs don't race to save one shared key or restore the wrong interpreter's wheels.
-          cache-suffix: py${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-extras-${{ inputs.include_all_extra_deps }}
+          cache-suffix: py${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-jit-${{ inputs.jit }}
 
       - name: Determine Python version
         shell: bash
@@ -54,42 +53,39 @@ runs:
         env:
           PY: ${{ env.PYTHON_EFFECTIVE_VERSION }}
           RES: ${{ inputs.dependency_resolution }}
-          EXTRAS: ${{ inputs.include_all_extra_deps }}
-          COV: ${{ inputs.coverage }}
+          JIT: ${{ inputs.jit }}
           # distinct per-combo data file so the coverage job combines rather than overwrites
-          COVERAGE_FILE: .coverage.${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-${{ inputs.include_all_extra_deps }}
+          COVERAGE_FILE: .coverage.${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-${{ inputs.jit }}
         run: |
-          EXTRA_FLAG=""
-          [ "$EXTRAS" = "true" ] && EXTRA_FLAG="--all-extras"
-          # 'false' legs run with JIT disabled so per-line coverage still reaches the
-          # @njit-compiled kernel bodies (compiled code reads as uncovered).
-          [ "$EXTRAS" = "false" ] && export NUMBA_DISABLE_JIT=1
+          # JIT-off legs both disable compilation and carry coverage — one implies the other.
+          # --cov-fail-under=0: the gate is cumulative (coverage job), not per-combo.
           COV_FLAG=""
-          # --cov-fail-under=0: the gate is cumulative (coverage job), not per-combo
-          [ "$COV" = "true" ] && COV_FLAG="--cov --cov-report= --cov-fail-under=0"
-          uv run --python "$PY" --resolution "$RES" $EXTRA_FLAG --group dev pytest ./tests $COV_FLAG --durations=20
+          if [ "$JIT" = "off" ]; then
+            export NUMBA_DISABLE_JIT=1
+            COV_FLAG="--cov --cov-report= --cov-fail-under=0"
+          fi
+          uv run --python "$PY" --resolution "$RES" --group dev pytest ./tests $COV_FLAG --durations=20
 
       - name: Dump collected node-ids (for the cross-combo test-count union)
-        if: inputs.coverage == 'true'
+        if: inputs.jit == 'off'
         shell: bash
         env:
           PY: ${{ env.PYTHON_EFFECTIVE_VERSION }}
           RES: ${{ inputs.dependency_resolution }}
-          EXTRAS: ${{ inputs.include_all_extra_deps }}
+          JIT: ${{ inputs.jit }}
         run: |
-          EXTRA_FLAG=""
-          [ "$EXTRAS" = "true" ] && EXTRA_FLAG="--all-extras"
+          [ "$JIT" = "off" ] && export NUMBA_DISABLE_JIT=1
           # -o addopts="" clears `-n auto`, so collection runs single-process (xdist off);
           # each combo records its own collected set so the coverage job can union them.
-          uv run --python "$PY" --resolution "$RES" $EXTRA_FLAG --group dev \
-            pytest ./tests --collect-only -q -o addopts="" \
-            | grep '::' > "test-ids-${PY}-${RES}-${EXTRAS}.txt"
+          uv run --python "$PY" --resolution "$RES" --group dev \
+            pytest ./tests --collect-only -q -o addopts="--strict-markers" \
+            | grep '::' > "test-ids-${PY}-${RES}-jit-${JIT}.txt"
 
       - name: Upload coverage + node-id data
-        if: inputs.coverage == 'true'
+        if: inputs.jit == 'off'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: coverage-data-${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-extras-${{ inputs.include_all_extra_deps }}
+          name: coverage-data-${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-jit-${{ inputs.jit }}
           path: |
             .coverage.*
             test-ids-*.txt
