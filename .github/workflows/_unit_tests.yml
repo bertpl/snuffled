@@ -16,11 +16,9 @@ jobs:
         # ubuntu-only: the analysers are pure Python + numpy/numba with no OS-specific
         # code paths, so one OS exercises everything. Strategic combos cover every axis
         # (all four Pythons, both resolution ends, JIT on/off at the extremes) rather
-        # than their full product. The two JIT modes split the work: jit-off legs run
-        # the coverage-bearing tier as plain Python (per-line coverage sees inside
-        # @njit bodies) and are the only legs the coverage job unions; jit-on legs run
-        # the full suite compiled — including the tests that only run under JIT — with
-        # no coverage collection.
+        # than their full product. The jit-off legs measure coverage; the jit-on legs
+        # exercise the compiled paths + JIT-only tests — see tests/conftest.py for why
+        # the suite runs in both modes.
         include:
           - { python: "3.11", resolution: highest,       jit: "off" }
           - { python: "3.12", resolution: highest,       jit: "off" }
@@ -40,9 +38,9 @@ jobs:
           uv_version: ${{ vars.UV_VERSION }}
           python_version: ${{ matrix.python }}
           dependency_resolution: ${{ matrix.resolution }}
+          # jit drives everything: the jit-off legs disable compilation, carry coverage,
+          # and are the ones the coverage job unions + gates.
           jit: ${{ matrix.jit }}
-          # jit-off legs upload their data; the coverage job unions + gates exactly those
-          coverage: ${{ matrix.jit == 'off' && 'true' || 'false' }}
 
   coverage:
     name: coverage

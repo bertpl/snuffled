@@ -9,7 +9,7 @@ help:
 	@echo ''
 	@echo '  dev-setup                      One-time: sync dev deps & install pre-commit hooks.'
 	@echo '  test		                    Run the full pytest suite (JIT on).'
-	@echo '  test-cov                       Run the coverage-bearing tier with JIT disabled + per-line coverage report.'
+	@echo '  test-cov                       Local coverage proxy (py3.13, JIT off); approximates the CI gate, which unions all Pythons.'
 	@echo '  lint		                    Run all pre-commit hooks on all files.'
 	@echo '  format		                    Format source code using ruff.'
 	@echo '  format-single-file             Format single file using ruff. Useful in e.g. PyCharm to automatically trigger formatting on file save.'
@@ -30,11 +30,13 @@ dev-setup:
 	uv run pre-commit install
 
 test:
-	# full suite (both test tiers), JIT on - just 1 python version
+	# full suite, JIT on - just 1 python version
 	uv run --python 3.13 pytest ./tests
 
 test-cov:
-	# coverage-bearing tier only: JIT disabled so per-line coverage sees inside @njit bodies
+	# Local coverage proxy: JIT off (so coverage sees inside @njit bodies), py3.13 only.
+	# Not the CI gate — that unions all Pythons, so version-divergent lines may read as
+	# uncovered here. Use it as a cheap "did I keep coverage up" check before pushing.
 	NUMBA_DISABLE_JIT=1 uv run --python 3.13 pytest ./tests --cov --cov-report=term-missing
 
 lint:
