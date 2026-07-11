@@ -12,11 +12,13 @@ updates:
     groups:
       actions:  # one batched PR for all action bumps
         patterns: ["*"]
-    # Let releases age before PRs open: auto-merged patch/minor bumps then sit
-    # long enough for upstream compromises to surface before they can land.
+    # Let releases age before PRs open: auto-merged bumps then sit long enough
+    # for upstream compromises to surface before they can land. github-actions
+    # supports only default-days (semver-granular cooldowns are ignored), so
+    # the conservative major-bump delay applies to everything; security
+    # updates bypass cooldown regardless.
     cooldown:
-      default-days: 7  # zizmor's dependabot-cooldown floor; ~no-op at weekly cadence anyway
-      semver-major-days: 14
+      default-days: 14
 
   - package-ecosystem: "uv"
     # Refreshes uv.lock for the runtime + dev/lint/type tooling the lockfile
