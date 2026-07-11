@@ -39,7 +39,7 @@ def f_wide_zeroes(x: float, width_left: float, width_right: float) -> float:
         (partial(f_wide_zeroes, width_left=0, width_right=0), 0.0, 2 * EPS),
         (partial(f_wide_zeroes, width_left=1e-3, width_right=1e-6), 8e-4, 1.2e-3),
         (partial(f_wide_zeroes, width_left=1e-9, width_right=1e-4), 8e-5, 1.2e-4),
-        (partial(f_wide_zeroes, width_left=1e-10, width_right=1e-10), 8e-11, 1.2e10),
+        (partial(f_wide_zeroes, width_left=1e-10, width_right=1e-10), 8e-11, 1.2e-10),
     ],
 )
 def test_function_analyser_max_zero_width(fun: Callable[[float], float], max_width_lb: float, max_width_ub: float):
