@@ -25,12 +25,12 @@ build:
 	uv build;
 
 dev-setup:
-	uv sync --all-extras
+	uv sync
 	uv run pre-commit install
 
 test:
-	# run all tests - with numba & just 1 python version
-	uv run --all-extras --python 3.13 pytest ./tests
+	# run all tests - just 1 python version
+	uv run --python 3.13 pytest ./tests
 
 lint:
 	uv run pre-commit run --all-files

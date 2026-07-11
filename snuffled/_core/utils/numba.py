@@ -1,8 +1,7 @@
 """Numba-specific helper functions, e.g. due to lack of support for existing ones, such as np.clip.."""
 
+import numba
 import numpy as np
-
-from snuffled._core.compatibility import numba
 
 
 @numba.njit(inline="always")

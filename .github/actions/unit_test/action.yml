@@ -61,6 +61,9 @@ runs:
         run: |
           EXTRA_FLAG=""
           [ "$EXTRAS" = "true" ] && EXTRA_FLAG="--all-extras"
+          # 'false' legs run with JIT disabled so per-line coverage still reaches the
+          # @njit-compiled kernel bodies (compiled code reads as uncovered).
+          [ "$EXTRAS" = "false" ] && export NUMBA_DISABLE_JIT=1
           COV_FLAG=""
           # --cov-fail-under=0: the gate is cumulative (coverage job), not per-combo
           [ "$COV" = "true" ] && COV_FLAG="--cov --cov-report= --cov-fail-under=0"
