@@ -52,3 +52,35 @@ def test_function_analyser_max_zero_width(fun: Callable[[float], float], max_wid
 
     # --- assert ------------------------------------------
     assert max_width_lb <= max_width <= max_width_ub
+
+
+# =================================================================================================
+#  Rootless functions: empty root list -> 0.0  (regression: used to crash on max() of empty)
+# =================================================================================================
+def f_parabola(x: float) -> float:
+    return 1.0 + x * x  # strictly positive on [-1, 1] -> no root
+
+
+def f_constant(x: float) -> float:
+    return 1.0
+
+
+def f_monotone_no_root(x: float) -> float:
+    return x + 5.0  # no root in [-1, 1]
+
+
+def f_all_zeros(x: float) -> float:
+    return 0.0  # never crosses zero -> no sign-flip root detected
+
+
+@pytest.mark.parametrize("fun", [f_parabola, f_constant, f_monotone_no_root, f_all_zeros])
+def test_max_zero_width_rootless_is_zero(fun: Callable[[float], float]):
+    # --- arrange -----------------------------------------
+    sampler = FunctionSampler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0)
+    analyser = DiagnosticAnalyser(sampler)
+
+    # --- act ---------------------------------------------
+    max_width = analyser.extract(Diagnostic.MAX_ZERO_WIDTH)
+
+    # --- assert ------------------------------------------
+    assert max_width == 0.0
