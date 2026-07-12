@@ -47,7 +47,9 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     #  Internal methods
     # -------------------------------------------------------------------------
     def _ensure_all_roots_analysed(self) -> None:
-        roots = self.function_sampler.roots()
+        # only roots with room for the full sampling span on both sides — near-edge roots can't be
+        # reliably two-side-fitted and are flagged by the ALL_ROOTS_TOO_CLOSE_TO_EDGE diagnostic.
+        roots = self.function_sampler.analyzable_roots()
         if len(self._root_analyses) < len(roots):
             self._root_analyses = {
                 root: SingleRootTwoSideAnalyser(

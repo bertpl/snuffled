@@ -9,7 +9,7 @@ from snuffled._core.models.root_analysis import Root
 from snuffled._core.utils.constants import EPS, SEED_OFFSET_FUNCTION_SAMPLER
 from snuffled._core.utils.math import smooth_sign_array
 from snuffled._core.utils.root_finding import find_odd_root
-from snuffled._core.utils.sampling import multi_scale_samples, sample_integers
+from snuffled._core.utils.sampling import max_x_delta, multi_scale_samples, sample_integers
 
 
 class FunctionSampler:
@@ -255,3 +255,15 @@ class FunctionSampler:
             )
             for x_min, x_max in cand_intervals
         ]
+
+    @cache
+    def analyzable_roots(self) -> list[Root]:
+        """Roots far enough from the interval edges for reliable two-sided analysis.
+
+        A root is analyzable only if both sides have room for the full sampling span
+        `max_x_delta(dx)`; nearer the edge, sampling `root.x ± x_delta` would fall outside
+        `[x_min, x_max]`. Scoped to two-sided root analysis — `roots()` still returns every root
+        (for counting, zero-width, and the all-too-close diagnostic).
+        """
+        margin = max_x_delta(self.dx)
+        return [root for root in self.roots() if (root.x - self.x_min >= margin) and (self.x_max - root.x >= margin)]

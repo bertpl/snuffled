@@ -3,13 +3,30 @@ import math
 import numpy as np
 import pytest
 
+from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
 from snuffled._core.utils.sampling import (
     fit_fixed_sum_exponential_intervals,
     get_fixed_sum_exponential_intervals,
+    max_x_delta,
     multi_scale_samples,
     pseudo_uniform_samples,
     sample_integers,
 )
+
+
+# =================================================================================================
+#  max_x_delta anti-drift: must equal the actual max of compute_x_deltas, for all k / seed / dx
+# =================================================================================================
+@pytest.mark.parametrize("dx", [1.0, 1e-6, 1e-9])
+@pytest.mark.parametrize("k", [1, 2, 5, 10])
+@pytest.mark.parametrize("seed", [1, 42, 999])
+def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> None:
+    # --- act ---------------------------------------------
+    claimed = max_x_delta(dx)
+    actual = float(np.max(compute_x_deltas(dx=dx, k=k, seed=seed)))
+
+    # --- assert ------------------------------------------
+    assert claimed == pytest.approx(actual, rel=1e-12)
 
 
 # =================================================================================================
