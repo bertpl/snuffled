@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.1.8 (2026-07-12)
 
 ### Added
 - `ALL_ROOTS_TOO_CLOSE_TO_EDGE` diagnostic — flags functions whose every root is too close to an interval edge to analyze reliably
@@ -14,19 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Sample-count parameters (`n_fun_samples`, `n_roots`, `n_root_samples`) below 10 now raise a clear `ValueError`
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - `extract_all()` no longer crashes on functions with no root in the interval (e.g. `1 + x²`)
 - `extract_all()` no longer crashes on flat / constant functions
 - `extract_all()` no longer crashes on roots very close to an interval edge (such roots are excluded from analysis)
 - `extract_all()` no longer crashes on NaN-returning functions; pole / ±inf functions now produce finite scores (previously NaN)
 - `extract_all()` no longer crashes on all-zeros / zero-magnitude functions
-
-### Security
-
 ## 0.1.7 (2026-07-11)
 
 ### Changed
