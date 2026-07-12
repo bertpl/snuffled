@@ -33,6 +33,10 @@ def f_step(x: float) -> float:
     return float(np.sign(x))
 
 
+def f_constant(x: float) -> float:
+    return 1.0  # perfectly flat: dfx_total == 0 used to divide-by-zero; a constant is fully continuous
+
+
 # =================================================================================================
 #  Main tests
 # =================================================================================================
@@ -44,6 +48,7 @@ def f_step(x: float) -> float:
         (f_exp, 0.0, 1e-3),
         (f_linear_with_step, 0.499, 0.501),
         (f_step, 0.999, 1.0),
+        (f_constant, 0.0, 1e-6),
     ],
 )
 def test_function_analyser_discontinuity(fun: Callable[[float], float], min_score: float, max_score: float):

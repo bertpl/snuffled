@@ -123,7 +123,9 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
         def heuristic(_dx: float, _dfx: float) -> float:
             if _dx > dx_min:
                 _dx_rel = _dx / dx_total
-                _dfx_rel = _dfx / dfx_total  # noqa: B023 -- called immediately in-iteration; no late binding
+                # dfx_total == 0 means every sampled interval is flat (e.g. a constant function):
+                # there is no dfx signal to normalize by, so the dx^2 term alone drives resampling.
+                _dfx_rel = (_dfx / dfx_total) if dfx_total > 0 else 0.0  # noqa: B023 -- called in-iteration; no late binding
                 return (_dfx_rel * _dfx_rel / _dx_rel) + (_dx_rel * _dx_rel)
             return 0.0
 
