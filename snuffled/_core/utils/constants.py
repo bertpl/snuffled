@@ -11,6 +11,17 @@ EPS = sys.float_info.epsilon  # 2**-52 for float64
 # to that metric for any sane function.
 FX_CLIP = math.sqrt(sys.float_info.max) * math.sqrt(EPS)
 
+# --- sample counts ---------------------------------------
+# Public default sample counts (used by Snuffler's signature; tests import these to build
+# at-default samplers without hard-coding the values).
+DEFAULT_N_FUN_SAMPLES = 10_000
+DEFAULT_N_ROOTS = 100
+DEFAULT_N_ROOT_SAMPLES = 100
+
+# Hard floor for every sample-count parameter: below this the analysis is not statistically useful
+# (and the sampling utilities have no headroom); constructors reject smaller values.
+MIN_USEFUL_N_SAMPLES = 10
+
 # --- seed offsets ----------------------------------------
 # these offsets are used in different functions to ensure
 # we do not use the same seed in each, even when set

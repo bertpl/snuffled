@@ -8,7 +8,7 @@ from snuffled._core.models import FunctionProperty
 def test_function_analyser_supported_properties():
     # --- arrange -----------------------------------------
     sampler = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
@@ -22,7 +22,7 @@ def test_function_analyser_supported_properties():
 def test_function_analyser_extract_all():
     # --- arrange -----------------------------------------
     sampler = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
@@ -36,7 +36,7 @@ def test_function_analyser_extract_all():
 def test_function_analyser_statistics():
     # --- arrange -----------------------------------------
     sampler = FunctionSampler(
-        fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 

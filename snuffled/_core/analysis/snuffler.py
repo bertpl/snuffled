@@ -6,7 +6,12 @@ from snuffled._core.models import (
     RootProperty,
     SnuffledProperties,
 )
-from snuffled._core.utils.constants import SEED_OFFSET_SNUFFLER
+from snuffled._core.utils.constants import (
+    DEFAULT_N_FUN_SAMPLES,
+    DEFAULT_N_ROOT_SAMPLES,
+    DEFAULT_N_ROOTS,
+    SEED_OFFSET_SNUFFLER,
+)
 
 from ._function_sampler import FunctionSampler
 from ._property_extractor import PropertyExtractor
@@ -35,9 +40,9 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         x_max: float,
         dx: float,
         seed: int,
-        n_fun_samples: int = 10_000,
-        n_roots: int = 100,
-        n_root_samples: int = 100,
+        n_fun_samples: int = DEFAULT_N_FUN_SAMPLES,
+        n_roots: int = DEFAULT_N_ROOTS,
+        n_root_samples: int = DEFAULT_N_ROOT_SAMPLES,
         rel_tol_scale: float = 10.0,
     ) -> None:
         seed += SEED_OFFSET_SNUFFLER

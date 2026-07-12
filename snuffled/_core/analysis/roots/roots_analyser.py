@@ -6,6 +6,7 @@ from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import SnuffledRootProperties
 from snuffled._core.utils.constants import SEED_OFFSET_ROOTS_ANALYSER
+from snuffled._core.utils.validation import require_min_n_samples
 
 from .single_root_two_side_analyser import SingleRootTwoSideAnalyser
 
@@ -19,6 +20,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # -------------------------------------------------------------------------
     def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int) -> None:
         super().__init__(function_sampler)
+        require_min_n_samples("n_root_samples", n_root_samples)
         self.n_root_samples = n_root_samples
         self._root_analyses: dict[Root, SnuffledRootProperties] = {}
         self._seed = seed + SEED_OFFSET_ROOTS_ANALYSER
