@@ -40,6 +40,7 @@ classifiers = [
 [dependency-groups]
 dev = [
     "genbadge[all]>=1.1.2",
+    "hypothesis>=6.100",
     "jupyterlab>=4.4.6",
     "matplotlib>=3.10.5",
     "notebook>=7.4.5",
