@@ -7,6 +7,22 @@ from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFO
 
 
 # =================================================================================================
+#  Root-sampling geometry
+# =================================================================================================
+def max_x_delta(dx: float) -> float:
+    """Largest x_delta `compute_x_deltas` can produce for a given dx: `2^2.5 · dx = 4·√2·dx`.
+
+    This is the outer radius of that function's sampling span `[2^-0.5·dx, 2^2.5·dx]`, independent
+    of `k` and `seed` (which only vary sample density/order within the span). Used to decide which
+    roots sit far enough from the interval edges to have room for the full span on both sides. A
+    consistency test pins it against `max(compute_x_deltas(...))` so a span change can't silently
+    drift. Lives here (not next to `compute_x_deltas`) so `FunctionSampler` can use it without a
+    dependency cycle through the roots package.
+    """
+    return (2.0**2.5) * dx
+
+
+# =================================================================================================
 #  Multi-scale sampling
 # =================================================================================================
 @numba.njit

@@ -21,6 +21,7 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
             Diagnostic.INTERVAL_NOT_BRACKETING_READY,
             Diagnostic.NO_ZEROS_DETECTED,
             Diagnostic.MAX_ZERO_WIDTH,
+            Diagnostic.ALL_ROOTS_TOO_CLOSE_TO_EDGE,
         ]
 
     def _new_named_array(self) -> SnuffledDiagnostics:
@@ -34,6 +35,8 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
                 return self._extract_max_zero_width()
             case Diagnostic.NO_ZEROS_DETECTED:
                 return self._extract_no_zeros_detected()
+            case Diagnostic.ALL_ROOTS_TOO_CLOSE_TO_EDGE:
+                return self._extract_all_roots_too_close_to_edge()
             case _:
                 raise ValueError(f"Property {prop} not supported")
 
@@ -64,3 +67,10 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
             # no candidate intervals to find roots
             return 1.0
         return 0.0
+
+    def _extract_all_roots_too_close_to_edge(self) -> float:
+        # 1.0 iff roots exist but every one is too close to an interval edge to analyze reliably
+        # (distinct from NO_ZEROS_DETECTED, which flags the genuinely rootless case).
+        has_roots = len(self.function_sampler.roots()) > 0
+        has_analyzable = len(self.function_sampler.analyzable_roots()) > 0
+        return 1.0 if (has_roots and not has_analyzable) else 0.0

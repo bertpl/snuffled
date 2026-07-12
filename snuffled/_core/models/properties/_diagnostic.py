@@ -7,6 +7,7 @@ class Diagnostic(StrEnum):
     MAX_ZERO_WIDTH = "diagnostic_max_zero_width"
     NO_ZEROS_DETECTED = "diagnostic_no_zeros_detected"
     INTERVAL_NOT_BRACKETING_READY = "diagnostic_interval_not_bracketing_ready"
+    ALL_ROOTS_TOO_CLOSE_TO_EDGE = "diagnostic_all_roots_too_close_to_edge"
 
 
 class SnuffledDiagnostics(NamedArray):

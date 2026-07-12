@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- `ALL_ROOTS_TOO_CLOSE_TO_EDGE` diagnostic — flags functions whose every root is too close to an interval edge to analyze reliably
 
 ### Changed
 
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `extract_all()` no longer crashes on functions with no root in the interval (e.g. `1 + x²`)
 - `extract_all()` no longer crashes on flat / constant functions
+- `extract_all()` no longer crashes on roots very close to an interval edge (such roots are excluded from analysis)
 
 ### Security
 
