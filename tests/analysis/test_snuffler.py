@@ -1,8 +1,38 @@
 import time
+from collections.abc import Callable
+
+import numpy as np
+import pytest
 
 from snuffled import Diagnostic, FunctionProperty, Snuffler
 from snuffled._core.models import RootProperty
 from tests.helpers import only_with_numba_jit
+
+
+# =================================================================================================
+#  Rootless functions complete extract_all() with all-finite scores (regression R1)
+# =================================================================================================
+# NOTE: the *flat* rootless functions (constant, all-zeros) additionally need the flat-function
+# discontinuity guard, so they are exercised at pipeline level once that lands; here we cover the
+# non-flat rootless functions, which the empty-roots fix alone makes crash-free.
+@pytest.mark.parametrize(
+    "fun",
+    [
+        lambda x: 1.0 + x * x,  # parabola, no root
+        lambda x: x + 5.0,  # monotone, no root in [-1, 1]
+    ],
+)
+def test_snuffler_extract_all_rootless(fun: Callable[[float], float]):
+    # --- arrange -----------------------------------------
+    snuffler = Snuffler(
+        fun=fun, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, n_roots=100, n_root_samples=100
+    )
+
+    # --- act ---------------------------------------------
+    props = snuffler.extract_all()
+
+    # --- assert ------------------------------------------
+    assert np.all(np.isfinite(props.as_array()))
 
 
 def test_snuffler_supported_properties():

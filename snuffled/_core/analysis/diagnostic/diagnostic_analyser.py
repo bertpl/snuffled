@@ -54,7 +54,9 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
         return 1.0
 
     def _extract_max_zero_width(self) -> float:
-        return max([root.width for root in self.function_sampler.roots()])
+        # default=0.0 for rootless functions: no roots -> no zero-width interval,
+        # mirroring the RootsAnalyser no-roots contract (all root properties 0.0).
+        return max((root.width for root in self.function_sampler.roots()), default=0.0)
 
     def _extract_no_zeros_detected(self) -> float:
         root_intervals, _no_root_intervals = self.function_sampler.candidate_root_intervals()
