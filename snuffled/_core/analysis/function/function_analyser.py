@@ -66,6 +66,10 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         """
         q10 = self.function_sampler.fx_quantile(0.1, absolute=True)
         q90 = self.function_sampler.fx_quantile(0.9, absolute=True)
+        if q10 == 0.0:
+            # q90/q10 is undefined: q90 > 0 means an unbounded range (saturate to 1.0); q90 == 0 means
+            # the function is ~everywhere 0 (no dynamic range at all -> 0.0).
+            return 1.0 if q90 > 0.0 else 0.0
         return float(np.interp(np.log2(q90 / q10), [10.0, 94.0], [0.0, 1.0], left=0.0, right=1.0))
 
     def _extract_many_zeroes(self) -> float:

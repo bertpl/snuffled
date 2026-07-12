@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `extract_all()` no longer crashes on flat / constant functions
 - `extract_all()` no longer crashes on roots very close to an interval edge (such roots are excluded from analysis)
 - `extract_all()` no longer crashes on NaN-returning functions; pole / ±inf functions now produce finite scores (previously NaN)
+- `extract_all()` no longer crashes on all-zeros / zero-magnitude functions
 
 ### Security
 

@@ -215,4 +215,6 @@ def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: 
             w_i = min(max(w_i, 0.0), 1.0)
             score += w_i * (dfx_i / dfx_total)
 
-    return score
+    # score is a weighted average of w_i in [0, 1] (weights dfx_i/dfx_total sum to 1), so it is
+    # mathematically in [0, 1]; clamp to absorb floating-point rounding at the 1.0 boundary.
+    return min(max(score, 0.0), 1.0)
