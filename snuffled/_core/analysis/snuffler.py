@@ -16,7 +16,14 @@ from .roots import RootsAnalyser
 
 
 class Snuffler(PropertyExtractor[SnuffledProperties]):
-    """Analyze a function, returning SnuffledRootProperties, SnuffledFunctionProperties, or all SnuffledProperties."""
+    """Analyze a function, returning SnuffledRootProperties, SnuffledFunctionProperties, or all SnuffledProperties.
+
+    Non-finite function values are handled at the sampling boundary so analysis never crashes:
+      - ``+-inf`` is clipped to ``+-FX_CLIP`` and still characterized (a pole reads as discontinuous);
+        ``INF_VALUES_DETECTED`` flags that it occurred.
+      - ``NaN`` sets ``NAN_VALUES_DETECTED`` and, per contract, leaves every *other* metric unspecified
+        (finite, but its value may be anything) — a NaN-returning function is not a well-defined target.
+    """
 
     # -------------------------------------------------------------------------
     #  Constructor

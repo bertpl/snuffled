@@ -18,6 +18,8 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     def supported_properties(self) -> list[str]:
         # return in order of increasing number of required function evals
         return [
+            Diagnostic.NAN_VALUES_DETECTED,
+            Diagnostic.INF_VALUES_DETECTED,
             Diagnostic.INTERVAL_NOT_BRACKETING_READY,
             Diagnostic.NO_ZEROS_DETECTED,
             Diagnostic.MAX_ZERO_WIDTH,
@@ -37,6 +39,10 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
                 return self._extract_no_zeros_detected()
             case Diagnostic.ALL_ROOTS_TOO_CLOSE_TO_EDGE:
                 return self._extract_all_roots_too_close_to_edge()
+            case Diagnostic.NAN_VALUES_DETECTED:
+                return self._extract_nan_values_detected()
+            case Diagnostic.INF_VALUES_DETECTED:
+                return self._extract_inf_values_detected()
             case _:
                 raise ValueError(f"Property {prop} not supported")
 
@@ -74,3 +80,14 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
         has_roots = len(self.function_sampler.roots()) > 0
         has_analyzable = len(self.function_sampler.analyzable_roots()) > 0
         return 1.0 if (has_roots and not has_analyzable) else 0.0
+
+    def _extract_nan_values_detected(self) -> float:
+        # 1.0 iff the function returned NaN for a sampled point (which the boundary sanitize replaced).
+        # Force the multi-scale grid first so the flag is set even when extracted standalone.
+        self.function_sampler.fx_values()
+        return 1.0 if self.function_sampler.saw_nan else 0.0
+
+    def _extract_inf_values_detected(self) -> float:
+        # 1.0 iff the function returned +-inf for a sampled point (which the boundary clip replaced).
+        self.function_sampler.fx_values()
+        return 1.0 if self.function_sampler.saw_inf else 0.0
