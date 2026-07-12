@@ -12,14 +12,16 @@ from tests.helpers import only_with_numba_jit
 # =================================================================================================
 #  Rootless functions complete extract_all() with all-finite scores (regression R1)
 # =================================================================================================
-# NOTE: the *flat* rootless functions (constant, all-zeros) additionally need the flat-function
-# discontinuity guard, so they are exercised at pipeline level once that lands; here we cover the
-# non-flat rootless functions, which the empty-roots fix alone makes crash-free.
+# NOTE: the all-zeros function additionally hits the high-dynamic-range metric (q90/q10 = 0/0),
+# so it needs fixes across several metrics; its whole-pipeline crash-freeness is left to the
+# property harness. Here we cover the rootless functions the empty-roots + flat-discontinuity
+# guards fully make crash-free.
 @pytest.mark.parametrize(
     "fun",
     [
         lambda x: 1.0 + x * x,  # parabola, no root
         lambda x: x + 5.0,  # monotone, no root in [-1, 1]
+        lambda x: 1.0,  # flat constant (also needs the discontinuity flat-guard)
     ],
 )
 def test_snuffler_extract_all_rootless(fun: Callable[[float], float]):

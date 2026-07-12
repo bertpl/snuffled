@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - `extract_all()` no longer crashes on functions with no root in the interval (e.g. `1 + x²`)
+- `extract_all()` no longer crashes on flat / constant functions
 
 ### Security
 
