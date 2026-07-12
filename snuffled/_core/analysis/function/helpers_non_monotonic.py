@@ -64,6 +64,8 @@ def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
         [-1,  -0.1,   0.01, -0.1,  -1]      ->    0.01
 
     """
+    # fx_diff_signs is non-empty: it has n_fun_samples - 1 elements, and n_fun_samples >= 10 is
+    # enforced at construction (MIN_USEFUL_N_SAMPLES), so [0] is always safe.
     extrema = [fx_diff_signs[0]]
     for fx_diff_sign in fx_diff_signs:
         if np.sign(fx_diff_sign) * np.sign(extrema[-1]) >= 0:

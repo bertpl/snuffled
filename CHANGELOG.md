@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NAN_VALUES_DETECTED` and `INF_VALUES_DETECTED` diagnostics — flag functions that return NaN or ±inf for some input
 
 ### Changed
+- Sample-count parameters (`n_fun_samples`, `n_roots`, `n_root_samples`) below 10 now raise a clear `ValueError`
 
 ### Deprecated
 
