@@ -89,3 +89,28 @@ def test_extract_all_pole_has_finite_discontinuity():
     # --- assert ------------------------------------------
     assert np.all(np.isfinite(props.as_array()))
     assert props[FunctionProperty.DISCONTINUOUS] > 0.99
+
+
+# =================================================================================================
+#  Deep detection: a non-finite value first hit during root-finding (not the initial grid) is flagged
+# =================================================================================================
+@pytest.mark.parametrize(
+    "bad, diagnostic",
+    [
+        (float("nan"), Diagnostic.NAN_VALUES_DETECTED),
+        (float("inf"), Diagnostic.INF_VALUES_DETECTED),
+    ],
+)
+def test_non_finite_hit_only_in_deep_analysis_is_flagged(bad: float, diagnostic: Diagnostic):
+    # A tiny non-finite band around the root at 0: a coarse grid (n_fun_samples=10) misses it, but
+    # root-finding bisects into it -> the diagnostic must reflect that deeper sampling, not the grid alone.
+    def fun(x: float) -> float:
+        return bad if abs(x) < 1e-7 else x
+
+    # --- act ---------------------------------------------
+    props = Snuffler(
+        fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=10, n_roots=10, n_root_samples=10
+    ).extract_all()
+
+    # --- assert ------------------------------------------
+    assert props[diagnostic] == 1.0
