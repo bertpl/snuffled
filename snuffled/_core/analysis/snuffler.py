@@ -16,7 +16,14 @@ from .roots import RootsAnalyser
 
 
 class Snuffler(PropertyExtractor[SnuffledProperties]):
-    """Analyze a function, returning SnuffledRootProperties, SnuffledFunctionProperties, or all SnuffledProperties."""
+    """Analyze a function, returning SnuffledRootProperties, SnuffledFunctionProperties, or all SnuffledProperties.
+
+    Non-finite function values are handled at the sampling boundary so analysis never crashes:
+      - ``+-inf`` is clipped to ``+-FX_CLIP`` and still characterized (a pole reads as discontinuous);
+        ``INF_VALUES_DETECTED`` flags that it occurred.
+      - ``NaN`` sets ``NAN_VALUES_DETECTED`` and, per contract, leaves every *other* metric unspecified
+        (finite, but its value may be anything) — a NaN-returning function is not a well-defined target.
+    """
 
     # -------------------------------------------------------------------------
     #  Constructor
@@ -47,12 +54,18 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         return SnuffledProperties()
 
     def supported_properties(self) -> list[str]:
-        """Make sure function analysis is performed last, so it benefits from samples taken by other analyses."""
-        diagnostic_props = self._diagnostics_analyser.supported_properties()
+        """Order the extraction so shared sampling is done before it's needed.
+
+        Root then function analysis run first (function still benefits from the roots' samples); the
+        diagnostics come last so the NAN_VALUES_DETECTED / INF_VALUES_DETECTED flags reflect every
+        f(x) the deeper analyses evaluated (root bisection, discontinuity zoom), not just the initial
+        multi-scale grid.
+        """
         roots_props = self._roots_analyser.supported_properties()
         function_props = self._function_analyser.supported_properties()
+        diagnostic_props = self._diagnostics_analyser.supported_properties()
 
-        return diagnostic_props + roots_props + function_props
+        return roots_props + function_props + diagnostic_props
 
     def _extract(self, prop: str) -> float:
         if isinstance(prop, Diagnostic):

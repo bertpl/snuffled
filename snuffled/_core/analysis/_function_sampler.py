@@ -6,7 +6,7 @@ from typing import overload
 import numpy as np
 
 from snuffled._core.models.root_analysis import Root
-from snuffled._core.utils.constants import EPS, SEED_OFFSET_FUNCTION_SAMPLER
+from snuffled._core.utils.constants import EPS, FX_CLIP, SEED_OFFSET_FUNCTION_SAMPLER
 from snuffled._core.utils.math import smooth_sign_array
 from snuffled._core.utils.root_finding import find_odd_root
 from snuffled._core.utils.sampling import max_x_delta, multi_scale_samples, sample_integers
@@ -52,6 +52,12 @@ class FunctionSampler:
         # --- cache ---------------------------------------
         self._fun_cache: dict[float, float] = {}
 
+        # --- non-finite tracking -------------------------
+        # set in _eval() when the function returns NaN / +-inf for a sampled point; read by the
+        # NAN_VALUES_DETECTED / INF_VALUES_DETECTED diagnostics.
+        self._saw_nan = False
+        self._saw_inf = False
+
     # -------------------------------------------------------------------------
     #  Low-level generic functionality
     # -------------------------------------------------------------------------
@@ -68,7 +74,7 @@ class FunctionSampler:
                 if not (self.x_min <= single_x <= self.x_max):
                     raise ValueError(f"x={single_x} is out of bounds [{self.x_min}, {self.x_max}]")
                 if single_x not in self._fun_cache:
-                    self._fun_cache[single_x] = fx = self._fun(single_x)
+                    self._fun_cache[single_x] = fx = self._eval(single_x)
                 else:
                     fx = self._fun_cache[single_x]
                 fx_values.append(fx)
@@ -77,10 +83,40 @@ class FunctionSampler:
         if x in self._fun_cache:
             return self._fun_cache[x]
         if self.x_min <= x <= self.x_max:
-            fx = self._fun(x)
+            fx = self._eval(x)
             self._fun_cache[x] = fx
             return fx
         raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
+
+    def _eval(self, x: float) -> float:
+        """Evaluate fun(x), sanitizing non-finite results so no NaN / +-inf reaches the analysis kernels.
+
+        NaN -> FX_CLIP (and _saw_nan set: per the NAN_VALUES_DETECTED contract, all other metrics are
+        then unspecified). We use FX_CLIP rather than 0.0 only to avoid introducing a fake zero-region
+        that would re-trigger the high-dynamic-range divide-by-zero; the exact value is otherwise
+        immaterial. +-inf -> sign * FX_CLIP (and _saw_inf set); finite magnitudes above FX_CLIP are
+        clipped too (arithmetic safety), without setting a flag.
+        """
+        raw = float(self._fun(x))
+        if math.isnan(raw):
+            self._saw_nan = True
+            return FX_CLIP
+        if math.isinf(raw):
+            self._saw_inf = True
+            return math.copysign(FX_CLIP, raw)
+        if abs(raw) > FX_CLIP:
+            return math.copysign(FX_CLIP, raw)
+        return raw
+
+    @property
+    def saw_nan(self) -> bool:
+        """Whether the function returned NaN for at least one sampled point so far."""
+        return self._saw_nan
+
+    @property
+    def saw_inf(self) -> bool:
+        """Whether the function returned +-inf for at least one sampled point so far."""
+        return self._saw_inf
 
     @cache
     def x_values(self) -> np.ndarray:
