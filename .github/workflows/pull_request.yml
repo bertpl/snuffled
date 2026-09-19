@@ -20,7 +20,15 @@ jobs:
   preflight:
     runs-on: ubuntu-latest
     steps:
+      # Dependabot's `dependabot/...` branch prefix isn't configurable, so this
+      # check exempts Dependabot. Branch names are ephemeral and never reach
+      # main; the `Check PR title` step below still enforces the PR title.
+      #
+      # The exemption matches `pull_request.user.login` (the PR author), not
+      # `github.actor`, so a human re-running checks on a Dependabot PR can't
+      # remove the exemption.
       - name: Check branch name
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         env:
           BRANCH: ${{ github.head_ref }}
         run: |
