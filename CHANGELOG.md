@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix `Snuffler` printing messages to stdout during root finding
+- Fix `Snuffler.extract()` rejecting property names given as plain strings
 
 ### Security
 

@@ -1,11 +1,6 @@
 from collections.abc import Callable
 
-from snuffled._core.models import (
-    Diagnostic,
-    FunctionProperty,
-    RootProperty,
-    SnuffledProperties,
-)
+from snuffled._core.models import SnuffledProperties
 from snuffled._core.utils.constants import (
     DEFAULT_N_FUN_SAMPLES,
     DEFAULT_N_ROOT_SAMPLES,
@@ -73,10 +68,9 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         return roots_props + function_props + diagnostic_props
 
     def _extract(self, prop: str) -> float:
-        if isinstance(prop, Diagnostic):
-            return self._diagnostics_analyser.extract(prop)
-        if isinstance(prop, RootProperty):
-            return self._roots_analyser.extract(prop)
-        if isinstance(prop, FunctionProperty):
-            return self._function_analyser.extract(prop)
+        # Property names are StrEnum members, which equal their plain-string values, so the
+        # membership test against `supported_properties()` accepts both a member and its string.
+        for analyser in (self._roots_analyser, self._function_analyser, self._diagnostics_analyser):
+            if prop in analyser.supported_properties():
+                return analyser.extract(prop)
         raise ValueError(f"Property {prop} not supported.")
