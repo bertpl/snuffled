@@ -1,6 +1,5 @@
 file_path=
-# PY sets the Python for the local test targets; it defaults to the interpreter in .python-version
-# and can be overridden with PY=<x.y>.
+# PY sets the Python version for the local test targets.
 PY ?= $(shell cat .python-version)
 
 help:
@@ -40,8 +39,9 @@ test:
 test-cov:
 	# This target is a local coverage estimate: it runs with JIT off (so coverage sees inside
 	# @njit bodies) on one Python only.
-	# Not the CI gate — that unions all Pythons, so version-divergent lines may read as
-	# uncovered here. Use it as a cheap "did I keep coverage up" check before pushing.
+	# Not the CI coverage check — that combines coverage from every Python version, so
+	# version-divergent lines may read as uncovered here. Use it as a cheap "did I keep
+	# coverage up" check before pushing.
 	NUMBA_DISABLE_JIT=1 uv run --python $(PY) pytest ./tests --cov --cov-report=term-missing
 
 lint:

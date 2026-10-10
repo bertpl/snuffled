@@ -7,7 +7,7 @@ from ._function_sampler import FunctionSampler
 
 
 class PropertyExtractor[NamedArrayT: NamedArray](ABC):
-    """Base class that extracts the properties of a sampled function into a named array of type `NamedArrayT`."""
+    """This base class extracts the properties of a sampled function into a named array of type `NamedArrayT`."""
 
     # =================================================================================================
     #  Main API

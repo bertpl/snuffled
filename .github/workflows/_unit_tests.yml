@@ -14,12 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         # ubuntu-only: the analysers are pure Python + numpy/numba with no OS-specific
-        # code paths, so one OS exercises everything. Strategic combos cover every axis without
-        # running their full product:
+        # code paths, so one OS exercises everything. The entries below cover each axis (Python
+        # version, dependency resolution, JIT) without running every combination of them:
         #   - every supported Python
-        #   - both resolution ends
-        #   - JIT on/off at the extremes
-        # The jit-off legs measure coverage; the jit-on legs
+        #   - both dependency resolutions (`highest` and `lowest-direct`)
+        #   - JIT on and off, at least on the oldest and newest Python
+        # The jit-off entries measure coverage; the jit-on entries
         # exercise the compiled paths + JIT-only tests — see tests/conftest.py for why
         # the suite runs in both modes.
         include:
@@ -40,7 +40,7 @@ jobs:
           uv_version: ${{ vars.UV_VERSION }}
           python_version: ${{ matrix.python }}
           dependency_resolution: ${{ matrix.resolution }}
-          # jit drives everything: the jit-off legs disable compilation, carry coverage,
+          # jit drives everything: the jit-off entries disable compilation, carry coverage,
           # and are the ones the coverage job unions + gates.
           jit: ${{ matrix.jit }}
 
