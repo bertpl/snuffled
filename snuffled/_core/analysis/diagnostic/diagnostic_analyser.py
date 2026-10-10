@@ -52,6 +52,7 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     #  Internal methods
     # -------------------------------------------------------------------------
     def _extract_interval_not_bracketing_ready(self) -> float:
+        """Return 1.0 if f has the same sign at both interval ends, 0.5 if f is 0 at either end, and 0.0 otherwise."""
         x_min, x_max = self.function_sampler.x_min, self.function_sampler.x_max
         fx_min, fx_max = self.function_sampler.f(x_min), self.function_sampler.f(x_max)
         fx_min_sign, fx_max_sign = np.sign(fx_min), np.sign(fx_max)
