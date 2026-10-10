@@ -14,12 +14,14 @@ dependencies = [
     # for that CPython, so `lowest-direct` installs (not source-builds) across the whole matrix.
     "numpy>=2.0.0; python_version == '3.12'",
     "numpy>=2.1.0; python_version == '3.13'",
-    "numpy>=2.3.2; python_version >= '3.14'",
+    "numpy>=2.3.2; python_version == '3.14'",
+    "numpy>=2.5.2; python_version >= '3.15'",
     # Per-Python numba floors: earliest numba with a wheel for that CPython (so `lowest-direct`
     # installs a wheel, and numba is available on the newest CPython in the matrix).
     "numba>=0.59; python_version == '3.12'",
     "numba>=0.61; python_version == '3.13'",
-    "numba>=0.63; python_version >= '3.14'",
+    "numba>=0.63; python_version == '3.14'",
+    "numba>=0.68; python_version >= '3.15'",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -31,6 +33,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Typing :: Typed",
 ]
