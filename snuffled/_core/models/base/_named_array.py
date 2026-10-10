@@ -7,11 +7,22 @@ class NamedArray:
     def __init__(self, names: list[str], values: list[float] | None = None) -> None:
         """Initialize the NamedArray with names and values.
 
-        :param names: List of names (str) for the array elements.
-        :param values: List of values (float) corresponding to the names.
+        Args:
+            names: Names of the array elements; each name may appear only once. The array keeps this list, not a copy.
+            values: Values of the array elements, one per name. `None` gives all zeros. The array keeps this list,
+                not a copy, so setting an element also changes the caller's list.
+
+        Raises:
+            ValueError: If a name appears more than once, or if `values` does not hold exactly one value per name.
         """
+        if len(set(names)) != len(names):
+            raise ValueError(f"Names must be unique; got {names}")
+        if values is None:
+            values = [0.0] * len(names)
+        elif len(values) != len(names):
+            raise ValueError(f"Expected {len(names)} values, one per name; got {len(values)}")
         self._names = names
-        self._values = values or [0.0] * len(names)
+        self._values = values
 
     # -------------------------------------------------------------------------
     #  Conversion methods
@@ -23,10 +34,7 @@ class NamedArray:
         return self._values.copy()
 
     def as_dict(self) -> dict[str, float]:
-        """Convert the NamedArray to a dictionary with names as keys and values as values.
-
-        :return: Dictionary representation of the NamedArray.
-        """
+        """Return a dict that maps each name to its value."""
         return dict(zip(self._names, self._values))
 
     # -------------------------------------------------------------------------
@@ -51,15 +59,18 @@ class NamedArray:
     #  Internals
     # -------------------------------------------------------------------------
     def _key_to_index(self, key: str | int) -> int:
-        """Convert a key (name or index) to an index.
+        """Return the index for a name or an int index; an int is returned as is, without a range check.
 
-        :param key: The key to convert.
-        :return: The index corresponding to the key.
+        Raises:
+            KeyError: If `key` is a name that is not in the array.
+            TypeError: If `key` is neither a str nor an int.
         """
         if isinstance(key, int):
             return key
-        if isinstance(key, str):
+        elif isinstance(key, str):
             if key in self._names:
                 return self._names.index(key)
-            raise KeyError(f"Name '{key}' not found in NamedArray.")
-        raise TypeError(f"Invalid key type {type(key)}")
+            else:
+                raise KeyError(f"Name '{key}' not found in NamedArray.")
+        else:
+            raise TypeError(f"Invalid key type {type(key)}")

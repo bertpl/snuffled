@@ -5,7 +5,8 @@ import pytest
 from snuffled._core.models.base import NamedArray
 
 
-def test_named_array_construction_empty():
+def test_named_array_construction_without_values():
+    """Leaving out values gives one 0.0 per name."""
     # --- arrange -----------------------------------------
     names = ["a", "b", "c"]
 
@@ -53,6 +54,32 @@ def test_named_array_construction_with_str_enum():
     assert named_array.names() == [MyStrEnum.MEMBER_A, MyStrEnum.MEMBER_B, MyStrEnum.MEMBER_C]
     assert named_array.as_array() == [3.0, 5.0, 7.0]
     assert named_array.as_dict() == {"a": 3.0, "b": 5.0, "c": 7.0}
+
+
+@pytest.mark.parametrize(
+    "names, values, match",
+    [
+        (["a", "b", "c"], [1.0, 2.0], "Expected 3 values"),
+        (["a", "b", "c"], [1.0, 2.0, 3.0, 4.0], "Expected 3 values"),
+        (["a", "b", "c"], [], "Expected 3 values"),
+        (["a", "b", "a"], None, "Names must be unique"),
+    ],
+)
+def test_named_array_construction_rejects_invalid_input(names: list[str], values: list[float] | None, match: str):
+    """The constructor raises ValueError for a values list of the wrong length, and for duplicate names."""
+    # --- act / assert ------------------------------------
+    with pytest.raises(ValueError, match=match):
+        NamedArray(names, values)
+
+
+def test_named_array_construction_with_no_names():
+    """An empty values list is valid when there are no names."""
+    # --- act ---------------------------------------------
+    named_array = NamedArray([], [])
+
+    # --- assert ------------------------------------------
+    assert len(named_array) == 0
+    assert named_array.as_dict() == {}
 
 
 def test_named_array_get_set():
