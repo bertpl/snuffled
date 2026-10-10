@@ -122,6 +122,8 @@ ignore = [
     "RUF001", "RUF002", "RUF003",  # intentional typography, not "ambiguous"
     "RUF007",  # numba nopython mode can't compile itertools.pairwise; keep zip(x[:-1], x[1:])
     "B905",    # numba nopython mode can't take zip()'s strict= kwarg
+    "RET505",  # house style: the final return of an if/elif sits in its own `else:` branch
+    "SIM108",  # house style: a decision with work in a branch stays an if/else block, not a ternary
 ]
 
 [tool.ruff.lint.mccabe]

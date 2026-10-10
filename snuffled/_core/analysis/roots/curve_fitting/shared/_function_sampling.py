@@ -51,7 +51,7 @@ def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
     # 6*k additional randomized samples
     for j in range(k):
         # set up iteration j
-        if j == 0:  # noqa: SIM108 -- branch comments below are clearer than a ternary
+        if j == 0:
             # make sure first outer samples are right at the edges,
             # which guarantees that we span the entire range [(2.0^-0.5)*dx, (2.0^2.5)*dx]
             r_outer = math.sqrt(2)
