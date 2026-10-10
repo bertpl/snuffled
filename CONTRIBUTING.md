@@ -20,12 +20,12 @@ This syncs dev dependencies via `uv` and installs the pre-commit hooks.
 
 ```bash
 make test      # Run the test suite (pytest)
-make test-cov  # Run the test suite with numba JIT off, so coverage sees inside compiled functions, and report coverage
+make test-cov  # Run the test suite and report coverage, with numba JIT off so that coverage can measure the lines inside numba-compiled functions
 make format    # Format and auto-fix with ruff
 make lint      # Run all pre-commit hooks (ruff, ty, file hygiene, ...) over all files
 ```
 
-`make test-cov` gives a local coverage estimate on one Python version: the default in `.python-version`, or another one with `make test-cov PY=3.12`. The CI coverage check combines the coverage of every Python version, so a line that runs only on another version can show as uncovered locally.
+`make test-cov` gives a local coverage estimate on one Python version: the default in `.python-version`, or another one with `make test-cov PY=3.12`. In CI, the minimum coverage (`fail_under` in `pyproject.toml`) applies to the coverage combined over every Python version, so a line that runs only on another version can show as uncovered locally.
 
 ## Branching
 
