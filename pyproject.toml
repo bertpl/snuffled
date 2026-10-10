@@ -8,16 +8,15 @@ dynamic = ["readme"]
 authors = [
     { name = "Bert Pluymers", email = "bert.pluymers@gmail.com" }
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     # Per-Python numpy floors on a numpy 2.0 baseline: each is the earliest 2.x shipping a wheel
     # for that CPython, so `lowest-direct` installs (not source-builds) across the whole matrix.
-    "numpy>=2.0.0; python_version < '3.13'",
+    "numpy>=2.0.0; python_version == '3.12'",
     "numpy>=2.1.0; python_version == '3.13'",
     "numpy>=2.3.2; python_version >= '3.14'",
     # Per-Python numba floors: earliest numba with a wheel for that CPython (so `lowest-direct`
     # installs a wheel, and numba is available on the newest CPython in the matrix).
-    "numba>=0.57; python_version < '3.12'",
     "numba>=0.59; python_version == '3.12'",
     "numba>=0.61; python_version == '3.13'",
     "numba>=0.63; python_version >= '3.14'",
@@ -29,7 +28,6 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     # Python versions kept in sync with .python-versions (release.py enforces this)
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -85,7 +83,7 @@ packages = ["snuffled"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 # Broad rule set; PLC/PLR (pylint conventions/refactors) are deliberately excluded as

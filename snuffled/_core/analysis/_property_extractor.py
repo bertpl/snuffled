@@ -1,15 +1,14 @@
 from abc import ABC, abstractmethod
 from time import perf_counter_ns, time_ns
-from typing import Generic, TypeVar
 
 from snuffled._core.models import NamedArray, PropertyExtractionStats
 
 from ._function_sampler import FunctionSampler
 
-NA = TypeVar("NA", bound=NamedArray)
 
+class PropertyExtractor[NamedArrayT: NamedArray](ABC):
+    """This base class extracts the properties of a sampled function into a named array of type `NamedArrayT`."""
 
-class PropertyExtractor(ABC, Generic[NA]):
     # =================================================================================================
     #  Main API
     # =================================================================================================
@@ -21,7 +20,7 @@ class PropertyExtractor(ABC, Generic[NA]):
         """Return list of all supported properties, in order in which they should be extracted by extract_all."""
         return self._new_named_array().names()
 
-    def extract_all(self) -> NA:
+    def extract_all(self) -> NamedArrayT:
         """Extract all properties and returned as specific NamedArray subclass."""
         named_array = self._new_named_array()
         for property_name in self.supported_properties():
@@ -70,5 +69,5 @@ class PropertyExtractor(ABC, Generic[NA]):
         raise NotImplementedError
 
     @abstractmethod
-    def _new_named_array(self) -> NA:
+    def _new_named_array(self) -> NamedArrayT:
         raise NotImplementedError
