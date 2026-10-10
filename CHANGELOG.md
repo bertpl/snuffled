@@ -5,23 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
-### Added
+## 0.1.10 (2026-10-10)
 
 ### Changed
 - **Breaking:** Invert `Diagnostic.INTERVAL_NOT_BRACKETING_READY`, so that 1.0 means the interval is not ready for a bracketing solver
 - **Breaking:** Make the `NamedArray` constructor raise `ValueError` when the number of values differs from the number of names, or when a name repeats
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Fix `Snuffler` printing messages to stdout during root finding
 - Fix `Snuffler.extract()` rejecting property names given as plain strings
-
-### Security
 
 ## 0.1.9 (2026-10-10)
 
