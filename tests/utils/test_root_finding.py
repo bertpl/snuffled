@@ -72,13 +72,14 @@ def f_with_wide_even_zero_2(x: float) -> float:
         (f_with_wide_even_zero_2, 0.95),
     ],
 )
-def test_find_odd_root(fun: Callable[[float], float], expected_odd_root: float):
+def test_find_odd_root(fun: Callable[[float], float], expected_odd_root: float, capsys: pytest.CaptureFixture[str]):
     # --- act ---------------------------------------------
     root = find_odd_root(fun, x_min=-1.0, x_max=1.0, dx_min=EPS * EPS)
 
     # --- assert ------------------------------------------
     assert root.x_min <= expected_odd_root <= root.x_max
     assert root.deriv_sign != 0.0
+    assert capsys.readouterr().out == ""  # passing the even root writes nothing to stdout
 
 
 # =================================================================================================

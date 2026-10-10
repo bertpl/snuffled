@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+- Fix `Snuffler` printing to stdout when the analyzed function has an even root
 
 ### Security
 
