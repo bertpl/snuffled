@@ -4,7 +4,7 @@ Thanks for your interest in contributing.
 
 ## Security
 
-Found a vulnerability? Please report it privately — see [`SECURITY.md`](SECURITY.md). Do not open a public issue for it.
+If you find a vulnerability, please report it privately — see [`SECURITY.md`](SECURITY.md). Do not open a public issue about the vulnerability.
 
 ## Dev setup
 
@@ -20,12 +20,12 @@ This syncs dev dependencies via `uv` and installs the pre-commit hooks.
 
 ```bash
 make test      # Run the test suite (pytest)
-make test-cov  # Run the test suite with JIT off and report coverage
+make test-cov  # Run the test suite with numba JIT off, so coverage sees inside compiled functions, and report coverage
 make format    # Format and auto-fix with ruff
 make lint      # Run all pre-commit hooks (ruff, ty, file hygiene, ...) over all files
 ```
 
-`make test-cov` gives a local coverage estimate on one Python version. The CI coverage check combines the coverage of every Python version, so a line that runs only on another version can read as uncovered locally.
+`make test-cov` gives a local coverage estimate on one Python version: the default in `.python-version`, or another one with `make test-cov PY=3.12`. The CI coverage check combines the coverage of every Python version, so a line that runs only on another version can show as uncovered locally.
 
 ## Branching
 

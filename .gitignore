@@ -7,7 +7,7 @@ dist
 __pycache__
 *.pyc
 
-# Coverage reports (.coverage.* are per-process data files that an interrupted run leaves behind)
+# Coverage reports (.coverage.* are per-process data files, left behind by an interrupted run)
 .coverage
 .coverage.*
 htmlcov
@@ -33,6 +33,7 @@ Thumbs.db
 # Local AI-assistant instructions and settings
 CLAUDE.md
 .claude
+
 # Only working_docs/README.md is committed; everything else here stays out of git.
 working_docs/*
 !working_docs/README.md
