@@ -8,7 +8,7 @@ class NamedArray:
         """Initialize the NamedArray with names and values.
 
         Args:
-            names: Names of the array elements; each name may appear only once.
+            names: Names of the array elements; each name may appear only once. The array keeps this list, not a copy.
             values: Values of the array elements, one per name. `None` gives all zeros. The array keeps this list,
                 not a copy, so setting an element also changes the caller's list.
 

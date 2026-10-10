@@ -6,6 +6,7 @@ from snuffled._core.models.base import NamedArray
 
 
 def test_named_array_construction_without_values():
+    """Leaving out values gives one 0.0 per name."""
     # --- arrange -----------------------------------------
     names = ["a", "b", "c"]
 
@@ -71,7 +72,7 @@ def test_named_array_construction_rejects_invalid_input(names: list[str], values
         NamedArray(names, values)
 
 
-def test_named_array_construction_with_empty_names():
+def test_named_array_construction_with_no_names():
     """An empty values list is valid when there are no names."""
     # --- act ---------------------------------------------
     named_array = NamedArray([], [])
