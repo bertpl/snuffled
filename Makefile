@@ -1,5 +1,6 @@
 file_path=
-# Python for the local test targets: the default interpreter in .python-version, overridable with PY=<x.y>.
+# PY sets the Python for the local test targets; it defaults to the interpreter in .python-version
+# and can be overridden with PY=<x.y>.
 PY ?= $(shell cat .python-version)
 
 help:
@@ -11,7 +12,7 @@ help:
 	@echo ''
 	@echo '  dev-setup                      One-time: sync dev deps & install pre-commit hooks.'
 	@echo '  test		                    Run the full pytest suite (JIT on) on Python $(PY).'
-	@echo '  test-cov                       Local coverage proxy (Python $(PY), JIT off); approximates the CI gate, which unions all Pythons.'
+	@echo '  test-cov                       Local coverage estimate (Python $(PY), JIT off); approximates the CI coverage check, which combines coverage from every Python version.'
 	@echo '  lint		                    Run all pre-commit hooks on all files.'
 	@echo '  format		                    Format source code using ruff.'
 	@echo '  format-single-file             Format single file using ruff. Useful in e.g. PyCharm to automatically trigger formatting on file save.'
@@ -37,7 +38,8 @@ test:
 	uv run --python $(PY) pytest ./tests
 
 test-cov:
-	# Local coverage proxy: JIT off (so coverage sees inside @njit bodies), one Python only.
+	# This target is a local coverage estimate: it runs with JIT off (so coverage sees inside
+	# @njit bodies) on one Python only.
 	# Not the CI gate — that unions all Pythons, so version-divergent lines may read as
 	# uncovered here. Use it as a cheap "did I keep coverage up" check before pushing.
 	NUMBA_DISABLE_JIT=1 uv run --python $(PY) pytest ./tests --cov --cov-report=term-missing

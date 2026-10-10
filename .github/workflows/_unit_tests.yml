@@ -14,9 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         # ubuntu-only: the analysers are pure Python + numpy/numba with no OS-specific
-        # code paths, so one OS exercises everything. Strategic combos cover every axis
-        # (every supported Python, both resolution ends, JIT on/off at the extremes) rather
-        # than their full product. The jit-off legs measure coverage; the jit-on legs
+        # code paths, so one OS exercises everything. Strategic combos cover every axis without
+        # running their full product:
+        #   - every supported Python
+        #   - both resolution ends
+        #   - JIT on/off at the extremes
+        # The jit-off legs measure coverage; the jit-on legs
         # exercise the compiled paths + JIT-only tests — see tests/conftest.py for why
         # the suite runs in both modes.
         include:

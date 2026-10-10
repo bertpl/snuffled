@@ -6,7 +6,9 @@ from snuffled._core.models import NamedArray, PropertyExtractionStats
 from ._function_sampler import FunctionSampler
 
 
-class PropertyExtractor[NA: NamedArray](ABC):
+class PropertyExtractor[NamedArrayT: NamedArray](ABC):
+    """Base class that extracts the properties of a sampled function into a named array of type `NamedArrayT`."""
+
     # =================================================================================================
     #  Main API
     # =================================================================================================
@@ -18,7 +20,7 @@ class PropertyExtractor[NA: NamedArray](ABC):
         """Return list of all supported properties, in order in which they should be extracted by extract_all."""
         return self._new_named_array().names()
 
-    def extract_all(self) -> NA:
+    def extract_all(self) -> NamedArrayT:
         """Extract all properties and returned as specific NamedArray subclass."""
         named_array = self._new_named_array()
         for property_name in self.supported_properties():
@@ -67,5 +69,5 @@ class PropertyExtractor[NA: NamedArray](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _new_named_array(self) -> NA:
+    def _new_named_array(self) -> NamedArrayT:
         raise NotImplementedError
