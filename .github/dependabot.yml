@@ -1,4 +1,18 @@
 version: 2
+# Settings shared by every entry below:
+#   - Each ecosystem runs on its own weekday. Branch protection requires a PR
+#     branch to be up to date with main, so when 2 Dependabot PRs open together,
+#     the first one to auto-merge leaves the other behind main until someone
+#     updates it by hand. Dependabot's actual run times drift by hours, so the
+#     separation in days is what prevents this; the 01:00 local time only makes
+#     it likely that nothing else is being pushed to main at that moment.
+#   - Minor/patch bumps and major bumps go in separate groups. The auto-merge
+#     workflow decides per PR from its update type, and a group holding a single
+#     major bump counts as major, so a mixed group would hold every minor and
+#     patch bump back for review too.
+#   - The `chore` commit-message prefix makes the PR title (and thus the squash
+#     commit on main) follow the repo's `<type>: <summary>` convention that CI
+#     enforces.
 updates:
   - package-ecosystem: "github-actions"
     # "/" scans .github/workflows; each composite action under .github/actions
@@ -9,17 +23,20 @@ updates:
       - "/.github/actions/pre_commit"
     schedule:
       interval: "weekly"
-    # `chore` prefix makes the PR title (and thus the squash commit on main)
-    # follow the repo's `<type>: <summary>` convention that CI enforces.
+      day: "monday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
     groups:
-      actions:  # one batched PR for all action bumps
+      actions:  # minor/patch: auto-merges once CI passes
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+      actions-major:  # majors: wait for review
+        patterns: ["*"]
+        update-types: ["major"]
     # Let releases age before PRs open: auto-merged bumps then sit long enough
-    # for upstream compromises to surface before they can land. github-actions
-    # supports only default-days (semver-granular cooldowns are ignored), so
-    # the conservative major-bump delay applies to everything; security
+    # for upstream compromises to surface before they can land. Security
     # updates bypass cooldown regardless.
     cooldown:
       default-days: 14
@@ -34,13 +51,43 @@ updates:
     versioning-strategy: "lockfile-only"
     schedule:
       interval: "weekly"
-    # `chore` prefix makes the PR title (and thus the squash commit on main)
-    # follow the repo's `<type>: <summary>` convention that CI enforces.
+      day: "tuesday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
     groups:
-      python:  # one batched PR for all Python-dependency bumps
+      python:  # minor/patch: auto-merges once CI passes
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+      python-major:  # majors: wait for review
+        patterns: ["*"]
+        update-types: ["major"]
+    # 14 days matches PyPI's window for adding files: a release rejects new
+    # files once it is 14 days old, so waiting that long means the files
+    # installed are the ones the release keeps.
     cooldown:
-      default-days: 7  # zizmor's dependabot-cooldown floor; ~no-op at weekly cadence anyway
-      semver-major-days: 14
+      default-days: 14
+
+  - package-ecosystem: "pre-commit"
+    # Bumps the `rev:` of each managed hook in .pre-commit-config.yaml. The
+    # local hooks run tools pinned in uv.lock, which the uv entry covers.
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
+    commit-message:
+      prefix: "chore"
+    groups:
+      pre-commit:  # minor/patch: auto-merges once CI passes
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      pre-commit-major:  # majors: wait for review
+        patterns: ["*"]
+        update-types: ["major"]
+    # A hook `rev:` resolves to a git tag, so (as for github-actions) the wait
+    # gives a compromised or broken release time to surface upstream.
+    cooldown:
+      default-days: 14
