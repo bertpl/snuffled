@@ -1,5 +1,6 @@
 import time
 from collections.abc import Callable
+from enum import StrEnum
 
 import numpy as np
 import pytest
@@ -53,6 +54,31 @@ def test_snuffler_supported_properties():
 
     # --- assert ------------------------------------------
     assert set(supported_properties) == set(list(RootProperty) + list(Diagnostic) + list(FunctionProperty))
+
+
+@pytest.mark.parametrize("prop", [RootProperty.ILL_BEHAVED, FunctionProperty.MANY_ZEROES, Diagnostic.NO_ZEROS_DETECTED])
+def test_snuffler_extract_accepts_plain_string_name(prop: StrEnum):
+    """`extract` returns the same value for a property's plain-string name as for its enum member."""
+    # --- arrange -----------------------------------------
+    snuffler_for_member = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
+    snuffler_for_string = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
+
+    # --- act ---------------------------------------------
+    value_from_member = snuffler_for_member.extract(prop)
+    value_from_string = snuffler_for_string.extract(prop.value)
+
+    # --- assert ------------------------------------------
+    assert value_from_string == value_from_member
+
+
+def test_snuffler_extract_rejects_unknown_name():
+    """`extract` raises `ValueError` for a name that matches no property."""
+    # --- arrange -----------------------------------------
+    snuffler = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
+
+    # --- act / assert ------------------------------------
+    with pytest.raises(ValueError, match="not supported"):
+        snuffler.extract("root_unknown")
 
 
 def test_snuffler_extract_all_smoke():
