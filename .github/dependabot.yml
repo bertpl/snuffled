@@ -4,19 +4,20 @@ version: 2
 #     - Branch protection requires a PR branch to be up to date with main, so
 #       when 2 Dependabot PRs open together, the first one to auto-merge leaves
 #       the other behind main until someone updates it by hand.
-#     - Dependabot's actual run times drift by hours, so only running each
-#       ecosystem on a different day keeps 2 Dependabot PRs from opening
-#       together; the 01:00 local time only makes it likely that nothing else
-#       is being pushed to main at that moment.
-#     - The 2 groups of 1 ecosystem can still open PRs on the same day; the
-#       major-bump PR waits for review anyway, so updating it by hand then
-#       costs no extra step.
+#     - Dependabot's actual run times drift by hours, so a different weekday
+#       per ecosystem is the one schedule setting that keeps 2 Dependabot PRs
+#       from opening together. The 01:00 local time makes it likely that
+#       nothing else is being pushed to main when a PR opens.
 #   - Minor/patch bumps and major bumps go in separate groups:
 #     - The auto-merge workflow (.github/workflows/dependabot_automerge.yml)
 #       uses each PR's update type to decide whether to merge it without
 #       review.
-#     - A group that contains even 1 major bump counts as major, so a mixed
-#       group would keep every minor and patch bump waiting for review too.
+#     - The auto-merge workflow treats a group PR that contains even 1 major
+#       bump as major, so a mixed group would keep every minor and patch bump
+#       waiting for review too.
+#     - The minor/patch PR and the major-bump PR of the same ecosystem can
+#       still open on the same day; the major-bump PR waits for review anyway,
+#       so updating its branch by hand during that review costs no extra step.
 #   - The `chore` commit-message prefix makes the PR title (and thus the squash
 #     commit on main) follow the repo's `<type>: <summary>` convention that CI
 #     enforces.
@@ -70,9 +71,11 @@ updates:
       python-major:  # This group waits for review.
         patterns: ["*"]
         update-types: ["major"]
-    # 14 days matches PyPI's window for adding files: a release rejects new
-    # files once it is 14 days old, so after waiting that long, the release's
-    # set of files is final.
+    # The 14-day cooldown matches PyPI's window for adding files: PyPI rejects
+    # new files for a release once it is 14 days old, so no file can be added
+    # to a release after Dependabot proposes it. As for github-actions above,
+    # the cooldown also gives a compromised release time to be found and
+    # withdrawn before auto-merge can merge it.
     cooldown:
       default-days: 14
 
@@ -95,7 +98,7 @@ updates:
       pre-commit-major:  # This group waits for review.
         patterns: ["*"]
         update-types: ["major"]
-    # A hook `rev:` is a git tag that the hook's author publishes, so, as for
+    # A hook `rev:` is a git tag that the hook's author publishes. As for
     # github-actions above, the cooldown gives time for a compromised or broken
     # release to be found and reported before Dependabot proposes it.
     cooldown:
