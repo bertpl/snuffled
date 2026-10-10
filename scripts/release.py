@@ -221,8 +221,8 @@ def step_10_finalize_changelog(version: str) -> None:
         else:
             new_body_lines.append(line)
             i += 1
-    # The match ends at the next '## ' heading, so the finalized section ends in a blank line
-    # that keeps it apart from the previous release's heading. At end-of-file there is no next
+    # The match `m` ends where the next '## ' heading starts, so the finalized section needs its
+    # own trailing blank line to stay apart from that heading. At end-of-file there is no next
     # heading, and a single newline ends the file.
     tail = text[m.end() :]
     new_body = "".join(new_body_lines).rstrip() + ("\n\n" if tail else "\n")

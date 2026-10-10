@@ -83,9 +83,9 @@ jobs:
     needs: [preflight]
     uses: ./.github/workflows/_unit_tests.yml
 
-  # Tests the built wheel, which the editable-install matrix above never sees.
-  # release_tag.yml runs the same check before publishing.
-  package:
+  # The package check tests the built wheel. The `test` job installs snuffled
+  # in editable mode, so that job never tests the wheel.
+  package-check:
     needs: [preflight]
     uses: ./.github/workflows/_package_check.yml
 
@@ -125,7 +125,7 @@ jobs:
     # itself through a job-level `if:` reports `skipped` and fails the gate, so
     # such a condition belongs inside the job.
     if: always()
-    needs: [preflight, pre-commit, test, package, pip-audit]
+    needs: [preflight, pre-commit, test, package-check, pip-audit]
     runs-on: ubuntu-latest
     steps:
       # The check runs in the script: a step-level `if:` that skipped this

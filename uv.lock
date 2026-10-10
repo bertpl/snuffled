@@ -2629,7 +2629,7 @@ dev = [
     { name = "ruff" },
     { name = "ty" },
 ]
-package = [
+package-check = [
     { name = "check-wheel-contents" },
 ]
 test = [
@@ -2666,7 +2666,7 @@ dev = [
     { name = "ruff", specifier = ">=0.15.11" },
     { name = "ty", specifier = "==0.0.56" },
 ]
-package = [{ name = "check-wheel-contents", specifier = ">=0.6.2" }]
+package-check = [{ name = "check-wheel-contents", specifier = ">=0.6.2" }]
 test = [
     { name = "hypothesis", specifier = ">=6.100" },
     { name = "pytest", specifier = ">=8.0" },

@@ -43,8 +43,8 @@ jobs:
     needs: validate-tag-version
     uses: ./.github/workflows/_unit_tests.yml
 
-  # Build + install gate: the same package check that PRs run behind ci-gate.
-  # The publish job below publishes the exact artifact that this job built and tested.
+  # This job tests the built wheel before it is published. The publish-to-prod job
+  # publishes this job's artifact exactly as this job built and tested it.
   package-check:
     needs: validate-tag-version
     uses: ./.github/workflows/_package_check.yml
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     permissions:
-      contents: read       # job-level perms replace the top-level block, so re-list the read baseline
+      contents: read       # job-level permissions replace the top-level block, so re-list contents: read
       id-token: write      # mandatory for Trusted Publishing; also signs the keyless provenance
       attestations: write  # store SLSA build provenance for the wheel + sdist
     steps:

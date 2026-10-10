@@ -1,10 +1,14 @@
-# Reusable package-integrity check: build the distribution once, verify the
-# wheel statically, then install it into a bare environment and run the test
-# suite against it. Guards the packaging layer (a missing subpackage or
-# py.typed, shipped code that imports a dev-only distribution) that the
-# editable-install test matrix can never see.
-# Called from the PR pipeline (behind ci-gate) and from the release pipeline
-# (before publish, which publishes the exact artifact tested here).
+# Reusable package-integrity check, in 3 steps:
+#   - build the distribution once;
+#   - check the wheel statically;
+#   - install the wheel into a bare environment and run the test suite against it.
+#
+# The check catches packaging errors (a missing subpackage or py.typed file,
+# shipped code that imports a dev-only dependency) that the `test` job cannot
+# see, because that job installs snuffled in editable mode.
+#
+# The release pipeline publishes the `dist` artifact that the build job uploads,
+# so renaming that artifact breaks the release.
 name: Package check
 
 on:
@@ -28,10 +32,10 @@ jobs:
       - name: Build sdist + wheel
         run: uv build
 
-      # Static check: catches structurally broken wheels (empty, missing the
-      # declared import package, ...) before the install job spins up.
+      # This static check catches structurally broken wheels (empty, missing the
+      # declared import package, ...) before the install job starts.
       - name: Check wheel contents
-        run: uv run --frozen --no-default-groups --group package check-wheel-contents dist/*.whl
+        run: uv run --frozen --no-default-groups --group package-check check-wheel-contents dist/*.whl
 
       - name: Upload distribution artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -58,21 +62,21 @@ jobs:
           name: dist
           path: dist
 
-      # Bare environment: the test dependencies come lockfile-pinned from the
-      # test group (--only-group keeps the project and its runtime dependencies
-      # out), and snuffled comes only from the built wheel, which brings its own
-      # runtime dependencies.
+      # The environment starts empty. The test dependencies are installed at the
+      # versions pinned in uv.lock, from the `test` group only (`--only-group`
+      # leaves out snuffled and its runtime dependencies). snuffled and its
+      # runtime dependencies then come from the built wheel alone.
       - name: Install the built wheel into a bare environment
         run: |
           uv export --frozen --no-emit-project --only-group test -o requirements.txt
-          uv venv blind-venv
-          uv pip install --python blind-venv/bin/python -r requirements.txt
+          uv venv bare-venv
+          uv pip install --python bare-venv/bin/python -r requirements.txt
           WHEEL=(dist/*.whl)
-          uv pip install --python blind-venv/bin/python "snuffled @ file://$PWD/${WHEEL[0]}"
+          uv pip install --python bare-venv/bin/python "snuffled @ file://$PWD/${WHEEL[0]}"
 
       # snuffled's package sits at the repo root, and pytest puts the repo root
       # on sys.path because tests/ is a package. The checkout's copy would then
-      # hide the installed wheel, so it is deleted.
+      # hide the installed wheel, so this step deletes the checkout's copy.
       - name: Remove the source package from the checkout
         run: rm -rf snuffled
 
@@ -80,4 +84,4 @@ jobs:
         env:
           # tests/conftest.py fails the run unless snuffled is imported from site-packages
           SNUFFLED_TESTS_NEEDS_INSTALLED_WHEEL: "1"
-        run: blind-venv/bin/python -m pytest tests/
+        run: bare-venv/bin/python -m pytest tests/
