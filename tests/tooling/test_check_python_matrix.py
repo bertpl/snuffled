@@ -1,25 +1,10 @@
 """Test the CI-matrix coverage check in scripts/check_python_matrix.py."""
 
-import importlib.util
-import sys
-from pathlib import Path
-
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-SCRIPT = REPO_ROOT / "scripts" / "check_python_matrix.py"
+from .helpers import load_script
 
-
-def _load_module():
-    """Import the check by path: scripts/ is maintainer tooling, not an importable package."""
-    spec = importlib.util.spec_from_file_location("check_python_matrix", SCRIPT)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-check_python_matrix = _load_module()
+check_python_matrix = load_script("check_python_matrix")
 
 
 def test_reads_only_quoted_matrix_python_values(tmp_path):

@@ -221,9 +221,13 @@ def step_10_finalize_changelog(version: str) -> None:
         else:
             new_body_lines.append(line)
             i += 1
-    new_body = "".join(new_body_lines).rstrip() + "\n"
+    # The match ends at the next '## ' heading, so the finalized section ends in a blank line
+    # that keeps it apart from the previous release's heading. At end-of-file there is no next
+    # heading, and a single newline ends the file.
+    tail = text[m.end() :]
+    new_body = "".join(new_body_lines).rstrip() + ("\n\n" if tail else "\n")
     new_header = f"## {version} ({date.today().isoformat()})\n"
-    text = text[: m.start()] + new_header + new_body + text[m.end() :]
+    text = text[: m.start()] + new_header + new_body + tail
     CHANGELOG.write_text(text)
 
 
