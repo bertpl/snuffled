@@ -2,6 +2,10 @@
 
 Thanks for your interest in contributing.
 
+## Security
+
+Found a vulnerability? Please report it privately — see [`SECURITY.md`](SECURITY.md). Do not open a public issue for it.
+
 ## Dev setup
 
 One-time setup on a fresh clone:
@@ -15,10 +19,13 @@ This syncs dev dependencies via `uv` and installs the pre-commit hooks.
 ## Common commands
 
 ```bash
-make test    # Run the test suite (pytest)
-make format  # Format and auto-fix with ruff
-make lint    # Run all pre-commit hooks (ruff, ty, file hygiene, ...) over all files
+make test      # Run the test suite (pytest)
+make test-cov  # Run the test suite with JIT off and report coverage
+make format    # Format and auto-fix with ruff
+make lint      # Run all pre-commit hooks (ruff, ty, file hygiene, ...) over all files
 ```
+
+`make test-cov` gives a local coverage estimate on one Python version. The CI coverage check combines the coverage of every Python version, so a line that runs only on another version can read as uncovered locally.
 
 ## Branching
 
