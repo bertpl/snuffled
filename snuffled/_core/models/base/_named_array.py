@@ -9,7 +9,8 @@ class NamedArray:
 
         Args:
             names: Names of the array elements; each name may appear only once.
-            values: Values of the array elements, one per name. `None` gives all zeros.
+            values: Values of the array elements, one per name. `None` gives all zeros. The array keeps this list,
+                not a copy, so setting an element also changes the caller's list.
 
         Raises:
             ValueError: If a name appears more than once, or if `values` does not hold exactly one value per name.
@@ -58,7 +59,7 @@ class NamedArray:
     #  Internals
     # -------------------------------------------------------------------------
     def _key_to_index(self, key: str | int) -> int:
-        """Return the index for a key, which is either a name or an index.
+        """Return the index for a name or an int index; an int is returned as is, without a range check.
 
         Raises:
             KeyError: If `key` is a name that is not in the array.
