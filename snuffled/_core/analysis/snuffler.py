@@ -68,8 +68,8 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         return roots_props + function_props + diagnostic_props
 
     def _extract(self, prop: str) -> float:
-        # Property names are StrEnum members, which equal their plain-string values, so this check
-        # accepts both forms of a name.
+        # Property names are StrEnum members, which equal their plain-string values, so the
+        # membership test against `supported_properties()` accepts both a member and its string.
         for analyser in (self._roots_analyser, self._function_analyser, self._diagnostics_analyser):
             if prop in analyser.supported_properties():
                 return analyser.extract(prop)
