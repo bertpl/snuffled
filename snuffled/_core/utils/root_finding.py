@@ -66,8 +66,8 @@ def find_odd_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_
 def find_root(fun: Callable[[float], float], x_min: float, x_max: float, dx_min: float) -> Root:
     """Finds a root of fun(x) in interval [x_min, x_max], assuming fun(x_min) * fun(x_max) < 0.
 
-    NOTE 1: This function can return both ODD or EVEN roots, i.e. with derig_sign!=0 or deriv_sign==0.
-            Use find_odd_root(.) for finding any root, including even ones.
+    NOTE 1: This function can return both ODD or EVEN roots, i.e. with deriv_sign!=0 or deriv_sign==0.
+            Use find_odd_root(.) to find only odd roots.
 
     NOTE 2: We make sure we try to identify the root width (x_max-x_min) tightly.
 
