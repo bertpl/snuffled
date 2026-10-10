@@ -41,7 +41,7 @@ classifiers = [
 [dependency-groups]
 # This group holds every package that the test suite imports besides snuffled and its runtime
 # dependencies. The CI package check (.github/workflows/_package_check.yml) installs only this
-# group next to the built wheel, so a test that needs more fails there.
+# group next to the built wheel, so a test that imports a package outside this group fails there.
 test = [
     "hypothesis>=6.100",
     "pytest>=8.0",
@@ -50,12 +50,12 @@ test = [
 ]
 # The CI package check (.github/workflows/_package_check.yml) runs this group's tool to check the
 # built wheel statically.
-package-check = [
+wheel-contents-check = [
     "check-wheel-contents>=0.6.2",
 ]
 dev = [
     { include-group = "test" },
-    { include-group = "package-check" },
+    { include-group = "wheel-contents-check" },
     "genbadge[all]>=1.1.2",
     "jupyterlab>=4.4.6",
     "matplotlib>=3.10.5",

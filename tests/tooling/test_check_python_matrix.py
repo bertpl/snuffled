@@ -2,9 +2,9 @@
 
 import pytest
 
-from .helpers import load_script
+from .helpers import import_script
 
-check_python_matrix = load_script("check_python_matrix")
+check_python_matrix = import_script("check_python_matrix")
 
 
 def test_reads_only_quoted_matrix_python_values(tmp_path):

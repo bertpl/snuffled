@@ -83,8 +83,8 @@ jobs:
     needs: [preflight]
     uses: ./.github/workflows/_unit_tests.yml
 
-  # The package check tests the built wheel. The `test` job installs snuffled
-  # in editable mode, so that job never tests the wheel.
+  # The package check tests the built wheel; _package_check.yml says why the
+  # `test` job cannot.
   package-check:
     needs: [preflight]
     uses: ./.github/workflows/_package_check.yml

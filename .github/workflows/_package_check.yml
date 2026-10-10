@@ -1,11 +1,12 @@
-# Reusable package-integrity check, in 3 steps:
+# This reusable workflow checks the package's integrity in 3 steps:
 #   - build the distribution once;
 #   - check the wheel statically;
 #   - install the wheel into a bare environment and run the test suite against it.
 #
 # The check catches packaging errors (a missing subpackage or py.typed file,
-# shipped code that imports a dev-only dependency) that the `test` job cannot
-# see, because that job installs snuffled in editable mode.
+# shipped code that imports a dev-only dependency outside the `test` group)
+# that the `test` job cannot see, because that job installs snuffled in
+# editable mode.
 #
 # The release pipeline publishes the `dist` artifact that the build job uploads,
 # so renaming that artifact breaks the release.
@@ -35,7 +36,7 @@ jobs:
       # This static check catches structurally broken wheels (empty, missing the
       # declared import package, ...) before the install job starts.
       - name: Check wheel contents
-        run: uv run --frozen --no-default-groups --group package-check check-wheel-contents dist/*.whl
+        run: uv run --frozen --no-default-groups --group wheel-contents-check check-wheel-contents dist/*.whl
 
       - name: Upload distribution artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -62,10 +63,10 @@ jobs:
           name: dist
           path: dist
 
-      # The environment starts empty. The test dependencies are installed at the
-      # versions pinned in uv.lock, from the `test` group only (`--only-group`
-      # leaves out snuffled and its runtime dependencies). snuffled and its
-      # runtime dependencies then come from the built wheel alone.
+      # The bare environment gets its packages in 2 steps:
+      #   - the test dependencies, at the versions pinned in uv.lock, from the `test`
+      #     group only (`--only-group` leaves out snuffled and its runtime dependencies);
+      #   - snuffled and its runtime dependencies, from the built wheel alone.
       - name: Install the built wheel into a bare environment
         run: |
           uv export --frozen --no-emit-project --only-group test -o requirements.txt
@@ -74,9 +75,9 @@ jobs:
           WHEEL=(dist/*.whl)
           uv pip install --python bare-venv/bin/python "snuffled @ file://$PWD/${WHEEL[0]}"
 
-      # snuffled's package sits at the repo root, and pytest puts the repo root
-      # on sys.path because tests/ is a package. The checkout's copy would then
-      # hide the installed wheel, so this step deletes the checkout's copy.
+      # The `snuffled/` source directory sits at the repo root, and pytest puts the
+      # repo root on sys.path because tests/ is a package. Python would then import
+      # that source directory, not the installed wheel, so this step deletes it.
       - name: Remove the source package from the checkout
         run: rm -rf snuffled
 

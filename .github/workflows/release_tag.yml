@@ -10,7 +10,7 @@ permissions:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   # Never cancel a release run: a run cancelled after the PyPI upload would leave
-  # that version on PyPI with no GitHub Release and no provenance bundle.
+  # the tagged version on PyPI with no GitHub Release and no provenance bundle.
   cancel-in-progress: false
 
 jobs:
@@ -43,8 +43,7 @@ jobs:
     needs: validate-tag-version
     uses: ./.github/workflows/_unit_tests.yml
 
-  # This job tests the built wheel before it is published. The publish-to-prod job
-  # publishes this job's artifact exactly as this job built and tested it.
+  # This job tests the built wheel before it is published.
   package-check:
     needs: validate-tag-version
     uses: ./.github/workflows/_package_check.yml
@@ -58,6 +57,7 @@ jobs:
       id-token: write      # mandatory for Trusted Publishing; also signs the keyless provenance
       attestations: write  # store SLSA build provenance for the wheel + sdist
     steps:
+      # This job publishes the package-check job's artifact exactly as that job built and tested it.
       - name: Download the tested distribution artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:

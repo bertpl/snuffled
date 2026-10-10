@@ -4,9 +4,9 @@ from datetime import date
 
 import pytest
 
-from .helpers import load_script
+from .helpers import import_script
 
-release = load_script("release")
+release = import_script("release")
 
 
 @pytest.mark.parametrize(
