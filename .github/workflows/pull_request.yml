@@ -110,16 +110,26 @@ jobs:
 
   ci-gate:
     name: CI gate
-    # The single stable required check on main: branch protection requires only
-    # this, so the job set can change without re-touching repo settings.
-    # `always()` is load-bearing — without it the gate is skipped when an
-    # upstream job fails, and GitHub treats a skipped required check as passing.
+    # The gate is the single stable required check on main: branch protection
+    # requires only the gate, so the jobs in `needs` can change without touching
+    # repo settings. `always()` keeps the gate running after an upstream
+    # failure, because GitHub treats a skipped required check as passing.
+    #
+    # The gate requires `success` from every job in `needs`. A job that skips
+    # itself through a job-level `if:` reports `skipped` and fails the gate, so
+    # such a condition belongs inside the job.
     if: always()
     needs: [preflight, pre-commit, test, pip-audit]
     runs-on: ubuntu-latest
     steps:
-      - name: Fail if any required job did not succeed
-        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+      # The check runs in the script: a step-level `if:` that skipped this
+      # step would let the gate pass.
+      - name: Fail unless every required job succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
         run: |
-          echo "::error::One or more required jobs failed."
-          exit 1
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          if ! jq -e 'all(.[]; .result == "success")' <<< "$NEEDS" > /dev/null; then
+            echo "::error::One or more required jobs did not succeed."
+            exit 1
+          fi
