@@ -110,16 +110,35 @@ jobs:
 
   ci-gate:
     name: CI gate
-    # The single stable required check on main: branch protection requires only
-    # this, so the job set can change without re-touching repo settings.
-    # `always()` is load-bearing — without it the gate is skipped when an
-    # upstream job fails, and GitHub treats a skipped required check as passing.
+    # The gate is the single stable required check on main: branch protection
+    # requires only the gate, so the job set can change without re-touching repo
+    # settings. Without `always()`, an upstream failure would skip the gate, and
+    # GitHub treats a skipped required check as passing.
+    #
+    # The gate passes only when every job in `needs` ended in `success`.
+    #
+    # A job skipped by its own `if:` reports `skipped`, the same result as a job
+    # skipped because an upstream job failed or was cancelled. The gate cannot
+    # tell these cases apart, so it fails on any `skipped` result, and no job in
+    # `needs` may skip itself.
+    #
+    # A job whose work applies only to some runs therefore always runs, and
+    # inside the job it:
+    #   - decides whether the work applies;
+    #   - succeeds without doing the work when it does not;
+    #   - sets a job output if a later job needs to know whether the work ran.
     if: always()
     needs: [preflight, pre-commit, test, pip-audit]
     runs-on: ubuntu-latest
     steps:
-      - name: Fail if any required job did not succeed
-        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+      # The script checks the job results itself: a step-level `if:` can skip
+      # the step silently and let the gate pass.
+      - name: Fail unless every required job succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
         run: |
-          echo "::error::One or more required jobs failed."
-          exit 1
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          if ! jq -e 'all(.[]; .result == "success")' <<< "$NEEDS" > /dev/null; then
+            echo "::error::One or more required jobs did not succeed."
+            exit 1
+          fi
