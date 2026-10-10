@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
 from time import perf_counter_ns, time_ns
-from typing import Generic, TypeVar
 
 from snuffled._core.models import NamedArray, PropertyExtractionStats
 
 from ._function_sampler import FunctionSampler
 
-NA = TypeVar("NA", bound=NamedArray)
 
-
-class PropertyExtractor(ABC, Generic[NA]):
+class PropertyExtractor[NA: NamedArray](ABC):
     # =================================================================================================
     #  Main API
     # =================================================================================================

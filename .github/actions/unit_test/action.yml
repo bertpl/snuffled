@@ -56,6 +56,10 @@ runs:
           JIT: ${{ inputs.jit }}
           # distinct per-combo data file so the coverage job combines rather than overwrites
           COVERAGE_FILE: .coverage.${{ inputs.python_version }}-${{ inputs.dependency_resolution }}-${{ inputs.jit }}
+          # uv-managed builds only: without this, uv takes the runner image's own interpreter
+          # whenever one matches the requested version, so a matrix entry would test whatever
+          # build and patch release that image happens to carry.
+          UV_PYTHON_PREFERENCE: only-managed
         run: |
           # JIT-off legs both disable compilation and carry coverage — one implies the other.
           # --cov-fail-under=0: the gate is cumulative (coverage job), not per-combo.
@@ -73,6 +77,7 @@ runs:
           PY: ${{ env.PYTHON_EFFECTIVE_VERSION }}
           RES: ${{ inputs.dependency_resolution }}
           JIT: ${{ inputs.jit }}
+          UV_PYTHON_PREFERENCE: only-managed  # same interpreter as the test step above
         run: |
           [ "$JIT" = "off" ] && export NUMBA_DISABLE_JIT=1
           # -o addopts="" clears `-n auto`, so collection runs single-process (xdist off);
