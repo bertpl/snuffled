@@ -23,7 +23,7 @@ check_python_matrix = _load_module()
 
 
 def test_reads_only_quoted_matrix_python_values(tmp_path):
-    """The parser picks up quoted `python:` matrix entries and ignores every `python_version:` key."""
+    """`read_tested_versions` picks up quoted `python:` matrix entries and ignores every `python_version:` key."""
     # --- arrange ----------------------
     workflow = tmp_path / "wf.yml"
     workflow.write_text(
@@ -46,15 +46,16 @@ def test_reads_only_quoted_matrix_python_values(tmp_path):
     "declared_versions, tested_versions, expected_uncovered",
     [
         ({"3.12", "3.15"}, {"3.12", "3.15"}, set()),
-        ({"3.15"}, {"3.15.0rc1"}, set()),  # an entry pinned to a fuller version of the same minor covers it
-        ({"3.1"}, {"3.15"}, {"3.1"}),  # 3.15 is a different minor than 3.1
+        ({"3.15"}, {"3.15.0rc1"}, set()),  # a 3.15.0rc1 entry covers the declared minor version 3.15
+        ({"3.1"}, {"3.15"}, {"3.1"}),  # a 3.15 entry does not cover minor version 3.1
         ({"3.12", "3.15"}, {"3.12", "3.14"}, {"3.15"}),
     ],
 )
-def test_uncovered_versions(declared_versions, tested_versions, expected_uncovered):
-    """A declared minor counts as covered by an exact entry or an entry pinned to a fuller version of that minor."""
+def test_find_uncovered_versions(declared_versions, tested_versions, expected_uncovered):
+    """A declared minor version counts as covered by an entry with the same version, or by an entry whose version
+    starts with it followed by a dot."""
     # --- act --------------------------
-    uncovered = check_python_matrix.uncovered_versions(declared_versions, tested_versions)
+    uncovered = check_python_matrix.find_uncovered_versions(declared_versions, tested_versions)
 
     # --- assert -----------------------
     assert uncovered == expected_uncovered
