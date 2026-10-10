@@ -1,4 +1,4 @@
-"""Tests for the CI-matrix coverage check (scripts/check_python_matrix.py)."""
+"""Test the CI-matrix coverage check in scripts/check_python_matrix.py."""
 
 import importlib.util
 import sys
@@ -19,7 +19,7 @@ def _load_module():
     return module
 
 
-_mod = _load_module()
+check_python_matrix = _load_module()
 
 
 def test_reads_only_quoted_matrix_python_values(tmp_path):
@@ -36,47 +36,47 @@ def test_reads_only_quoted_matrix_python_values(tmp_path):
     )
 
     # --- act --------------------------
-    tested = _mod.read_tested_versions(workflow)
+    tested_versions = check_python_matrix.read_tested_versions(workflow)
 
     # --- assert -----------------------
-    assert tested == {"3.12", "3.15.0rc1"}
+    assert tested_versions == {"3.12", "3.15.0rc1"}
 
 
 @pytest.mark.parametrize(
-    "declared, tested, expected_uncovered",
+    "declared_versions, tested_versions, expected_uncovered",
     [
-        ({"3.12", "3.15"}, {"3.12", "3.15"}, set()),  # exact matches
-        ({"3.15"}, {"3.15.0rc1"}, set()),  # a fuller pin of the same minor covers it
+        ({"3.12", "3.15"}, {"3.12", "3.15"}, set()),
+        ({"3.15"}, {"3.15.0rc1"}, set()),  # an entry pinned to a fuller version of the same minor covers it
         ({"3.1"}, {"3.15"}, {"3.1"}),  # 3.15 is a different minor than 3.1
-        ({"3.12", "3.15"}, {"3.12", "3.14"}, {"3.15"}),  # no entry for 3.15
+        ({"3.12", "3.15"}, {"3.12", "3.14"}, {"3.15"}),
     ],
 )
-def test_uncovered_versions(declared, tested, expected_uncovered):
-    """A declared minor counts as covered by an exact entry or a fuller pin of that minor, and by nothing else."""
+def test_uncovered_versions(declared_versions, tested_versions, expected_uncovered):
+    """A declared minor counts as covered by an exact entry or an entry pinned to a fuller version of that minor."""
     # --- act --------------------------
-    uncovered = _mod.uncovered_versions(declared, tested)
+    uncovered = check_python_matrix.uncovered_versions(declared_versions, tested_versions)
 
     # --- assert -----------------------
     assert uncovered == expected_uncovered
 
 
 @pytest.mark.parametrize(
-    "declared, tested, expected_exit_code",
+    "declared_versions, tested_versions, expected_exit_code",
     [
-        ({"3.12", "3.15"}, {"3.12", "3.14"}, 1),  # 3.15 has no matrix entry
+        ({"3.12", "3.15"}, {"3.12", "3.14"}, 1),
         ({"3.12"}, {"3.12", "3.14"}, 0),  # an extra matrix entry is fine
     ],
 )
 def test_main_fails_only_on_a_declared_version_without_a_matrix_entry(
-    monkeypatch, declared, tested, expected_exit_code
+    monkeypatch, declared_versions, tested_versions, expected_exit_code
 ):
     """The check fails on a declared version that has no matrix entry, and accepts extra matrix entries."""
     # --- arrange ----------------------
-    monkeypatch.setattr(_mod, "read_declared_versions", lambda: declared)
-    monkeypatch.setattr(_mod, "read_tested_versions", lambda: tested)
+    monkeypatch.setattr(check_python_matrix, "read_declared_versions", lambda: declared_versions)
+    monkeypatch.setattr(check_python_matrix, "read_tested_versions", lambda: tested_versions)
 
     # --- act --------------------------
-    exit_code = _mod.main()
+    exit_code = check_python_matrix.main()
 
     # --- assert -----------------------
     assert exit_code == expected_exit_code
@@ -85,4 +85,4 @@ def test_main_fails_only_on_a_declared_version_without_a_matrix_entry(
 def test_repo_matrix_covers_declared_versions():
     """The repo's own `.python-versions` and CI test matrix satisfy the check."""
     # --- act / assert -----------------
-    assert _mod.main() == 0
+    assert check_python_matrix.main() == 0
