@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- **Breaking:** Invert `Diagnostic.INTERVAL_NOT_BRACKETING_READY`, so that 1.0 means the interval is not ready for a bracketing solver
 
 ### Deprecated
 

@@ -12,7 +12,7 @@ from snuffled._core.models import Diagnostic
 #  Test functions
 # =================================================================================================
 def f_linear(x: float, fx_left: float, fx_right: float) -> float:
-    """Linear function going through (-1, fx_left) and (1, fx_right)"""
+    """Linear function going through (-1, -fx_left) and (1, fx_right)"""
     return ((x - 1) / 2) * fx_left + ((x + 1) / 2) * fx_right
 
 
@@ -22,16 +22,16 @@ def f_linear(x: float, fx_left: float, fx_right: float) -> float:
 @pytest.mark.parametrize(
     "fun, expected_result",
     [
-        (partial(f_linear, fx_left=-1, fx_right=1), 0.0),
-        (partial(f_linear, fx_left=-1e-9, fx_right=1), 0.0),
-        (partial(f_linear, fx_left=-1, fx_right=1e-9), 0.0),
-        (partial(f_linear, fx_left=1e-250, fx_right=-1e-250), 0.0),
+        (partial(f_linear, fx_left=-1, fx_right=1), 1.0),
+        (partial(f_linear, fx_left=-1e-9, fx_right=1), 1.0),
+        (partial(f_linear, fx_left=-1, fx_right=1e-9), 1.0),
+        (partial(f_linear, fx_left=1e-250, fx_right=-1e-250), 1.0),
         (partial(f_linear, fx_left=0, fx_right=1), 0.5),
         (partial(f_linear, fx_left=-1, fx_right=0), 0.5),
         (partial(f_linear, fx_left=-1e-250, fx_right=0), 0.5),
-        (partial(f_linear, fx_left=1, fx_right=2), 1.0),
-        (partial(f_linear, fx_left=-1, fx_right=-2), 1.0),
-        (partial(f_linear, fx_left=1e-250, fx_right=1e-250), 1.0),
+        (partial(f_linear, fx_left=1, fx_right=2), 0.0),
+        (partial(f_linear, fx_left=-1, fx_right=-2), 0.0),
+        (partial(f_linear, fx_left=1e-250, fx_right=1e-250), 0.0),
     ],
 )
 def test_function_analyser_not_bracketing_ready(fun: Callable[[float], float], expected_result: float):
