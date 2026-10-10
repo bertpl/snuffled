@@ -1,4 +1,26 @@
 version: 2
+# These settings apply to every entry below:
+#   - Each ecosystem runs on its own weekday:
+#     - Branch protection requires a PR branch to be up to date with main, so
+#       when 2 Dependabot PRs open together, the first one to auto-merge leaves
+#       the other behind main until someone updates it by hand.
+#     - Dependabot's actual run times drift by hours, so a different weekday
+#       per ecosystem is the one schedule setting that keeps 2 Dependabot PRs
+#       from opening together. The 01:00 local time makes it likely that
+#       nothing else is being pushed to main when a PR opens.
+#   - Minor/patch bumps and major bumps go in separate groups:
+#     - The auto-merge workflow (.github/workflows/dependabot_automerge.yml)
+#       uses each PR's update type to decide whether to merge it without
+#       review.
+#     - The auto-merge workflow treats a group PR that contains even 1 major
+#       bump as major, so a mixed group would keep every minor and patch bump
+#       waiting for review too.
+#     - The minor/patch PR and the major-bump PR of the same ecosystem can
+#       still open on the same day; the major-bump PR waits for review anyway,
+#       so updating its branch by hand during that review costs no extra step.
+#   - The `chore` commit-message prefix makes the PR title (and thus the squash
+#     commit on main) follow the repo's `<type>: <summary>` convention that CI
+#     enforces.
 updates:
   - package-ecosystem: "github-actions"
     # "/" scans .github/workflows; each composite action under .github/actions
@@ -9,18 +31,21 @@ updates:
       - "/.github/actions/pre_commit"
     schedule:
       interval: "weekly"
-    # `chore` prefix makes the PR title (and thus the squash commit on main)
-    # follow the repo's `<type>: <summary>` convention that CI enforces.
+      day: "monday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
     groups:
-      actions:  # one batched PR for all action bumps
+      actions-minor-patch:  # This group auto-merges once CI passes.
         patterns: ["*"]
-    # Let releases age before PRs open: auto-merged bumps then sit long enough
-    # for upstream compromises to surface before they can land. github-actions
-    # supports only default-days (semver-granular cooldowns are ignored), so
-    # the conservative major-bump delay applies to everything; security
-    # updates bypass cooldown regardless.
+        update-types: ["minor", "patch"]
+      actions-major:  # This group waits for review.
+        patterns: ["*"]
+        update-types: ["major"]
+    # Dependabot opens a PR only for a release older than the cooldown, so a
+    # compromised upstream release has time to be found and withdrawn before
+    # auto-merge can merge it. Security updates bypass cooldown regardless.
     cooldown:
       default-days: 14
 
@@ -34,13 +59,47 @@ updates:
     versioning-strategy: "lockfile-only"
     schedule:
       interval: "weekly"
-    # `chore` prefix makes the PR title (and thus the squash commit on main)
-    # follow the repo's `<type>: <summary>` convention that CI enforces.
+      day: "tuesday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore"
     groups:
-      python:  # one batched PR for all Python-dependency bumps
+      python-minor-patch:  # This group auto-merges once CI passes.
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+      python-major:  # This group waits for review.
+        patterns: ["*"]
+        update-types: ["major"]
+    # The 14-day cooldown matches PyPI's window for adding files: PyPI rejects
+    # new files for a release once it is 14 days old, so no file can be added
+    # to a release after Dependabot proposes it. As for github-actions above,
+    # the cooldown also gives a compromised release time to be found and
+    # withdrawn before auto-merge can merge it.
     cooldown:
-      default-days: 7  # zizmor's dependabot-cooldown floor; ~no-op at weekly cadence anyway
-      semver-major-days: 14
+      default-days: 14
+
+  - package-ecosystem: "pre-commit"
+    # Dependabot bumps the `rev:` of each hook that .pre-commit-config.yaml
+    # pulls from a remote repo. The hooks under `repo: local` run tools pinned
+    # in uv.lock, which the uv entry above updates.
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "01:00"
+      timezone: "Europe/Zurich"
+    commit-message:
+      prefix: "chore"
+    groups:
+      pre-commit-minor-patch:  # This group auto-merges once CI passes.
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      pre-commit-major:  # This group waits for review.
+        patterns: ["*"]
+        update-types: ["major"]
+    # A hook `rev:` is a git tag that the hook's author publishes. As for
+    # github-actions above, the cooldown gives time for a compromised or broken
+    # release to be found and reported before Dependabot proposes it.
+    cooldown:
+      default-days: 14
