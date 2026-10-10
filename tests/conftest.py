@@ -17,8 +17,27 @@ compiled behavior — carry the `only_with_numba_jit` marker (an importable alia
 below auto-skips them whenever JIT is disabled, so the coverage mode never runs them.
 """
 
+import os
+from pathlib import Path
+
 import numba
 import pytest
+
+import snuffled
+
+
+def pytest_sessionstart(session: pytest.Session) -> None:
+    """Fail the run when `SNUFFLED_TESTS_NEEDS_INSTALLED_WHEEL` is `1` and snuffled is not imported from site-packages.
+
+    The package check sets the variable when it runs the suite against the built wheel. Without this
+    check, a source tree on `sys.path` would let every test import the source, so a run meant to test
+    the wheel would pass without testing it.
+    """
+    if (
+        os.environ.get("SNUFFLED_TESTS_NEEDS_INSTALLED_WHEEL") == "1"
+        and "site-packages" not in Path(snuffled.__file__).parts
+    ):
+        pytest.exit(f"snuffled is imported from {snuffled.__file__}, not from the installed wheel.", returncode=1)
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:

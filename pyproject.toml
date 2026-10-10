@@ -39,16 +39,28 @@ classifiers = [
 ]
 
 [dependency-groups]
-dev = [
-    "genbadge[all]>=1.1.2",
+# This group holds every package that the test suite imports besides snuffled and its runtime
+# dependencies. The CI package check (.github/workflows/_package_check.yml) installs only this
+# group next to the built wheel, so a test that imports a package outside this group fails there.
+test = [
     "hypothesis>=6.100",
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+    "pytest-xdist>=3.5.0",
+]
+# The CI package check (.github/workflows/_package_check.yml) runs this group's tool to check the
+# built wheel statically.
+wheel-contents-check = [
+    "check-wheel-contents>=0.6.2",
+]
+dev = [
+    { include-group = "test" },
+    { include-group = "wheel-contents-check" },
+    "genbadge[all]>=1.1.2",
     "jupyterlab>=4.4.6",
     "matplotlib>=3.10.5",
     "notebook>=7.4.5",
     "pre-commit>=4.0",
-    "pytest>=8.0",
-    "pytest-cov>=6.0",
-    "pytest-xdist>=3.5.0",
     # exact tool versions are pinned by the tracked uv.lock (used by pre-commit,
     # `make lint`, and CI); these ranges just set the floor.
     "ruff>=0.15.11",

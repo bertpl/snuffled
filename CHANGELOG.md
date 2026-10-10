@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Drop support for Python 3.11
+
 ## 0.1.8 (2026-07-12)
 
 ### Added
@@ -41,14 +42,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `extract_all()` no longer crashes on roots very close to an interval edge (such roots are excluded from analysis)
 - `extract_all()` no longer crashes on NaN-returning functions; pole / ±inf functions now produce finite scores (previously NaN)
 - `extract_all()` no longer crashes on all-zeros / zero-magnitude functions
+
 ## 0.1.7 (2026-07-11)
 
 ### Changed
 - **breaking:** numba is now a required dependency (was the optional `snuffled[numba]` extra); pure-Python execution remains available for development via `NUMBA_DISABLE_JIT=1`
+
 ## 0.1.6 (2026-07-06)
 
 ### Security
 - Releases now ship SLSA build provenance and a GitHub Release with the changelog excerpt
+
 ## 0.1.5 (2026-07-06)
 
 ### Added
@@ -62,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix broken splash screen CI job by committing a locally generated splash image
+
 ## 0.1.4 (2025-11-07)
 
 ### Changed
