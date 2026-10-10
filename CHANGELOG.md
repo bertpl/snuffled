@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Breaking:** Invert `Diagnostic.INTERVAL_NOT_BRACKETING_READY`, so that 1.0 means the interval is not ready for a bracketing solver
+- **Breaking:** Make the `NamedArray` constructor raise `ValueError` when the number of values differs from the number of names, or when a name repeats
 
 ### Deprecated
 
