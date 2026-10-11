@@ -13,8 +13,8 @@ from snuffled._core.utils.rng_seed import RngSeed
 # ==================================================================================================
 #  Test functions
 # ==================================================================================================
-def _f_nan_middle(x: float) -> float:
-    """Return x, but NaN for |x| < 0.3, so that the only sign change lies inside the NaN region."""
+def _f_nan_at_root(x: float) -> float:
+    """Return x, but NaN for |x| < 0.3, so that the only sign change, at x = 0, lies inside the NaN region."""
     if abs(x) < 0.3:
         return float("nan")
     else:
@@ -98,7 +98,7 @@ def test_f_clips_huge_finite_without_inf_flag():
 # ==================================================================================================
 #  Pipeline: extract_all() completes on functions that return NaN or inf, and flags those values
 # ==================================================================================================
-@pytest.mark.parametrize("fun", [_f_nan_middle, _f_nan_beside_root])
+@pytest.mark.parametrize("fun", [_f_nan_at_root, _f_nan_beside_root])
 def test_extract_all_nan_completes_and_flags(fun: Callable[[float], float]):
     # --- act --------------------------
     props = Snuffler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
