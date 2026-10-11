@@ -43,7 +43,9 @@ class FunctionSampler:
         require_min_n_samples("n_roots", n_roots)
 
         # --- randomization ----------------------
-        self._rng_seed = rng_seed.derive("function_sampler")
+        # the grid is always drawn before the root subset, because finding candidate roots needs the
+        # function's values on the grid, and each is drawn once; so both draws share 1 state
+        self._rng_state = rng_seed.get_derived_seed("function_sampler").new_rng_state()
 
         # --- function properties ----------------
         self._fun = fun
@@ -140,7 +142,7 @@ class FunctionSampler:
             x_max=self.x_max,
             dx_min=self.dx,
             n=self.n_fun_samples,
-            rng_state=self._rng_seed.derive_rng_state("grid"),
+            rng_state=self._rng_state,
         )
 
     @cache
@@ -285,9 +287,7 @@ class FunctionSampler:
             cand_intervals = [
                 cand_intervals[i]
                 for i in sorted(
-                    sample_without_replacement(
-                        self._rng_seed.derive_rng_state("root_subset"), 0, len(cand_intervals), self.n_roots
-                    ).tolist()
+                    sample_without_replacement(self._rng_state, 0, len(cand_intervals), self.n_roots).tolist()
                 )
             ]
 

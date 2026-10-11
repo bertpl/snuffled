@@ -87,12 +87,12 @@ def test_function_sampler_x_values(test_fun_quad, dx: float):
     x_min, x_max = -2.0, 1.0
     n = 1000
     sampler = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, rng_seed=RngSeed(42), n_fun_samples=n, n_roots=100)
+    sampler_2 = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, rng_seed=RngSeed(42), n_fun_samples=n, n_roots=100)
 
     # --- act --------------------------
     x_values = sampler.x_values()
     x_values_2 = sampler.x_values()
-    sampler.x_values.cache_clear()
-    x_values_3 = sampler.x_values()
+    x_values_3 = sampler_2.x_values()  # a new sampler with the same seed draws the same grid
 
     # --- assert -----------------------
     assert np.array_equal(x_values, x_values_2)

@@ -1,11 +1,15 @@
-"""Every random draw gets its own seed, derived from 1 user seed by hashing labels into the user seed.
+"""Every component that draws random numbers gets its own seed, derived from 1 user seed by hashing labels.
 
-Each random draw in snuffled builds its own generator state from a seed that is derived from the
-user's seed by successive `derive` calls, each with its own labels, such as `derive("function_sampler")`
-then `derive("grid")`.
+A component's seed is derived from the user's seed by successive `get_derived_seed` calls, each with
+its own labels, such as `get_derived_seed("roots_analyser")` then `get_derived_seed("root", x)`. Its
+random numbers therefore depend only on the user's seed and those labels.
 
-A draw's random numbers therefore depend only on the user's seed and the labels of those `derive`
-calls: not on which other draws happened before it, nor on how many.
+The components follow 2 rules, so that their results do not depend on the order in which properties
+are extracted:
+
+- each independent sequence of draws has its own generator state; draws that always run in the same
+  order share 1 state, which they advance in place;
+- a component builds all its generator states in its constructor, so a draw never derives a seed.
 """
 
 import hashlib
@@ -41,7 +45,7 @@ class RngSeed:
     # --------------------------------------------------------------------------
     #  Main API
     # --------------------------------------------------------------------------
-    def derive(self, *labels: str | int | float) -> "RngSeed":
+    def get_derived_seed(self, *labels: str | int | float) -> "RngSeed":
         """Return the child seed of this seed for the given labels.
 
         The same labels in the same order always give the same child. Each label is one of:
@@ -60,12 +64,9 @@ class RngSeed:
             hasher.update(self._encode_label(label))
         return RngSeed(int.from_bytes(hasher.digest(), "little", signed=True))
 
-    def derive_rng_state(self, *labels: str | int | float) -> np.ndarray:
-        """Return a new generator state for the child seed of this seed for the given labels.
-
-        Each random draw passes its own labels, so that no 2 draws share a generator state.
-        """
-        return new_rng_state(self.derive(*labels).value)
+    def new_rng_state(self) -> np.ndarray:
+        """Return a new generator state for this seed, as `rng.new_rng_state` builds it from `value`."""
+        return new_rng_state(self.value)
 
     # --------------------------------------------------------------------------
     #  Helpers
