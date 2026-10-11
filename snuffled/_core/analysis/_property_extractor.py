@@ -9,9 +9,9 @@ from ._function_sampler import FunctionSampler
 class PropertyExtractor[NamedArrayT: NamedArray](ABC):
     """This base class extracts the properties of a sampled function into a named array of type `NamedArrayT`."""
 
-    # =================================================================================================
+    # --------------------------------------------------------------------------
     #  Main API
-    # =================================================================================================
+    # --------------------------------------------------------------------------
     def __init__(self, function_sampler: FunctionSampler) -> None:
         self.function_sampler = function_sampler
         self.__stats: dict[str, PropertyExtractionStats] = {}  # property -> stats
@@ -29,7 +29,7 @@ class PropertyExtractor[NamedArrayT: NamedArray](ABC):
 
     def extract(self, prop: str) -> float:
         """Extract specific property, while tracking time and duration of extraction."""
-        # --- timed property extraction -------------------
+        # --- timed property extraction ----------
         t_start_ns_epoch = time_ns()  # ns since epoch
         t_start_ns = perf_counter_ns()
         n_f_samples_before = self.function_sampler.function_cache_size()
@@ -37,7 +37,7 @@ class PropertyExtractor[NamedArrayT: NamedArray](ABC):
         t_end_ns = perf_counter_ns()
         n_f_samples_after = self.function_sampler.function_cache_size()
 
-        # --- store stats ---------------------------------
+        # --- store stats ------------------------
         self.__stats[prop] = PropertyExtractionStats(
             property=prop,
             t_start_ns=t_start_ns_epoch,
@@ -45,7 +45,7 @@ class PropertyExtractor[NamedArrayT: NamedArray](ABC):
             n_f_samples=n_f_samples_after - n_f_samples_before,
         )
 
-        # --- return result -------------------------------
+        # --- return result ----------------------
         return result
 
     def statistics(self) -> dict[str, PropertyExtractionStats]:
@@ -60,9 +60,9 @@ class PropertyExtractor[NamedArrayT: NamedArray](ABC):
             )
         )
 
-    # =================================================================================================
+    # --------------------------------------------------------------------------
     #  Abstract methods
-    # =================================================================================================
+    # --------------------------------------------------------------------------
     @abstractmethod
     def _extract(self, prop: str) -> float:
         """Extract specific property."""

@@ -16,9 +16,9 @@ from snuffled._core.utils.noise import noise_from_float
 from tests.helpers import is_sorted_with_tolerance
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions     (for x-range [-1,1])
-# =================================================================================================
+# ==================================================================================================
 def f_quad(x: float) -> float:
     """
     score_up_down_fx       -->   1.0
@@ -46,9 +46,9 @@ def f_sin(x: float) -> float:
     return math.sin(x * math.pi)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - Simple cases
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, min_score, max_score",
     [
@@ -58,27 +58,27 @@ def f_sin(x: float) -> float:
     ],
 )
 def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_score: float, max_score: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=10000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
 
     print(non_monotonic_score)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_score - 0.05 <= non_monotonic_score <= max_score + 0.05
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - Trends
-# =================================================================================================
+# ==================================================================================================
 def test_function_analyser_non_monotonic_trend_1():
     """If non-monotonicity becomes more pronounced in y-direction, scores should increase"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_lin_quad(_c: float) -> Callable[[float], float]:
         # construct function with f(-1)=-1 and f(1)=1, f(0)=c
         def _f_lin_quad(_x: float) -> float:
@@ -86,7 +86,7 @@ def test_function_analyser_non_monotonic_trend_1():
 
         return _f_lin_quad
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     scores = [
         FunctionAnalyser(
             FunctionSampler(
@@ -105,7 +105,7 @@ def test_function_analyser_non_monotonic_trend_1():
 
     print(scores)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
     assert max(scores) > 0.60  # 2 of 3 scores will max out in the end
@@ -114,7 +114,7 @@ def test_function_analyser_non_monotonic_trend_1():
 def test_function_analyser_non_monotonic_trend_2():
     """Increasing noise will increase score"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_exp_noisy(_c: float) -> Callable[[float], float]:
         # construct strongly exponential function with noise of magnitude _c
         def _f_exp_noisy(_x: float) -> float:
@@ -122,7 +122,7 @@ def test_function_analyser_non_monotonic_trend_2():
 
         return _f_exp_noisy
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     scores = [
         FunctionAnalyser(
             FunctionSampler(
@@ -141,7 +141,7 @@ def test_function_analyser_non_monotonic_trend_2():
 
     print(scores)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
     assert max(scores) > 0.95
@@ -150,7 +150,7 @@ def test_function_analyser_non_monotonic_trend_2():
 def test_function_analyser_non_monotonic_trend_3():
     """Increasing number of wobbles will increase score"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_lin_cos(_c: float) -> Callable[[float], float]:
         # construct linear function with smaller amplitude cosine superimposed, with varying frequency
         def _f_lin_cos(_x: float) -> float:
@@ -158,7 +158,7 @@ def test_function_analyser_non_monotonic_trend_3():
 
         return _f_lin_cos
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     scores = [
         FunctionAnalyser(
             FunctionSampler(
@@ -177,15 +177,15 @@ def test_function_analyser_non_monotonic_trend_3():
 
     print(scores)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=0.1)  # large tol. as n_up_down_flips score is quite stochastic
     assert min(scores) == 0.0
     assert max(scores) > 0.95
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - Helpers
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fx_diff, expected_result",
     [
@@ -199,11 +199,11 @@ def test_function_analyser_non_monotonic_trend_3():
     ],
 )
 def test_score_total_up_down_fx(fx_diff: np.ndarray, expected_result: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     score_1 = non_monotonicity_score_up_down_fx(fx_diff)
     score_2 = non_monotonicity_score_up_down_fx(-fx_diff)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert score_1 == score_2
     assert score_1 == pytest.approx(expected_result, rel=1e-15, abs=1e-15)
 
@@ -220,11 +220,11 @@ def test_score_total_up_down_fx(fx_diff: np.ndarray, expected_result: float):
     ],
 )
 def test_score_total_up_down_x(diff_fx_signs: np.ndarray, expected_result: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     score_1 = non_monotonicity_score_up_down_x(diff_fx_signs)
     score_2 = non_monotonicity_score_up_down_x(-diff_fx_signs)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert score_1 == score_2
     assert score_1 == pytest.approx(expected_result, rel=1e-15, abs=1e-15)
 
@@ -247,10 +247,10 @@ def test_score_total_up_down_x(diff_fx_signs: np.ndarray, expected_result: float
     ],
 )
 def test_score_n_up_down_flips(diff_fx_signs: np.ndarray, expected_result: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     score_1 = non_monotonicity_score_n_up_down_flips(diff_fx_signs)
     score_2 = non_monotonicity_score_n_up_down_flips(-diff_fx_signs)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert score_1 == score_2
     assert score_1 == pytest.approx(expected_result, rel=1e-15, abs=1e-15)

@@ -22,7 +22,7 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
     tol: float = 1e-3,
     debug_flag: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    # --- shortcuts ---------------------------------------
+    # --- shortcuts ------------------------------
     if cost_opt > cost_threshold:
         return (
             np.zeros(0, dtype=np.float64),
@@ -31,10 +31,10 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
             np.zeros(0, dtype=np.float64),
         )
 
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     a_lst, b_lst, c_lst, cost_lst = [a_opt], [b_opt], [c_opt], [cost_opt]
 
-    # --- uncertainty exploration -------------------------
+    # --- uncertainty exploration ----------------
     if cost_threshold > cost_opt:
         # Find edge points of uncertainty region by performing bisection over the step_size parameter in ±[0,1]
         # until we find the edge.  We know that for step_size==0.0 we are strictly below the threshold_cost.
@@ -88,7 +88,7 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
                     # prepare next iteration
                     cand_step_size = 0.5 * (step_size_min + step_size_max)
 
-    # --- return all results ------------------------------
+    # --- return all results ---------------------
     return (
         np.array(a_lst, dtype=np.float64),
         np.array(b_lst, dtype=np.float64),

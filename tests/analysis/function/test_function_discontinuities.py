@@ -10,9 +10,9 @@ from snuffled._core.analysis.function.helpers_discontinuous import compute_disco
 from snuffled._core.models import FunctionProperty
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions     (for x-range [-1,1])
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float) -> float:
     return x
 
@@ -37,9 +37,9 @@ def f_constant(x: float) -> float:
     return 1.0  # perfectly flat: dfx_total == 0 used to divide-by-zero; a constant is fully continuous
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Main tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, min_score, max_score",
     [
@@ -52,7 +52,7 @@ def f_constant(x: float) -> float:
     ],
 )
 def test_function_analyser_discontinuity(fun: Callable[[float], float], min_score: float, max_score: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
@@ -61,18 +61,18 @@ def test_function_analyser_discontinuity(fun: Callable[[float], float], min_scor
     # seed function cache
     _ = sampler.fx_values()
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     discontinuity_score = analyser.extract(FunctionProperty.DISCONTINUOUS)
 
     print(discontinuity_score)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_score <= discontinuity_score <= max_score
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Helpers
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, x_values, dx_min, min_score, max_score",
     [
@@ -95,14 +95,14 @@ def test_compute_discontinuity_score_from_intervals(
     min_score: float,
     max_score: float,
 ):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_values = np.array(x_values)
     fx_values = np.array([fun(x) for x in x_values])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     score = compute_discontinuity_score_from_intervals(x_values, fx_values, dx_min)
 
     print(score)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_score <= score <= max_score

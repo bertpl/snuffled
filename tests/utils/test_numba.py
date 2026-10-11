@@ -17,7 +17,7 @@ from snuffled._core.utils.numba import clip_scalar, geomean
     ],
 )
 def test_numba_clip_scalar(a: float, a_min: float, a_max: float, expected_result: float):
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     assert clip_scalar(a, a_min, a_max) == expected_result
 
 
@@ -35,13 +35,13 @@ def test_numba_clip_scalar(a: float, a_min: float, a_max: float, expected_result
     ],
 )
 def test_numba_geomean(values: list[float], expected_result: float, tol: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     values_arr = np.array(values, dtype=np.float64)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = geomean(values_arr)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert result == pytest.approx(expected_result, rel=tol, abs=tol)
 
 
@@ -53,9 +53,9 @@ def test_numba_geomean(values: list[float], expected_result: float, tol: float):
     ],
 )
 def test_numba_geomean_value_error(values: list[float]):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     values_arr = np.array(values, dtype=np.float64)
 
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(ValueError):
         _ = geomean(values_arr)

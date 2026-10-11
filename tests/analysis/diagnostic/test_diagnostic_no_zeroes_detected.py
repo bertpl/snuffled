@@ -9,9 +9,9 @@ from snuffled._core.analysis.diagnostic import DiagnosticAnalyser
 from snuffled._core.models import Diagnostic
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float) -> float:
     return x - 1 / math.pi
 
@@ -21,9 +21,9 @@ def f_quadratic(x: float, c0: float) -> float:
     return c0 + (x * x)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, expected_result",
     [
@@ -41,14 +41,14 @@ def f_quadratic(x: float, c0: float) -> float:
     ],
 )
 def test_diagnostic_analyser_no_zeros_detected(fun: Callable[[float], float], expected_result: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = DiagnosticAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = analyser.extract(Diagnostic.NO_ZEROS_DETECTED)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert result == expected_result

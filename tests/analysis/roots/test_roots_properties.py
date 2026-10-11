@@ -7,9 +7,9 @@ from snuffled._core.analysis.roots.roots_analyser import RootsAnalyser
 from snuffled._core.models import RootProperty
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Regular cases
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "c_neg, c_pos, e_neg, e_pos, offset_neg, offset_pos, expectations",
     [
@@ -178,7 +178,7 @@ def test_roots_analyser_properties(
 ):
     """Test properties that are simply an average of left- and right-side root analysis"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         if base_function == "sin":
             _tmp = math.sin(10 * _x + 0.01)
@@ -198,31 +198,31 @@ def test_roots_analyser_properties(
     dx = 1e-10
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = RootsAnalyser(sampler, n_root_samples=100, seed=42)
 
     print(analyser.extract_all().as_dict())
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     for root_prop, (min_value, max_value) in expectations.items():
         assert min_value <= analyser.extract(root_prop) <= max_value, f"{root_prop} not in [{min_value},{max_value}]"
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Edge cases
-# =================================================================================================
+# ==================================================================================================
 def test_roots_analyser_no_roots():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return 1.0 + 0.1 * _x  # no roots in [-1,1]
 
     dx = 1e-10
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = RootsAnalyser(sampler, n_root_samples=100, seed=42)
     all_props = analyser.extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     for value in all_props.as_array():
         assert value == 0.0

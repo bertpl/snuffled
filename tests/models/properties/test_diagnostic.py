@@ -2,12 +2,12 @@ from snuffled._core.models import Diagnostic, NamedArray, SnuffledDiagnostics
 
 
 def test_snuffled_function_properties():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     expected_names = list(Diagnostic)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     sd = SnuffledDiagnostics()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert sd.names() == expected_names
     assert isinstance(sd, NamedArray)

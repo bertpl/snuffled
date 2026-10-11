@@ -2,12 +2,12 @@ from snuffled._core.models import NamedArray, RootProperty, SnuffledRootProperti
 
 
 def test_snuffled_function_properties():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     expected_names = list(RootProperty)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     srp = SnuffledRootProperties()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert srp.names() == expected_names
     assert isinstance(srp, NamedArray)

@@ -10,9 +10,9 @@ from snuffled._core.utils.noise import noise_from_float
 from tests.helpers import is_sorted_with_tolerance
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions     (for x-range [-1,1])
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float) -> float:
     """Should be found to be 0% flat"""
     return x
@@ -48,9 +48,9 @@ def f_exp_2(x: float) -> float:
     return (10 ** (20 * x)) - 1.0
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, min_score, max_score",
     [
@@ -64,18 +64,18 @@ def f_exp_2(x: float) -> float:
     ],
 )
 def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_score: float, max_score: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=10000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     flat_score = analyser.extract(FunctionProperty.FLAT_INTERVALS)
 
     print(flat_score)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_score <= flat_score <= max_score
 
 
@@ -84,7 +84,7 @@ def test_function_analyser_flat_intervals_trend_1():
     For wider fully flat intervals, the score should go up.
     """
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_relu(_x0: float) -> Callable[[float], float]:
         # construct function that is fully flat for x <= x0
         def _f_relu(_x: float) -> float:
@@ -92,7 +92,7 @@ def test_function_analyser_flat_intervals_trend_1():
 
         return _f_relu
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     scores = [
         FunctionAnalyser(
             FunctionSampler(
@@ -109,7 +109,7 @@ def test_function_analyser_flat_intervals_trend_1():
         for x0 in np.linspace(-0.95, 0.95, 100)
     ]
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert 0.0 < min(scores) < 0.1
     assert 0.9 < max(scores) < 1.0
@@ -121,7 +121,7 @@ def test_function_analyser_flat_intervals_trend_2():
     For gradually flatter function ranges, the score should go up.
     """
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_exp(_c: float) -> Callable[[float], float]:
         # construct function that is more and more flat for x<0 wrt f(1.0)
         def _f_exp(_x: float) -> float:
@@ -130,7 +130,7 @@ def test_function_analyser_flat_intervals_trend_2():
 
         return _f_exp
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     scores = [
         FunctionAnalyser(
             FunctionSampler(
@@ -147,7 +147,7 @@ def test_function_analyser_flat_intervals_trend_2():
         for c in np.linspace(1, 20, 100)
     ]
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert min(scores) < 1e-3
     assert max(scores) > 0.4
@@ -159,7 +159,7 @@ def test_function_analyser_flat_intervals_trend_3():
     Adding noise of increasing magnitude to flat areas should gradually decrease flatness score
     """
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def get_f_noisy_exp(_c: float) -> Callable[[float], float]:
         # construct strongly exponential function with noise of magnitude c
         def _f_noisy_exp(_x: float) -> float:
@@ -167,7 +167,7 @@ def test_function_analyser_flat_intervals_trend_3():
 
         return _f_noisy_exp
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     c_values = [10**e for e in np.linspace(10, -20, 100)]
     scores = [
         FunctionAnalyser(
@@ -185,7 +185,7 @@ def test_function_analyser_flat_intervals_trend_3():
         for c in c_values
     ]
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3), "Scores should be non-decreasing"
     assert min(scores) < 1e-2
     assert max(scores) > 0.45

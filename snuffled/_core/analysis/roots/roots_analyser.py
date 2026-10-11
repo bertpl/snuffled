@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 
 
 class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: int) -> None:
         super().__init__(function_sampler)
         require_min_n_samples("n_root_samples", n_root_samples)
@@ -25,9 +25,9 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
         self._root_analyses: dict[Root, SnuffledRootProperties] = {}
         self._seed = seed + SEED_OFFSET_ROOTS_ANALYSER
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Main Implementation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _new_named_array(self) -> SnuffledRootProperties:
         return SnuffledRootProperties()
 
@@ -45,9 +45,9 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
             return 0.0
         raise ValueError(f"Property {prop} not supported")
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internal methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _ensure_all_roots_analysed(self) -> None:
         # only roots with room for the full sampling span on both sides — near-edge roots can't be
         # reliably two-side-fitted and are flagged by the ALL_ROOTS_TOO_CLOSE_TO_EDGE diagnostic.

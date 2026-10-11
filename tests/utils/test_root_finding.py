@@ -8,9 +8,9 @@ from snuffled._core.utils.constants import EPS
 from snuffled._core.utils.root_finding import determine_root_width, find_odd_root, find_root
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions      (designed for range [-10, 10])
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float, root: float) -> float:
     return x - root
 
@@ -60,9 +60,9 @@ def f_with_wide_even_zero_2(x: float) -> float:
     return f_with_wide_even_zero_1(-x)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - find_odd_root
-# =================================================================================================
+# ==================================================================================================
 
 
 @pytest.mark.parametrize(
@@ -74,18 +74,18 @@ def f_with_wide_even_zero_2(x: float) -> float:
 )
 def test_find_odd_root(fun: Callable[[float], float], expected_odd_root: float, capsys: pytest.CaptureFixture[str]):
     """find_odd_root returns the odd root of a function that also has a wide even root, and writes nothing to stdout."""
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     root = find_odd_root(fun, x_min=-1.0, x_max=1.0, dx_min=EPS * EPS)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert root.x_min <= expected_odd_root <= root.x_max
     assert root.deriv_sign != 0.0
     assert capsys.readouterr().out == ""
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - find_root
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "x_min, x_max",
     [
@@ -115,14 +115,14 @@ def test_find_odd_root(fun: Callable[[float], float], expected_odd_root: float, 
 def test_find_root(
     fun: Callable[[float], float], x_min: float, x_max: float, dx_min: float, x_expected: float, x_abs_tol: float
 ):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_expected_min = x_expected - x_abs_tol
     x_expected_max = x_expected + x_abs_tol
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     root = find_root(fun, x_min, x_max, dx_min)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert x_expected_min <= root.x_min <= root.x_max <= x_expected_max
 
 
@@ -137,29 +137,29 @@ def test_find_root(
     ],
 )
 def test_find_root_value_error(x_min: float, x_max: float, root: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     fun = partial(f_linear, root=root)
 
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(ValueError):
         _ = find_root(fun, x_min, x_max, dx_min=EPS)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests - determine_root_width
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("true_root", [-0.9, -0.1, 1 / math.pi, 0.6789])
 @pytest.mark.parametrize("true_root_width", [1e-15, 1e-10, 1e-5, 1e-3])
 def test_determine_root_width(true_root: float, true_root_width: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     fun = partial(f_lin_with_wide_zero, root=true_root, zero_width=true_root_width)
     x_min = -1.0
     x_max = 1.0
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     root = determine_root_width(fun, true_root, x_min, x_max, dx_min=EPS * EPS)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert root.x_min <= true_root <= root.x_max
     assert 0.8 * true_root_width <= root.width <= 1.2 * true_root_width
 
@@ -167,7 +167,7 @@ def test_determine_root_width(true_root: float, true_root_width: float):
 def test_determine_root_width_edge_case():
     """This test set up such that each case has a zero so wide it crosses at least one edge of [x_min, x_max]"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(x: float) -> float:
         # all 0's except at the edge
         if x == -1:
@@ -179,10 +179,10 @@ def test_determine_root_width_edge_case():
     x_min = -1.0
     x_max = 1.0
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     root = determine_root_width(fun, 0.3, x_min, x_max, dx_min=EPS * EPS)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert root.width == 2.0
     assert root.x_min == x_min
     assert root.x_max == x_max

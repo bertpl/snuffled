@@ -23,8 +23,8 @@ from snuffled._core.utils.signs import robust_sign_estimate
     ],
 )
 def test_robust_sign_estimate(values: list[float], expected_result: int):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = robust_sign_estimate(values)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert result == expected_result

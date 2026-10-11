@@ -10,9 +10,9 @@ def _f(x: float) -> float:
     return x - 0.3
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Sample counts below MIN_USEFUL_N_SAMPLES are rejected with a clear, parameter-named message
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("n", [0, 1, MIN_USEFUL_N_SAMPLES - 1])
 def test_function_sampler_rejects_low_n_fun_samples(n: int):
     with pytest.raises(ValueError, match="n_fun_samples"):

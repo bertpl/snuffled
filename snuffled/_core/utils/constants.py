@@ -1,7 +1,9 @@
 import math
 import sys
 
-# --- accuracy --------------------------------------------
+# ==================================================================================================
+#  Accuracy
+# ==================================================================================================
 EPS = sys.float_info.epsilon  # 2**-52 for float64
 
 # f(x) magnitudes are clipped to +/- FX_CLIP at the sampling boundary so +/-inf never reaches the
@@ -11,7 +13,9 @@ EPS = sys.float_info.epsilon  # 2**-52 for float64
 # to that metric for any sane function.
 FX_CLIP = math.sqrt(sys.float_info.max) * math.sqrt(EPS)
 
-# --- sample counts ---------------------------------------
+# ==================================================================================================
+#  Sample counts
+# ==================================================================================================
 # Public default sample counts (used by Snuffler's signature; tests import these to build
 # at-default samplers without hard-coding the values).
 DEFAULT_N_FUN_SAMPLES = 10_000
@@ -22,7 +26,9 @@ DEFAULT_N_ROOT_SAMPLES = 100
 # (and the sampling utilities have no headroom); constructors reject smaller values.
 MIN_USEFUL_N_SAMPLES = 10
 
-# --- seed offsets ----------------------------------------
+# ==================================================================================================
+#  Seed offsets
+# ==================================================================================================
 # these offsets are used in different functions to ensure
 # we do not use the same seed in each, even when set
 # manually in the top-most function.

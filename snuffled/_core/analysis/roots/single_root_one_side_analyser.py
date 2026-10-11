@@ -8,9 +8,9 @@ from snuffled._core.utils.numba import clip_scalar
 
 from .curve_fitting import fit_curve_with_uncertainty, fitting_curve
 
-# =================================================================================================
+# ==================================================================================================
 #  Constants
-# =================================================================================================
+# ==================================================================================================
 _A_RANGE_MIN = EPS**0.25  # such that A_RANGE_MAX / A_RANGE_MIN is still well within bounds where...
 _A_RANGE_MAX = 1 / _A_RANGE_MIN  # ...numerical accuracy of such ratios starts to break down
 
@@ -21,13 +21,13 @@ _C_RANGE_MIN = 1 / 8.0  # smaller c-values will have g(1) > ~0.9*g(2), so c-esti
 _C_RANGE_MAX = 16.0  # larger c-values will get close to causing underflow for e.g. EPS**c
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Single Root - ONE SIDE Analyser
-# =================================================================================================
+# ==================================================================================================
 class SingleRootOneSideAnalyser:
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(self, dx: float, x_deltas: np.ndarray, fx_values: np.ndarray, dx_sign: int, fx_sign: int) -> None:
         """Initialize the single-root one-side analyser.
 
@@ -38,21 +38,21 @@ class SingleRootOneSideAnalyser:
         :param fx_sign: (int; +1 or -1) expected dominant sign of fx_values on this side of the root.
                                         We'll multiply the fx-values with this sign before we apply curve fitting.
         """
-        # --- store data ----------------------------------
+        # --- store data -------------------------
         self.dx = dx
         self.x_deltas = x_deltas
         self.fx_values = fx_values
         self.dx_sign = dx_sign
         self.fx_sign = fx_sign
 
-        # --- pre-processed data --------------------------
+        # --- pre-processed data -----------------
         (x, fx), (x_scale, fx_scale) = self.preprocess_x_fx()
         self.x_pre = x
         self.fx_pre = fx
         self.x_scale = x_scale
         self.fx_scale = fx_scale
 
-        # --- analysis ------------------------------------
+        # --- analysis ---------------------------
         if max(abs(fx_values)) == 0.0:
             # edge case where all fx values are 0 -> set dummy values with a=0.0
             self._a_values = np.array([0.0])
@@ -79,9 +79,9 @@ class SingleRootOneSideAnalyser:
             self._c_values = c_values
             self._cost_values = cost_values
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internal analysis methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def preprocess_x_fx(self) -> tuple[tuple[np.ndarray, np.ndarray], tuple[float, float]]:
         """Returns (x, fx), (x_scale, fx_scale)-tuples, such that (x, fx) can be used directly in curve fitting methods.
 
@@ -122,9 +122,9 @@ class SingleRootOneSideAnalyser:
         # return
         return (x, fx), (x_scale, fx_scale)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Parameter aggregation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     @cached_property
     def _a_min_max(self) -> tuple[float, float]:
         a_min = float(np.min(self._a_values))
@@ -162,9 +162,9 @@ class SingleRootOneSideAnalyser:
         f_values = [scale * a * (b + (1 - b) * (z**c)) for a, b, c in self._abc_tuples]
         return min(f_values), max(f_values)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Final property computation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     @cached_property
     def ill_behaved(self) -> float:
         """Relative fit error: 0 for a perfect fit (0 error), or ~1.0 if |e| ~= |f(x)|.

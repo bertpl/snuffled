@@ -12,9 +12,9 @@ from snuffled._core.analysis.roots.curve_fitting import (
 from snuffled._core.utils.noise import noise_from_float
 
 
-# =================================================================================================
+# ==================================================================================================
 #  fit_curve_with_uncertainty
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("a_true", [1.0, 5.0])
 @pytest.mark.parametrize("b_true", [0.0, 0.2, 0.9])
 @pytest.mark.parametrize("c_true", [0.5, 1.0, 2.0, -2.0, -1.0, -0.5])
@@ -33,7 +33,7 @@ def test_fit_curve_with_uncertainty(
 ):
     """Basic checks if all basic invariants are respected in the returned values."""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
 
     # define optimization problem
     x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
@@ -53,7 +53,7 @@ def test_fit_curve_with_uncertainty(
     cost_opt = min([cost_opt_neg_c, cost_opt_pos_c]) if include_opposite_c_range else cost_opt_pos_c
     threshold_cost = compute_threshold_cost(uncertainty_size, cost_opt, fx_q25, fx_q50, fx_q75)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     a_values, b_values, c_values, cost_values = fit_curve_with_uncertainty(
         x_values,
         fx_values,
@@ -67,7 +67,7 @@ def test_fit_curve_with_uncertainty(
         debug_flag=True,
     )
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
 
     # check if (a,b,c) vs cost are mutually correct
     for a, b, c, cost in zip(a_values, b_values, c_values, cost_values):

@@ -14,24 +14,24 @@ from snuffled._core.utils.sampling import (
 )
 
 
-# =================================================================================================
+# ==================================================================================================
 #  max_x_delta anti-drift: must equal the actual max of compute_x_deltas, for all k / seed / dx
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("dx", [1.0, 1e-6, 1e-9])
 @pytest.mark.parametrize("k", [1, 2, 5, 10])
 @pytest.mark.parametrize("seed", [1, 42, 999])
 def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> None:
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     claimed = max_x_delta(dx)
     actual = float(np.max(compute_x_deltas(dx=dx, k=k, seed=seed)))
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert claimed == pytest.approx(actual, rel=1e-12)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Multi-scale sampling
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "x_min, x_max, dx_min, n",
     [
@@ -44,10 +44,10 @@ def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> N
     ],
 )
 def test_multi_scale_sampling(x_min: float, x_max: float, dx_min: float, n: int):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     samples = multi_scale_samples(x_min, x_max, dx_min, n)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert samples[0] == x_min
     assert samples[-1] == x_max
     assert len(samples) == n
@@ -59,19 +59,19 @@ def test_multi_scale_sampling(x_min: float, x_max: float, dx_min: float, n: int)
 
 
 def test_multi_scale_sampling_seed():
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     s_1 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=123)
     s_2 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=123)  # same seed
     s_3 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=345)  # different seed
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.array_equal(s_1, s_2)
     assert not np.array_equal(s_1, s_3)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Exponential sampling
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "n, tgt_sum, dx_min",
     [
@@ -86,7 +86,7 @@ def test_multi_scale_sampling_seed():
     ],
 )
 def test_fit_fixed_sum_exponential_intervals_bad_args(n: int, tgt_sum: float, dx_min: float):
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(ValueError):
         _ = fit_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
 
@@ -104,10 +104,10 @@ def test_fit_fixed_sum_exponential_intervals_bad_args(n: int, tgt_sum: float, dx
     ],
 )
 def test_fit_fixed_sum_exponential_intervals_simple_cases(n: int, tgt_sum: float, dx_min: float, expected_c: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     c = fit_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert c == pytest.approx(expected_c, rel=1e-15)
 
 
@@ -135,11 +135,11 @@ def test_fit_fixed_sum_exponential_intervals_simple_cases(n: int, tgt_sum: float
     ],
 )
 def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt_sum: float, dx_min: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     c = fit_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
     interval_sizes = get_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
 
     # check result of fit_...
     computed_interval_sizes = [dx_min * (c**i) for i in range(n)]
@@ -150,9 +150,9 @@ def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt
     assert np.allclose(interval_sizes, computed_interval_sizes, rtol=1e-15)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Integer sampling
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "i_min, i_max, n",
     [
@@ -166,10 +166,10 @@ def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt
     ],
 )
 def test_sample_n_integers(i_min: int, i_max: int, n: int):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     samples = sample_integers(i_min, i_max, n)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert isinstance(samples, list)
     assert len(samples) == n
     assert all(i_min <= s < i_max for s in samples)
@@ -177,9 +177,9 @@ def test_sample_n_integers(i_min: int, i_max: int, n: int):
     assert len(set(samples)) == n
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Pseudo-uniform sampling
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "x_min, x_max, n",
     [
@@ -189,13 +189,13 @@ def test_sample_n_integers(i_min: int, i_max: int, n: int):
     ],
 )
 def test_pseudo_uniform_samples(x_min: float, x_max: float, n: int):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     w = (x_max - x_min) / n  # sub-interval width
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     samples = pseudo_uniform_samples(x_min, x_max, n)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(samples) == n
     assert min(samples) >= x_min
     assert max(samples) < x_max
@@ -203,11 +203,11 @@ def test_pseudo_uniform_samples(x_min: float, x_max: float, n: int):
 
 
 def test_pseudo_uniform_samples_edge_cases():
-    # --- act & assert 1 ----------------------------------
+    # --- act / assert 1 ---------------
     with pytest.raises(ValueError):
         _ = pseudo_uniform_samples(0.0, 1.0, -3)
 
-    # --- act & assert 2 ----------------------------------
+    # --- act / assert 2 ---------------
     result = pseudo_uniform_samples(0.0, 1.0, 0)
     assert isinstance(result, np.ndarray)
     assert len(result) == 0

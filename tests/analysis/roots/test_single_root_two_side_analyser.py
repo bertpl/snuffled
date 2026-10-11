@@ -7,9 +7,9 @@ from snuffled._core.models import RootProperty
 from snuffled._core.utils.noise import noise_from_float
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Properties
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "c_true, c_noise, offset_neg, offset_pos, expectations",
     [
@@ -128,7 +128,7 @@ def test_single_root_two_side_analyser_all_props(
 ):
     """Test properties that are simply an average of left- and right-side root analysis"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         _fx = np.sign(_x) * (abs(_x) ** c_true) * (1 + c_noise * noise_from_float(_x))
         if _x > 0:
@@ -141,10 +141,10 @@ def test_single_root_two_side_analyser_all_props(
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
     root = sampler.roots()[0]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     for root_prop, (min_value, max_value) in expectations.items():
         assert min_value <= analyser.extract(root_prop) <= max_value, f"{root_prop} not in [{min_value},{max_value}]"
 
@@ -164,7 +164,7 @@ def test_single_root_two_side_analyser_asymmetric_linear(
 ):
     """Test asymmetry property - by changing slopes of 2 linear functions"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         if _x >= 0.0:
             return c_pos * _x
@@ -174,11 +174,11 @@ def test_single_root_two_side_analyser_asymmetric_linear(
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
     root = sampler.roots()[0]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
     value = analyser.extract(RootProperty.ASYMMETRIC)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value, f"RootProperty.ASYMMETRIC not in [{min_value},{max_value}]"
 
 
@@ -199,7 +199,7 @@ def test_single_root_two_side_analyser_asymmetric_nonlinear(
 ):
     """Test asymmetry property - by changing exponents of 2 functions"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         if _x >= 0.0:
             return _x**e_pos
@@ -209,9 +209,9 @@ def test_single_root_two_side_analyser_asymmetric_nonlinear(
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
     root = sampler.roots()[0]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
     value = analyser.extract(RootProperty.ASYMMETRIC)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value, f"RootProperty.ASYMMETRIC not in [{min_value},{max_value}]"

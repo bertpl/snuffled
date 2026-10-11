@@ -25,9 +25,9 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         (finite, but its value may be anything) — a NaN-returning function is not a well-defined target.
     """
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(
         self,
         fun: Callable[[float], float],
@@ -47,9 +47,9 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         self._roots_analyser = RootsAnalyser(function_sampler, n_root_samples, seed)
         self._diagnostics_analyser = DiagnosticAnalyser(function_sampler)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Main Implementation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _new_named_array(self) -> SnuffledProperties:
         return SnuffledProperties()
 

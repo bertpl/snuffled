@@ -10,9 +10,9 @@ from snuffled._core.models import RootProperty
 from tests.helpers import only_with_numba_jit
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Rootless functions complete extract_all() with all-finite scores
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun",
     [
@@ -23,20 +23,20 @@ from tests.helpers import only_with_numba_jit
     ],
 )
 def test_snuffler_extract_all_rootless(fun: Callable[[float], float]):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(
         fun=fun, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, n_roots=100, n_root_samples=100
     )
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     props = snuffler.extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.all(np.isfinite(props.as_array()))
 
 
 def test_snuffler_supported_properties():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(
         fun=lambda x: x,
         x_min=-1.0,
@@ -49,34 +49,34 @@ def test_snuffler_supported_properties():
         rel_tol_scale=10.0,
     )
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     supported_properties = snuffler.supported_properties()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert set(supported_properties) == set(list(RootProperty) + list(Diagnostic) + list(FunctionProperty))
 
 
 @pytest.mark.parametrize("prop", [RootProperty.ILL_BEHAVED, FunctionProperty.MANY_ZEROES, Diagnostic.NO_ZEROS_DETECTED])
 def test_snuffler_extract_accepts_plain_string_name(prop: StrEnum):
     """`extract` returns the same value for a property's plain-string name as for its enum member."""
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler_for_member = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
     snuffler_for_string = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     value_from_member = snuffler_for_member.extract(prop)
     value_from_string = snuffler_for_string.extract(prop.value)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert value_from_string == value_from_member
 
 
 def test_snuffler_extract_rejects_unknown_name():
     """`extract` raises `ValueError` for a name that matches no property."""
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42)
 
-    # --- act / assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(ValueError, match="not supported"):
         snuffler.extract("root_unknown")
 
@@ -88,7 +88,7 @@ def test_snuffler_extract_all_smoke():
     the parameters are chosen purely for speed, not statistical honesty — no score values
     are asserted here.
     """
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(
         fun=lambda x: x,
         x_min=-1.0,
@@ -101,18 +101,18 @@ def test_snuffler_extract_all_smoke():
         rel_tol_scale=10.0,
     )
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     _ = snuffler.extract_all()
     stats = snuffler.statistics()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(stats) == len(RootProperty) + len(Diagnostic) + len(FunctionProperty)
     assert all(s.t_duration_sec >= 0 for s in stats.values())
 
 
 @only_with_numba_jit
 def test_snuffler_extract_all():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(
         fun=lambda x: x,
         x_min=-1.0,
@@ -121,16 +121,16 @@ def test_snuffler_extract_all():
         seed=42,
     )
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     _ = snuffler.extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     # if it doesn't fail at production-default sample counts, that's good enough for this test
 
 
 @only_with_numba_jit
 def test_snuffler_statistics():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     snuffler = Snuffler(
         fun=lambda x: x,
         x_min=-1.0,
@@ -139,7 +139,7 @@ def test_snuffler_statistics():
         seed=42,
     )
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     t_start = time.perf_counter()
     _ = snuffler.extract_all()
     t_end = time.perf_counter()
@@ -149,7 +149,7 @@ def test_snuffler_statistics():
     t_elapsed_min = (0.99 * t_elapsed) - 1e-3
     t_elapsed_max = (1.01 * t_elapsed) + 1e-3
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(stats) == len(RootProperty) + len(Diagnostic) + len(FunctionProperty)
     assert all(s.t_duration_sec >= 0 for s in stats.values())
     assert t_elapsed_min <= sum([s.t_duration_sec for s in stats.values()]) <= t_elapsed_max
