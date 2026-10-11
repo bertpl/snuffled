@@ -8,7 +8,7 @@ from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.analysis.function.helpers_discontinuous import (
     compute_discontinuity_score_from_intervals,
-    insert_sorted_samples,
+    merge_samples,
     select_midpoints_to_sample,
 )
 from snuffled._core.models import FunctionProperty
@@ -117,45 +117,38 @@ def test_compute_discontinuity_score_from_intervals(
 
 
 @pytest.mark.parametrize(
-    "fx_values, n_max, expected_midpoints",
+    "x_values, fx_values, dx_min, dx_total, n_max, expected_midpoints",
     [
-        # the step interval [1, 2] scores highest; then the flat intervals, the one further right first
-        ([0.0, 0.0, 1.0, 1.0], 3, [1.5, 2.5, 0.5]),
-        # n_max cuts the list after the highest scores
-        ([0.0, 0.0, 1.0, 1.0], 1, [1.5]),
-        # a constant function: equal scores, ordered right to left
-        ([1.0, 1.0, 1.0, 1.0], 2, [2.5, 1.5]),
-        # no intervals to select
-        ([1.0, 1.0, 1.0, 1.0], 0, []),
+        # the step interval [1, 2] scores highest, followed by the flat intervals from right to left
+        ([0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 1.0, 1.0], 1e-3, 3.0, 3, [1.5, 2.5, 0.5]),
+        # with n_max = 1, only the midpoint of the highest-scoring interval is returned
+        ([0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 1.0, 1.0], 1e-3, 3.0, 1, [1.5]),
+        # a constant function gives equal scores, which are ordered right to left
+        ([0.0, 1.0, 2.0, 3.0], [1.0, 1.0, 1.0, 1.0], 1e-3, 3.0, 2, [2.5, 1.5]),
+        # n_max == 0 selects no intervals
+        ([0.0, 1.0, 2.0, 3.0], [1.0, 1.0, 1.0, 1.0], 1e-3, 3.0, 0, []),
+        # an interval no wider than dx_min gets no midpoint, however steep it is
+        ([0.0, 1e-4, 1.0], [0.0, 1.0, 1.0], 1e-3, 1.0, 10, [0.5 * (1e-4 + 1.0)]),
     ],
 )
-def test_select_midpoints_to_sample(fx_values: list[float], n_max: int, expected_midpoints: list[float]):
-    """select_midpoints_to_sample orders midpoints by decreasing score, and equal scores right to left."""
-    # --- arrange ----------------------
-    x_values = np.array([0.0, 1.0, 2.0, 3.0])
-
-    # --- act --------------------------
-    midpoints = select_midpoints_to_sample(x_values, np.array(fx_values), 1e-3, 3.0, n_max)
+def test_select_midpoints_to_sample(
+    x_values: list[float],
+    fx_values: list[float],
+    dx_min: float,
+    dx_total: float,
+    n_max: int,
+    expected_midpoints: list[float],
+):
+    """select_midpoints_to_sample orders by decreasing score, equal scores right to left, and skips narrow intervals."""
+    # --- arrange / act ----------------
+    midpoints = select_midpoints_to_sample(np.array(x_values), np.array(fx_values), dx_min, dx_total, n_max)
 
     # --- assert -----------------------
     assert midpoints.tolist() == expected_midpoints
 
 
-def test_select_midpoints_to_sample_skips_narrow_intervals():
-    """An interval no wider than dx_min gets no midpoint, however steep it is."""
-    # --- arrange ----------------------
-    x_values = np.array([0.0, 1e-4, 1.0])
-    fx_values = np.array([0.0, 1.0, 1.0])
-
-    # --- act --------------------------
-    midpoints = select_midpoints_to_sample(x_values, fx_values, 1e-3, 1.0, 10)
-
-    # --- assert -----------------------
-    assert midpoints.tolist() == [0.5 * (1e-4 + 1.0)]
-
-
-def test_insert_sorted_samples():
-    """insert_sorted_samples merges new samples in sorted order and drops an x that is already present."""
+def test_merge_samples():
+    """merge_samples merges new samples in sorted order and drops an x that is already present."""
     # --- arrange ----------------------
     x_values = np.array([0.0, 1.0, 2.0])
     fx_values = np.array([10.0, 11.0, 12.0])
@@ -163,7 +156,7 @@ def test_insert_sorted_samples():
     new_fx_values = np.array([11.5, 99.0, 10.5])
 
     # --- act --------------------------
-    merged_x, merged_fx = insert_sorted_samples(x_values, fx_values, new_x_values, new_fx_values)
+    merged_x, merged_fx = merge_samples(x_values, fx_values, new_x_values, new_fx_values)
 
     # --- assert -----------------------
     assert merged_x.tolist() == [0.0, 0.5, 1.0, 1.5, 2.0]

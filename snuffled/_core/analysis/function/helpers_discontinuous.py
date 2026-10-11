@@ -107,7 +107,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
         # sample the function at the midpoints of the intervals that look most like a step
         new_x_values = select_midpoints_to_sample(x_values, fx_values, dx_min, dx_total, n_samples_i)
         new_fx_values = np.array(function_sampler.f(new_x_values.tolist()), dtype=np.float64)
-        x_values, fx_values = insert_sorted_samples(x_values, fx_values, new_x_values, new_fx_values)
+        x_values, fx_values = merge_samples(x_values, fx_values, new_x_values, new_fx_values)
         n_samples_remaining -= len(new_x_values)
 
         if (len(new_x_values) == 0) or (n_samples_remaining == 0):
@@ -196,17 +196,20 @@ def select_midpoints_to_sample(
     Args:
         x_values: (n,)-sized array of x-values, sorted in ascending order and without duplicates.
         fx_values: (n,)-sized array of the corresponding f(x)-values.
-        dx_min: Smallest interval width worth splitting.
-        dx_total: Width of the whole interval, which normalizes the interval widths.
+        dx_min: Intervals no wider than dx_min are not split.
+        dx_total: Width of the analyzed range [x_min, x_max]; each interval width is divided by it.
         n_max: Largest number of midpoints to return.
     """
     # --- select the highest scores --------------
+    # A partition finds the threshold score in linear time, so only the selected intervals get sorted; a full sort
+    # of all scores would cost O(n log n) on every iteration of the resampling loop.
     scores = compute_resampling_scores(x_values, fx_values, dx_min, dx_total)
     n_intervals = len(scores)
     n_selected = min(n_max, n_intervals)
     if n_selected <= 0:
         return np.zeros(0, dtype=np.float64)
-    # every score above the n_selected-th largest is selected; of the scores equal to it, those furthest right
+    # select every score above the n_selected-th largest score, then fill the remaining places with the scores
+    # equal to it, starting from the right
     threshold = np.partition(scores, n_intervals - n_selected)[n_intervals - n_selected]
     is_selected = scores > threshold
     n_equal_wanted = n_selected - np.sum(is_selected)
@@ -216,13 +219,13 @@ def select_midpoints_to_sample(
             is_selected[i] = True
             n_equal_wanted -= 1
         i -= 1
-    selected = np.flatnonzero(is_selected & (scores > 0.0))
+    selected_intervals = np.flatnonzero(is_selected & (scores > 0.0))
 
     # --- order by decreasing score --------------
     # a stable ascending sort keeps equal scores in ascending x; reversing it puts equal scores in descending x
-    order = np.argsort(scores[selected], kind="mergesort")[::-1]
-    selected = selected[order]
-    return 0.5 * (x_values[selected] + x_values[selected + 1])
+    order = np.argsort(scores[selected_intervals], kind="mergesort")[::-1]
+    selected_intervals = selected_intervals[order]
+    return 0.5 * (x_values[selected_intervals] + x_values[selected_intervals + 1])
 
 
 @numba.njit
@@ -231,43 +234,42 @@ def compute_resampling_scores(
 ) -> np.ndarray:
     """Return the resampling score of each interval between 2 consecutive samples.
 
-    The score of an interval is dfx_rel^2 / dx_rel + dx_rel^2, with dx and dfx normalized by their totals, and 0 for
-    an interval no wider than dx_min:
-       - dfx_rel^2 / dx_rel is the main term: splitting a mostly linear interval in 2 halves its score and divides
-         it over both halves, while splitting an interval with a step doubles the score of the half with the step;
+    An interval's width is dx and its height is dfx = |f(x_right) - f(x_left)|; dx_rel = dx / dx_total and
+    dfx_rel = dfx / dfx_total, where dfx_total is the sum of all heights. The score of an interval is
+    dfx_rel^2 / dx_rel + dx_rel^2, and an interval no wider than dx_min scores 0:
+       - dfx_rel^2 / dx_rel is the main term: splitting a mostly linear interval in 2 gives each new interval half
+         of the original score, while splitting an interval with a step gives the new interval with the step twice
+         the original score;
        - dx_rel^2 makes long, seemingly flat intervals get resampled once no interval looks more like a step.
-    When every interval is flat (dfx_total == 0, e.g. a constant function), dx_rel^2 alone drives the resampling.
-
-    The heights are summed the way Python's built-in sum() totals floats, so the scores are bit-identical to those
-    of a plain Python computation.
+    When every interval is flat (dfx_total == 0, e.g. a constant function), the score is dx_rel^2 alone.
 
     Args:
         x_values: (n,)-sized array of x-values, sorted in ascending order and without duplicates.
         fx_values: (n,)-sized array of the corresponding f(x)-values.
-        dx_min: Smallest interval width worth splitting.
-        dx_total: Width of the whole interval, which normalizes the interval widths.
+        dx_min: Intervals no wider than dx_min are not split.
+        dx_total: Width of the analyzed range [x_min, x_max]; each interval width is divided by it.
 
     Returns:
         (n-1,)-sized array of scores, one per interval.
     """
     # --- total height ---------------------------
-    # Neumaier's compensated sum, in the form that Python's built-in sum() uses for floats since Python 3.12
+    # Neumaier's compensated sum, in the form that Python's built-in sum() uses for floats since Python 3.12, so
+    # that dfx_total equals sum() over the same heights
     n_intervals = len(x_values) - 1
     dfx_total = 0.0
     compensation = 0.0
     for i in range(n_intervals):
         dfx = abs(fx_values[i + 1] - fx_values[i])
-        t = dfx_total + dfx
+        dfx_total_new = dfx_total + dfx
         if abs(dfx_total) >= abs(dfx):
-            compensation += (dfx_total - t) + dfx
+            compensation += (dfx_total - dfx_total_new) + dfx
         else:
-            compensation += (dfx - t) + dfx_total
-        dfx_total = t
+            compensation += (dfx - dfx_total_new) + dfx_total
+        dfx_total = dfx_total_new
     if (compensation != 0.0) and math.isfinite(compensation):
         dfx_total += compensation
 
     # --- interval scores ------------------------
-
     scores = np.zeros(n_intervals, dtype=np.float64)
     for i in range(n_intervals):
         dx = x_values[i + 1] - x_values[i]
@@ -282,10 +284,13 @@ def compute_resampling_scores(
 
 
 @numba.njit
-def insert_sorted_samples(
+def merge_samples(
     x_values: np.ndarray, fx_values: np.ndarray, new_x_values: np.ndarray, new_fx_values: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray]:
     """Return the samples with the new samples merged in, sorted by x, keeping 1 sample per x.
+
+    Only the new samples are sorted, and then merged in a single linear pass; sorting all samples again, as
+    np.unique would, would cost O(n log n) on every iteration of the resampling loop.
 
     Args:
         x_values: (n,)-sized array of x-values, sorted in ascending order and without duplicates.
@@ -294,8 +299,8 @@ def insert_sorted_samples(
         new_fx_values: (m,)-sized array of the corresponding f(x)-values.
 
     Returns:
-        (x_values, fx_values)-tuple of the merged arrays. A new x-value that is already present is dropped, which
-        matches the function cache, since it holds 1 value per x.
+        (x_values, fx_values)-tuple of the merged arrays. A new x-value that is already present is dropped, in the
+        same way that the function cache keeps only 1 value per x.
     """
     order = np.argsort(new_x_values, kind="mergesort")
     new_x_sorted = new_x_values[order]
