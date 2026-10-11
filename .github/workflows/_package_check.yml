@@ -63,7 +63,8 @@ jobs:
           name: dist
           path: dist
 
-      # The bare environment gets its packages in 2 steps:
+      # The bare environment, `blind-venv`, holds snuffled only as the installed wheel. It
+      # gets its packages in 2 steps:
       #   - the test dependencies, at the versions pinned in uv.lock, from the `test`
       #     group only (`--only-group` leaves out snuffled and its runtime dependencies);
       #   - snuffled and its runtime dependencies, from the built wheel alone.
