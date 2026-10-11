@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix `Snuffler` reseeding Python's global `random` module
 - Fix `Snuffler` keeping the analyzed function and its samples in memory until the process exits
+- Fix `FunctionProperty.MANY_ZEROES` on functions analyzed with a `dx` below the float spacing of the interval
 
 ### Security
 
