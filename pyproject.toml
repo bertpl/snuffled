@@ -157,9 +157,6 @@ raises-require-match-for = ["Exception", "BaseException"]  # only the truly broa
 "scripts/**" = ["INP001", "S", "T20"]   # maintainer tooling, not the shipped library
 ".github/scripts/**" = ["INP001", "S", "D", "ANN", "T20"]   # maintainer tooling, not held to shipped-source style
 "notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901", "B", "T20"]  # exploratory notebooks, not held to shipped-source style
-# @cache on FunctionSampler's computed-array methods is deliberate; the resulting instance
-# retention is tracked as a parked behavior item, not silently refactored here.
-"snuffled/_core/analysis/_function_sampler.py" = ["B019"]
 
 [tool.ty.src]
 include = ["snuffled"]

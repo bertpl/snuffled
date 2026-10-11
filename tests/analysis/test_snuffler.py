@@ -1,6 +1,8 @@
+import gc
 import math
 import random
 import time
+import weakref
 from collections.abc import Callable
 from enum import StrEnum
 
@@ -66,6 +68,32 @@ def test_snuffler_extract_all_keeps_global_random_states():
     assert random.getstate() == random_state_before
     assert np.array_equal(numpy_state_after[1], numpy_state_before[1])
     assert numpy_state_after[2:] == numpy_state_before[2:]
+
+
+def test_snuffler_is_freed_after_extract_all():
+    """A Snuffler and its function sampler are freed once the last reference to the Snuffler is deleted."""
+    # --- arrange ----------------------
+    snuffler = Snuffler(
+        fun=lambda x: x - 0.3,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        seed=42,
+        n_fun_samples=100,
+        n_roots=10,
+        n_root_samples=10,
+    )
+    _ = snuffler.extract_all()  # fills every cached value of the function sampler
+    snuffler_ref = weakref.ref(snuffler)
+    sampler_ref = weakref.ref(snuffler.function_sampler)
+
+    # --- act --------------------------
+    del snuffler
+    gc.collect()
+
+    # --- assert -----------------------
+    assert snuffler_ref() is None
+    assert sampler_ref() is None
 
 
 def test_snuffler_accepts_numpy_integer_seed():

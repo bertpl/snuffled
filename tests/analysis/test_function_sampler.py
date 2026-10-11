@@ -90,9 +90,9 @@ def test_function_sampler_x_values(test_fun_quad, dx: float):
     sampler_2 = FunctionSampler(test_fun_quad, x_min, x_max, dx=dx, rng_seed=RngSeed(42), n_fun_samples=n, n_roots=100)
 
     # --- act --------------------------
-    x_values = sampler.x_values()
-    x_values_2 = sampler.x_values()
-    x_values_3 = sampler_2.x_values()  # a new sampler with the same seed draws the same grid
+    x_values = sampler.x_values
+    x_values_2 = sampler.x_values
+    x_values_3 = sampler_2.x_values  # a new sampler with the same seed draws the same grid
 
     # --- assert -----------------------
     assert np.array_equal(x_values, x_values_2)
@@ -116,8 +116,8 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
         _ = sampler.f(0.123456)
 
     # --- act --------------------------
-    x_values = sampler.x_values()
-    fx_values = sampler.fx_values()
+    x_values = sampler.x_values
+    fx_values = sampler.fx_values
 
     # --- assert -----------------------
     for x, fx in zip(x_values, fx_values):
@@ -139,7 +139,7 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
     ],
 )
 def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x_after: list[float]):
-    """Tests if .function_cache() returns consistent info after calling .fx_values() and .f(.)"""
+    """Tests if .function_cache() returns consistent info after calling .fx_values and .f(.)"""
 
     # --- arrange ----------------------
     sampler = FunctionSampler(
@@ -147,14 +147,14 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
     )
 
     # --- act --------------------------
-    # fetch data before calling x_values(), fx_values()
+    # fetch data before calling x_values, fx_values
     x_fx_before = [(x, sampler.f(x)) for x in x_before]
 
-    # call x_values(), fx_values()
-    x_values = sampler.x_values()
-    fx_values = sampler.fx_values()
+    # call x_values, fx_values
+    x_values = sampler.x_values
+    fx_values = sampler.fx_values
 
-    # fetch data after calling x_values(), fx_values()
+    # fetch data after calling x_values, fx_values
     x_fx_after = [(x, sampler.f(x)) for x in x_after]
 
     # get cache contents
@@ -181,7 +181,7 @@ def test_function_sampler_robust_estimated_fx_max(n: int):
     max_rel_deviation = 4 / math.sqrt(n)
 
     # --- act --------------------------
-    estimated_max = sampler.robust_estimated_fx_max()
+    estimated_max = sampler.robust_estimated_fx_max
 
     # --- assert -----------------------
     assert estimated_max == pytest.approx(1.0, rel=max_rel_deviation)
@@ -207,10 +207,10 @@ def test_function_sampler_tol_array_local(test_fun_quad):
         n_roots=100,
     )
 
-    expected_tol_array = abs(sampler.fx_values()) * EPS * rel_tol_scale
+    expected_tol_array = abs(sampler.fx_values) * EPS * rel_tol_scale
 
     # --- act --------------------------
-    tol_array = sampler.tol_array_local()
+    tol_array = sampler.tol_array_local
 
     # --- assert -----------------------
     assert np.array_equal(tol_array, expected_tol_array)
@@ -233,10 +233,10 @@ def test_function_sampler_tol_array_global(test_fun_quad):
         n_roots=100,
     )
 
-    expected_tol_array = sampler.robust_estimated_fx_max() * EPS * rel_tol_scale * np.ones(n)
+    expected_tol_array = sampler.robust_estimated_fx_max * EPS * rel_tol_scale * np.ones(n)
 
     # --- act --------------------------
-    tol_array = sampler.tol_array_global()
+    tol_array = sampler.tol_array_global
 
     # --- assert -----------------------
     assert np.array_equal(tol_array, expected_tol_array)
@@ -283,10 +283,10 @@ def test_function_sampler_roots(fun: Callable[[float], float], n_roots: int):
     sampler = FunctionSampler(
         fun, x_min=-1, x_max=1, dx=1e-10, rng_seed=RngSeed(42), n_fun_samples=1000, n_roots=n_roots, rel_tol_scale=10.0
     )
-    candidate_root_intervals, _ = sampler.candidate_root_intervals()
+    candidate_root_intervals, _ = sampler.candidate_root_intervals
 
     # --- act --------------------------
-    roots = sampler.roots()
+    roots = sampler.roots
 
     # --- assert -----------------------
     assert len(roots) == min(n_roots, len(candidate_root_intervals))
