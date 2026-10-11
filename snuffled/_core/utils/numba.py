@@ -9,9 +9,10 @@ def clip_scalar(a: float, a_min: float, a_max: float) -> float:
     """np.clip but just for scalars, compatible with numba."""
     if a < a_min:
         return a_min
-    if a > a_max:
+    elif a > a_max:
         return a_max
-    return a
+    else:
+        return a
 
 
 @numba.njit(inline="always")
@@ -26,4 +27,5 @@ def geomean(x: np.ndarray) -> float:
         raise ValueError("Cannot take geometric mean of negative numbers")
     if x_min == 0.0:
         return 0.0
-    return float(np.exp2(np.average(np.log2(x))))
+    else:
+        return float(np.exp2(np.average(np.log2(x))))

@@ -34,7 +34,7 @@ def initialize_params(
 #  (a,b,c) search directions used in optimization & uncertainty exploration procedures
 # ==================================================================================================
 @numba.njit
-def param_step(
+def param_step(  # noqa: C901 -- each value of `method` needs its own branch
     a: float,
     b: float,
     c: float,
@@ -78,7 +78,10 @@ def param_step(
                 # These steps first modify parameter 'b' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
                 # STEP 1: modify 'b' in [b_min, b_max] with step_size=-1 -> b_min and step_size=+1 -> b_max  (LIN scale)
-                b_new = b + step_size * (b - b_min) if step_size < 0 else b + step_size * (b_max - b)
+                if step_size < 0:
+                    b_new = b + step_size * (b - b_min)
+                else:
+                    b_new = b + step_size * (b_max - b)
                 # STEP 2: modify 'c' if needed
                 match method:
                     case "b":

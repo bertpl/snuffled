@@ -25,7 +25,8 @@ def f_wide_zeroes(x: float, width_left: float, width_right: float) -> float:
     """roots are at -0.5, 0, 0.5"""
     if abs(x + 0.5) <= (width_left / 2) or abs(x - 0.5) <= (width_right / 2):
         return 0.0
-    return x * (x + 0.5) * (x - 0.5)
+    else:
+        return x * (x + 0.5) * (x - 0.5)
 
 
 # ==================================================================================================

@@ -115,8 +115,8 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         if total_norm == 0.0:
             # this means both sides are 0
             return 0.0
-        # regular case
-        return clip_scalar(total_delta / total_norm, 0.0, 1.0)
+        else:
+            return clip_scalar(total_delta / total_norm, 0.0, 1.0)
 
 
 # ==================================================================================================
@@ -130,8 +130,9 @@ def range_diff(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
     if x_max < y_min:
         # (x_min, x_max) < (y_min, y_max)  --> closest 2 points are x_max, y_min
         return y_min - x_max
-    if y_max < x_min:
+    elif y_max < x_min:
         # (y_min, y_max) < (x_min, x_max)  --> closest 2 points are y_max, x_min
         return x_min - y_max
-    # intervals must overlap at least partially
-    return 0.0
+    else:
+        # intervals must overlap at least partially
+        return 0.0

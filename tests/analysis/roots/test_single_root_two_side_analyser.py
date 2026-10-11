@@ -168,7 +168,8 @@ def test_single_root_two_side_analyser_asymmetric_linear(
     def fun(_x: float) -> float:
         if _x >= 0.0:
             return c_pos * _x
-        return c_neg * _x
+        else:
+            return c_neg * _x
 
     dx = 1e-10
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
@@ -203,7 +204,8 @@ def test_single_root_two_side_analyser_asymmetric_nonlinear(
     def fun(_x: float) -> float:
         if _x >= 0.0:
             return _x**e_pos
-        return -(abs(_x) ** e_neg)
+        else:
+            return -(abs(_x) ** e_neg)
 
     dx = 1e-10
     sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)

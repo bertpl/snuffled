@@ -84,14 +84,16 @@ class FunctionSampler:
                     fx = self._fun_cache[single_x]
                 fx_values.append(fx)
             return fx_values
-        # --- get SINGLE f(x) values -------------
-        if x in self._fun_cache:
-            return self._fun_cache[x]
-        if self.x_min <= x <= self.x_max:
-            fx = self._eval(x)
-            self._fun_cache[x] = fx
-            return fx
-        raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
+        else:
+            # --- get SINGLE f(x) values ---------
+            if x in self._fun_cache:
+                return self._fun_cache[x]
+            elif self.x_min <= x <= self.x_max:
+                fx = self._eval(x)
+                self._fun_cache[x] = fx
+                return fx
+            else:
+                raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
 
     def _eval(self, x: float) -> float:
         """Evaluate fun(x), sanitizing non-finite results so no NaN / +-inf reaches the analysis kernels.
@@ -106,12 +108,13 @@ class FunctionSampler:
         if math.isnan(raw):
             self._saw_nan = True
             return FX_CLIP
-        if math.isinf(raw):
+        elif math.isinf(raw):
             self._saw_inf = True
             return math.copysign(FX_CLIP, raw)
-        if abs(raw) > FX_CLIP:
+        elif abs(raw) > FX_CLIP:
             return math.copysign(FX_CLIP, raw)
-        return raw
+        else:
+            return raw
 
     @property
     def saw_nan(self) -> bool:
@@ -168,7 +171,8 @@ class FunctionSampler:
         """
         if absolute:
             return float(np.quantile(abs(self.fx_values()), q))
-        return float(np.quantile(self.fx_values(), q))
+        else:
+            return float(np.quantile(self.fx_values(), q))
 
     @cache
     def robust_estimated_fx_max(self) -> float:
