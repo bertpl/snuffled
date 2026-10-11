@@ -20,7 +20,6 @@ def fit_curve(
     range_c: tuple[float, float],
     reg: float,
     n_iters: int = 20,
-    debug_flag: bool = False,
 ) -> tuple[float, float, float, float]:
     """Tailored approach to find approximately optimal initial parameters within provided b and c bounds.
 
@@ -40,7 +39,7 @@ def fit_curve(
     :return: (a,b,c,cost)-tuple of parameters that are considered optimal, with a, b, c in requested ranges.
     """
     # --- initial approximate solution -----------
-    a_opt, b_opt, c_opt, optimal_cost, _ = fit_curve_approx(x, fx, range_a, range_b, range_c, reg, debug_flag)
+    a_opt, b_opt, c_opt, optimal_cost, _ = fit_curve_approx(x, fx, range_a, range_b, range_c, reg)
 
     # --- refine - step 2 - grid -----------------
     for step_methods in (["a", "b", "c"], ["ac", "ba", "bc"], ["a", "b", "c"], ["ac", "ba", "bc"]):
@@ -74,15 +73,6 @@ def fit_curve(
                         # (can happen that there's no change if we're already at the boundary of the search space)
                         current_cost = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
                         if current_cost < optimal_cost:
-                            if debug_flag:
-                                print(
-                                    "Improved along ",
-                                    step_size * step_dir,
-                                    f"x {step_method}: ",
-                                    optimal_cost,
-                                    " --> ",
-                                    current_cost,
-                                )
                             a_opt = a_cand
                             b_opt = b_cand
                             c_opt = c_cand
@@ -104,7 +94,6 @@ def fit_curve_approx(
     range_b: tuple[float, float],
     range_c: tuple[float, float],
     reg: float,
-    debug_flag: bool = False,
 ) -> tuple[float, float, float, float, str]:
     """Find approximately optimal solution (a,b,c) to curve fitting problem.
 
@@ -138,9 +127,6 @@ def fit_curve_approx(
     a_opt, b_opt, c_opt = initialize_params(range_a, range_b, range_c)
     optimal_cost = fitting_cost(x, fx, a_opt, b_opt, c_opt, reg)
     optimal_method = "default"
-
-    if debug_flag:
-        print("Method 'default'  --> cost=", optimal_cost)
 
     # --- heuristics -----------------------------
     # prepare a few reference values
@@ -182,9 +168,6 @@ def fit_curve_approx(
             range_c=range_c,
         )
         current_cost = fitting_cost(x, fx, a_est, b_est, c_est, reg)
-
-        if debug_flag:
-            print(f"Method '{method_names[i]}'  --> cost=", current_cost)
 
         if current_cost < optimal_cost:
             a_opt, b_opt, c_opt = a_est, b_est, c_est

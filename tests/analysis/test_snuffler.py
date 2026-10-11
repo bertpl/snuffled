@@ -56,13 +56,13 @@ def test_snuffler_extract_all_keeps_global_random_states():
         n_root_samples=10,
     )
     random_state_before = random.getstate()
-    numpy_state_before = np.random.get_state()
+    numpy_state_before = np.random.get_state()  # noqa: NPY002 -- the test checks the legacy global generator itself
 
     # --- act --------------------------
     _ = snuffler.extract_all()
 
     # --- assert -----------------------
-    numpy_state_after = np.random.get_state()
+    numpy_state_after = np.random.get_state()  # noqa: NPY002 -- the test checks the legacy global generator itself
     assert random.getstate() == random_state_before
     assert np.array_equal(numpy_state_after[1], numpy_state_before[1])
     assert numpy_state_after[2:] == numpy_state_before[2:]

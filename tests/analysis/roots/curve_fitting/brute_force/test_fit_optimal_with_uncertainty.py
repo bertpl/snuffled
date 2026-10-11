@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import fit_curve_with_uncertainty_brute_force
-from snuffled._core.utils.noise import noise_from_float
+from tests.noise import noise_from_float
 
 
 @pytest.mark.parametrize("c_noise", [1e-9, 1e-6, 1e-4, 1e-2])
@@ -25,9 +25,6 @@ def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: 
         reg=1e-3,
         rel_uncertainty_size=1.0,
     )
-
-    print(f"b : {min(b_values)} -> {max(b_values)}")
-    print(f"c : {min(c_values)} -> {max(c_values)}")
 
     # --- assert -----------------------
     # NOTE: we need to add some tolerances, since we search over a fixed grid
@@ -56,9 +53,6 @@ def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: 
         reg=1e-3,
         rel_uncertainty_size=1.0,
     )
-
-    print(f"b : {min(b_values)} -> {max(b_values)}")
-    print(f"c : {min(c_values)} -> {max(c_values)}")
 
     # --- assert -----------------------
     # NOTE: we need to add some tolerances, since we search over a fixed grid

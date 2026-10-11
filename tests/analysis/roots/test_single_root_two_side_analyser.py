@@ -4,8 +4,8 @@ import pytest
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.roots.single_root_two_side_analyser import SingleRootTwoSideAnalyser
 from snuffled._core.models import RootProperty
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng_seed import RngSeed
+from tests.noise import noise_from_float
 
 
 # ==================================================================================================

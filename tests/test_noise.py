@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-from snuffled._core.utils.noise import deterministic_noise_series, noise_from_float
+from tests.noise import deterministic_noise_series, noise_from_float
 
 
 def test_noise_from_float():
@@ -35,3 +35,4 @@ def test_deterministic_noise_series():
     assert len(noise_1) == n
     assert len(set(noise_1)) == n
     assert -1.0 <= min(noise_1) < -0.99 < 0.99 < max(noise_1) <= 1.0
+    assert not noise_1.flags.writeable

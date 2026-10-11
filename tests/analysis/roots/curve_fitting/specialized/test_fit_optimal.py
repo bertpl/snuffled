@@ -1,8 +1,8 @@
 import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas, fit_curve, fitting_cost, fitting_curve
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng import new_rng_state
+from tests.noise import noise_from_float
 
 
 # ==================================================================================================
@@ -26,7 +26,7 @@ def test_fit_curve_accurate(a_true: float, b_true: float, c_true: float, c_noise
     range_c = (0.25, 4.0) if c_true > 0.0 else (-4.0, -0.25)
 
     # --- act --------------------------
-    a_est, b_est, c_est, cost = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg=0.0, debug_flag=True)
+    a_est, b_est, c_est, cost = fit_curve(x_values, fx_values, range_a, range_b, range_c, reg=0.0)
 
     # --- assert -----------------------
     assert a_est == pytest.approx(a_true, rel=tol, abs=tol)

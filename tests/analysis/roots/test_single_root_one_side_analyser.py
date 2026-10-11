@@ -5,8 +5,8 @@ import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
 from snuffled._core.analysis.roots.single_root_one_side_analyser import SingleRootOneSideAnalyser
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng import new_rng_state
+from tests.noise import noise_from_float
 
 
 # ==================================================================================================
@@ -114,10 +114,6 @@ def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_
     fx_4_min, fx_4_max = analyser.f4
 
     # --- assert -----------------------
-    print(fx_1_min, fx_1_true, fx_1_max)
-    print(fx_2_min, fx_2_true, fx_2_max)
-    print(fx_4_min, fx_4_true, fx_4_max)
-
     assert fx_1_min <= fx_1_true <= fx_1_max
     assert fx_2_min <= fx_2_true <= fx_2_max
     assert fx_4_min <= fx_4_true <= fx_4_max

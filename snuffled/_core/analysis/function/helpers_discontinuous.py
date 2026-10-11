@@ -77,7 +77,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
 
     :param function_sampler: (FunctionSampler) used to get sampling settings + obtain addition f(x_j) samples
     :param n_samples: (int) number of additional samples we can take to zoom in on suspected discontinuities.
-    :return score: (int) value in [0,1]
+    :return score: (float) value in [0,1]
     """
     # --- init -----------------------------------
     # extract sampling settings
@@ -198,7 +198,7 @@ def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: 
     #                              deriv_i = deriv_max         -->  w_i = 1.0
     # when using the formula:
     #   w_i_unscaled = 1 / (1 + (deriv_threshold/deriv_i))
-    #   w_i          = 0.5 * c*(w_i_unscaled - 0.5)
+    #   w_i          = 0.5 + c*(w_i_unscaled - 0.5)
     #
     # NOTE: we choose this type of scaling (in the w_i-direction rather than the deriv-direction),
     #       since we don't want the transition around the threshold derivative to become sharper for increasing

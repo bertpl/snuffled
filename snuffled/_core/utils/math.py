@@ -40,7 +40,8 @@ def smooth_sign(x: float, inner_tol: float, outer_tol: float) -> float:
         # we know for sure that outer_tol cannot be 0 in this case, which we'd catch earlier
         inner_tol = 0.25 * outer_tol
     elif inner_tol >= 0.25 * outer_tol:
-        # we know that inner_tol > 0, in which case also inner_tol > 0
+        # inner_tol > 0, since the branch above handles inner_tol == 0, and so outer_tol > 0 too for any
+        # caller that keeps outer_tol >= inner_tol
         mid_tol = math.sqrt(inner_tol * outer_tol)
         inner_tol = 0.5 * mid_tol
         outer_tol = 2.0 * mid_tol
