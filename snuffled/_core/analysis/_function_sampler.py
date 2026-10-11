@@ -84,14 +84,16 @@ class FunctionSampler:
                     fx = self._fun_cache[single_x]
                 fx_values.append(fx)
             return fx_values
-        # --- get SINGLE f(x) values -------------
-        if x in self._fun_cache:
-            return self._fun_cache[x]
-        if self.x_min <= x <= self.x_max:
-            fx = self._eval(x)
-            self._fun_cache[x] = fx
-            return fx
-        raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
+        else:
+            # --- get SINGLE f(x) values ---------
+            if x in self._fun_cache:
+                return self._fun_cache[x]
+            elif self.x_min <= x <= self.x_max:
+                fx = self._eval(x)
+                self._fun_cache[x] = fx
+                return fx
+            else:
+                raise ValueError(f"x={x} is out of bounds [{self.x_min}, {self.x_max}]")
 
     def _eval(self, x: float) -> float:
         """Evaluate fun(x), sanitizing non-finite results so no NaN / +-inf reaches the analysis kernels.

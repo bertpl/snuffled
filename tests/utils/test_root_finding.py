@@ -53,7 +53,6 @@ def f_with_wide_even_zero_1(x: float) -> float:
     elif -0.9 <= x < -0.8:
         return 0.9 - x
     else:
-        # x < -0.9
         return 2 * (x + 0.95)
 
 

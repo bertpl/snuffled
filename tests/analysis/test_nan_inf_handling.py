@@ -13,7 +13,7 @@ from snuffled._core.utils.constants import FX_CLIP
 #  Test functions
 # ==================================================================================================
 def _f_nan_middle(x: float) -> float:
-    # NaN over a region
+    """Return NaN over the region |x| < 0.3, and x elsewhere."""
     if abs(x) < 0.3:
         return float("nan")
     else:
@@ -21,7 +21,7 @@ def _f_nan_middle(x: float) -> float:
 
 
 def _f_nan_at_only_root(x: float) -> float:
-    # NaN covers the only sign flip
+    """Return NaN over a region that covers the function's only sign flip."""
     if abs(x) < 0.3:
         return float("nan")
     elif x > 0:
@@ -31,7 +31,7 @@ def _f_nan_at_only_root(x: float) -> float:
 
 
 def _f_inf_region(x: float) -> float:
-    # +inf over a region -> the grid samples it
+    """Return +inf over the region x > 0.5, which is wide enough that the initial grid of samples hits it."""
     if x > 0.5:
         return float("inf")
     else:
@@ -39,6 +39,7 @@ def _f_inf_region(x: float) -> float:
 
 
 def _f_pole(x: float) -> float:
+    """Return 1/(x - 0.2), which has a pole at x = 0.2."""
     if x != 0.2:
         return 1.0 / (x - 0.2)
     else:

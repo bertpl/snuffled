@@ -84,5 +84,5 @@ def non_monotonicity_score_n_up_down_flips(fx_diff_signs: np.ndarray) -> float:
         normalized_score = min(1.0, score / (0.5 * (len(fx_diff_signs) - 1)))
         return float(normalized_score)
     else:
-        # no sign flips in fx_diff_signs
+        # fx_diff_signs has no sign flips
         return 0.0
