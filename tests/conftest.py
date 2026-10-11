@@ -29,7 +29,7 @@ import snuffled
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Fail the run when `SNUFFLED_TESTS_NEEDS_INSTALLED_WHEEL` is `1` and snuffled is not imported from site-packages.
 
-    The package check sets the variable when it runs the suite against the built wheel. Without this
+    The CI wheel check sets the variable when it runs the suite against the built wheel. Without this
     check, a source tree on `sys.path` would let every test import the source, so a run meant to test
     the wheel would pass without testing it.
     """
