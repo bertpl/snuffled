@@ -13,19 +13,36 @@ from snuffled._core.utils.constants import FX_CLIP
 #  Test functions
 # ==================================================================================================
 def _f_nan_middle(x: float) -> float:
-    return float("nan") if abs(x) < 0.3 else x  # NaN over a region
+    # NaN over a region
+    if abs(x) < 0.3:
+        return float("nan")
+    else:
+        return x
 
 
 def _f_nan_at_only_root(x: float) -> float:
-    return float("nan") if abs(x) < 0.3 else (x - 0.5 if x > 0 else x)  # NaN covers the only sign flip
+    # NaN covers the only sign flip
+    if abs(x) < 0.3:
+        return float("nan")
+    elif x > 0:
+        return x - 0.5
+    else:
+        return x
 
 
 def _f_inf_region(x: float) -> float:
-    return float("inf") if x > 0.5 else x  # +inf over a region -> the grid samples it
+    # +inf over a region -> the grid samples it
+    if x > 0.5:
+        return float("inf")
+    else:
+        return x
 
 
 def _f_pole(x: float) -> float:
-    return 1.0 / (x - 0.2) if x != 0.2 else float("inf")
+    if x != 0.2:
+        return 1.0 / (x - 0.2)
+    else:
+        return float("inf")
 
 
 # ==================================================================================================
@@ -113,7 +130,10 @@ def test_non_finite_hit_only_in_deep_analysis_is_flagged(bad: float, diagnostic:
     # A tiny non-finite band around the root at 0: a coarse grid (n_fun_samples=10) misses it, but
     # root-finding bisects into it -> the diagnostic must reflect that deeper sampling, not the grid alone.
     def fun(x: float) -> float:
-        return bad if abs(x) < 1e-7 else x
+        if abs(x) < 1e-7:
+            return bad
+        else:
+            return x
 
     # --- act --------------------------
     props = Snuffler(

@@ -87,6 +87,7 @@ def _base_spline(_x: float) -> float:
     """
     if _x <= 0:
         return 0.0
-    if _x <= 1:
+    elif _x <= 1:
         return 0.5 * _x * _x
-    return _x - 0.5
+    else:
+        return _x - 0.5

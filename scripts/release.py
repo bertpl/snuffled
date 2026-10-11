@@ -283,7 +283,10 @@ def _coverage_color(pct: float) -> str:
     """Map a coverage percentage to a shields.io badge color."""
     if pct >= 90:
         return "brightgreen"
-    return "yellow" if pct >= 75 else "red"
+    elif pct >= 75:
+        return "yellow"
+    else:
+        return "red"
 
 
 def refresh_readme_badges() -> None:

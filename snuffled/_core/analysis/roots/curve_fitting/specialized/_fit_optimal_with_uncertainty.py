@@ -54,7 +54,10 @@ def fit_curve_with_uncertainty(
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
     # --- init -----------------------------------
-    c_ranges = [range_c, (-range_c[1], -range_c[0])] if include_opposite_c_range else [range_c]
+    if include_opposite_c_range:
+        c_ranges = [range_c, (-range_c[1], -range_c[0])]
+    else:
+        c_ranges = [range_c]
 
     # --- get optimal solutions ------------------
     abc_opt_lst: list[tuple[float, float, float]] = []

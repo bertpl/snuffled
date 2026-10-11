@@ -225,7 +225,8 @@ def f_roots_linear(x: float) -> float:
 def f_roots_step(x: float) -> float:
     if x >= 0.1232465789:
         return 1.0
-    return -1.0
+    else:
+        return -1.0
 
 
 def f_roots_sine(x: float, c: float) -> float:

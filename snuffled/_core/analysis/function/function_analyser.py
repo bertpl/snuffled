@@ -69,8 +69,12 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         if q10 == 0.0:
             # q90/q10 is undefined: q90 > 0 means an unbounded range (saturate to 1.0); q90 == 0 means
             # the function is ~everywhere 0 (no dynamic range at all -> 0.0).
-            return 1.0 if q90 > 0.0 else 0.0
-        return float(np.interp(np.log2(q90 / q10), [10.0, 94.0], [0.0, 1.0], left=0.0, right=1.0))
+            if q90 > 0.0:
+                return 1.0
+            else:
+                return 0.0
+        else:
+            return float(np.interp(np.log2(q90 / q10), [10.0, 94.0], [0.0, 1.0], left=0.0, right=1.0))
 
     def _extract_many_zeroes(self) -> float:
         """Score whether the function suffers from a large number of zeroes.
