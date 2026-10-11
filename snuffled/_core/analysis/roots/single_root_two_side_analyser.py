@@ -47,7 +47,6 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         fx_values_right = np.array([self.function_sampler.f(self.root.x + x_delta) for x_delta in x_deltas])
 
         # --- left/right function sign -----------
-
         # get robust sign estimates from left & right fx-values
         sign_estimate_left = robust_sign_estimate(fx_values_left)
         sign_estimate_right = robust_sign_estimate(fx_values_right)

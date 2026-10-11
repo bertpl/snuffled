@@ -58,10 +58,8 @@ def param_step(
     if step_size != 0.0:
         match method:
             case "a" | "ac":
-                # -------------------------------
                 # These steps first modify parameter 'a' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
-                # -------------------------------
                 # STEP 1: modify 'a' with a factor in [0.1, 10.0]
                 a_new *= 10**step_size
                 # STEP 2: modify 'c' if needed
@@ -77,10 +75,8 @@ def param_step(
                         ratio = a / a_new
                         c_new = math.asinh(ratio * math.sinh(__LN_R * c)) / __LN_R
             case "b" | "ba" | "bc":
-                # -------------------------------
                 # These steps first modify parameter 'b' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
-                # -------------------------------
                 # STEP 1: modify 'b' in [b_min, b_max] with step_size=-1 -> b_min and step_size=+1 -> b_max  (LIN scale)
                 b_new = b + step_size * (b - b_min) if step_size < 0 else b + step_size * (b_max - b)
                 # STEP 2: modify 'c' if needed

@@ -140,7 +140,6 @@ def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt
     interval_sizes = get_fixed_sum_exponential_intervals(n, tgt_sum, dx_min)
 
     # --- assert -----------------------
-
     # check result of fit_...
     computed_interval_sizes = [dx_min * (c**i) for i in range(n)]
     assert sum(computed_interval_sizes) == pytest.approx(tgt_sum, rel=n * 1e-15)

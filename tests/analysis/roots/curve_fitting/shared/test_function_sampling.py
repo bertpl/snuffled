@@ -33,7 +33,6 @@ def test_compute_x_deltas(dx: float, k: int):
     x_deltas_3 = compute_x_deltas(dx, k, seed=seed2)
 
     # --- assert -----------------------
-
     # check seed handling
     assert np.array_equal(x_deltas, x_deltas_2)
     assert not np.array_equal(x_deltas, x_deltas_3)

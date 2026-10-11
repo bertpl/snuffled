@@ -80,7 +80,6 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     :return score: (int) value in [0,1]
     """
     # --- init -----------------------------------
-
     # extract sampling settings
     dx_min = function_sampler.dx
     x_min, x_max = function_sampler.x_min, function_sampler.x_max

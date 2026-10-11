@@ -34,7 +34,6 @@ def test_fit_curve_with_uncertainty(
     """Basic checks if all basic invariants are respected in the returned values."""
 
     # --- arrange ----------------------
-
     # define optimization problem
     x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
@@ -68,7 +67,6 @@ def test_fit_curve_with_uncertainty(
     )
 
     # --- assert -----------------------
-
     # check if (a,b,c) vs cost are mutually correct
     for a, b, c, cost in zip(a_values, b_values, c_values, cost_values):
         expected_cost = fitting_cost(x_values, fx_values, a, b, c, reg)

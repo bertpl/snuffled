@@ -42,7 +42,6 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     Results across multiple runs are deterministic, but can be controlled by a seed.
     """
     # --- determine interval widths --------------
-
     # get interval widths   (n samples -> n-1 sub-intervals)
     n_w = n - 1
     w = get_fixed_sum_exponential_intervals(n=n_w, tgt_sum=x_max - x_min, dx_min=dx_min)
@@ -52,7 +51,6 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     np.random.shuffle(w)
 
     # --- determine actual samples ---------------
-
     # compute cumulative
     x_rel = np.cumsum(w)  # x-positions of samples relative to x_min
     x_rel = x_rel * (x_max - x_min) / x_rel[-1]  # rescale (probably very slightly) to adjust for numerical errors

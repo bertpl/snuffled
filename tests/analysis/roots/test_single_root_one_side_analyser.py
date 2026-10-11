@@ -43,7 +43,6 @@ def test_single_root_one_side_analyser_preprocess_x_fx(
     analyser = SingleRootOneSideAnalyser(dx, x_deltas_arr, fx_values_arr, dx_sign, fx_sign)
 
     # --- assert -----------------------
-
     # check if core data is stored correctly
     assert analyser.dx == dx
     assert np.array_equal(analyser.x_deltas, x_deltas)

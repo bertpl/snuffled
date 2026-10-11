@@ -136,7 +136,6 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
     sampler = FunctionSampler(test_fun_quad, x_min=-2.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=10, n_roots=100)
 
     # --- act --------------------------
-
     # fetch data before calling x_values(), fx_values()
     x_fx_before = [(x, sampler.f(x)) for x in x_before]
 

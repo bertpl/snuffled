@@ -143,7 +143,6 @@ def fit_curve_approx(
         print("Method 'default'  --> cost=", optimal_cost)
 
     # --- heuristics -----------------------------
-
     # prepare a few reference values
     fx_median = np.median(fx)
     fx_05_median = np.median(fx_group_1)
