@@ -139,7 +139,7 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
     ],
 )
 def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x_after: list[float]):
-    """Check that .function_cache() returns consistent info after reading .fx_values and calling .f(.)."""
+    """Check that .function_cache() holds every (x, f(x)) pair from .fx_values and from the .f(.) calls around it."""
 
     # --- arrange ----------------------
     sampler = FunctionSampler(

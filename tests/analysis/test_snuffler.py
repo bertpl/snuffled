@@ -71,9 +71,9 @@ def test_snuffler_extract_all_keeps_global_random_states():
 
 
 # ==================================================================================================
-#  A Snuffler and its function sampler are freed once the Snuffler is deleted
+#  Memory release
 # ==================================================================================================
-def test_snuffler_is_freed_after_extract_all():
+def test_snuffler_is_freed_once_deleted_after_extract_all():
     """A Snuffler and its function sampler are freed once the last reference to the Snuffler is deleted."""
     # --- arrange ----------------------
     snuffler = Snuffler(

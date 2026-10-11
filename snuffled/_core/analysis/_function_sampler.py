@@ -122,14 +122,22 @@ class FunctionSampler:
 
     @property
     def saw_nan(self) -> bool:
-        """Whether the function returned NaN for a sampled point, including every point of the multi-scale grid."""
-        _ = self.fx_values  # sample the multi-scale grid first, so the flag covers it
+        """Return True if the function returned NaN for any sampled point.
+
+        The first read of this property, or of fx_values, evaluates the function on every point of x_values, so
+        the flag covers them.
+        """
+        _ = self.fx_values  # evaluate the function on every point of x_values first, so the flag covers them
         return self._saw_nan
 
     @property
     def saw_inf(self) -> bool:
-        """Whether the function returned +-inf for a sampled point, including every point of the multi-scale grid."""
-        _ = self.fx_values  # sample the multi-scale grid first, so the flag covers it
+        """Return True if the function returned +-inf for any sampled point.
+
+        The first read of this property, or of fx_values, evaluates the function on every point of x_values, so
+        the flag covers them.
+        """
+        _ = self.fx_values  # evaluate the function on every point of x_values first, so the flag covers them
         return self._saw_inf
 
     @cached_property
@@ -155,7 +163,7 @@ class FunctionSampler:
     def function_cache(self) -> list[tuple[float, float]]:
         """Returns contents of the function cache as a list of (x, f(x))-tuples.
 
-        Note this might return more information than .x_values and .fx_values, since those properties
+        Note that function_cache() might return more information than .x_values and .fx_values, since those properties
         only hold information related to the initial multiscale sampling.
         """
         return list(self._fun_cache.items())
@@ -239,7 +247,7 @@ class FunctionSampler:
         The root intervals serve as candidates (but potentially too many) for root finding.
 
         Returns:
-            Tuple (root_intervals, non_root_intervals) of 2 lists of (x_left, x_right)-tuples, each spanning 2
+            Tuple (root_intervals, non_root_intervals) of 2 lists of (x_left, x_right)-tuples. Each tuple spans 2
             consecutive nonzero samples. root_intervals holds the intervals whose endpoints differ in sign;
             non_root_intervals holds those whose endpoints have the same sign.
         """
@@ -302,8 +310,8 @@ class FunctionSampler:
 
         A root is analyzable only if both sides have room for the full sampling span
         `max_x_delta(dx)`; nearer the edge, sampling `root.x ± x_delta` would fall outside
-        `[x_min, x_max]`. Scoped to two-sided root analysis — `roots` still holds every root
-        (for counting, zero-width, and the all-too-close diagnostic).
+        `[x_min, x_max]`. This list is for two-sided root analysis only; `roots` holds every root, including
+        those near the edges.
         """
         margin = max_x_delta(self.dx)
         return [root for root in self.roots if (root.x - self.x_min >= margin) and (self.x_max - root.x >= margin)]
