@@ -40,7 +40,7 @@ def test_analyzable_roots_keeps_interior_root():
 
 
 # =================================================================================================
-#  Pipeline: near-edge roots no longer crash + diagnostic / fallback (regression R2)
+#  Pipeline: extract_all() completes on near-edge roots, flags them, and falls back to 0.0 root scores
 # =================================================================================================
 @pytest.mark.parametrize("root_x", [-1.0 + 2e-9, 1.0 - 2e-9])  # both edges
 def test_extract_all_near_edge_root_completes(root_x: float):
