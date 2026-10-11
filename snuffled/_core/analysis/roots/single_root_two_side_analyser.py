@@ -4,7 +4,7 @@ from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import RootProperty, SnuffledRootProperties
 from snuffled._core.models.root_analysis import Root
-from snuffled._core.utils.math import range_diff
+from snuffled._core.utils.math import range_distance
 from snuffled._core.utils.numba import clip_scalar
 from snuffled._core.utils.rng_seed import RngSeed
 from snuffled._core.utils.signs import robust_sign_estimate
@@ -110,7 +110,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             f_right_min, f_right_max = getattr(self._analysis_right, att)
 
             total_norm += max(abs(f_left_min), abs(f_left_max), abs(f_right_min), abs(f_right_max))
-            total_delta += range_diff(f_left_min, f_left_max, -f_right_max, -f_right_min)
+            total_delta += range_distance(f_left_min, f_left_max, -f_right_max, -f_right_min)
 
         # --- final score ------------------------
         if total_norm == 0.0:
