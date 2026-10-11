@@ -1,4 +1,4 @@
-"""This module draws random numbers from an explicit state, for use inside numba-compiled functions.
+"""This module draws random numbers from a caller-owned state array, for numba-compiled functions.
 
 The generator is xoroshiro128+ (Blackman and Vigna, https://prng.di.unimi.it/), seeded through
 splitmix64. Its state is a 2-element uint64 array that every draw updates in place: a function that
@@ -20,7 +20,7 @@ import numpy as np
 #  Constants
 # =================================================================================================
 # The scale factor maps 2**64 to 1.0 - eps, so that every float64 draw lies below 1.0.
-_UINT64_TO_FLOAT64 = np.float64((1.0 - np.finfo(np.float64).eps) / (2**64))
+_UINT64_TO_UNIT_INTERVAL_SCALE = np.float64((1.0 - np.finfo(np.float64).eps) / (2**64))
 
 
 # =================================================================================================
@@ -48,7 +48,7 @@ def new_rng_state(seed: int) -> np.ndarray:
 @numba.njit(inline="always")
 def rand_float64(rng_state: np.ndarray) -> float:
     """Return a random float64 in [0.0, 1.0), advancing `rng_state` in place."""
-    return np.float64(_xoroshiro128plus_next(rng_state)) * _UINT64_TO_FLOAT64
+    return np.float64(_xoroshiro128plus_next(rng_state)) * _UINT64_TO_UNIT_INTERVAL_SCALE
 
 
 @numba.njit(inline="always")
@@ -56,7 +56,7 @@ def rand_int64(rng_state: np.ndarray, low: int, high: int) -> np.int64:
     """Return a random integer in [low, high), advancing `rng_state` in place.
 
     `high` must exceed `low`. The draw reduces a uint64 modulo the range size, so each value's
-    probability differs from uniform by a relative amount of at most (high - low) / 2**64.
+    probability differs from 1 / (high - low) by a relative amount of at most (high - low) / 2**64.
     """
     range_size = np.uint64(high - low)
     return low + np.int64(_xoroshiro128plus_next(rng_state) % range_size)
@@ -82,8 +82,8 @@ def _xoroshiro128plus_next(rng_state: np.ndarray) -> np.uint64:
     result = s0 + s1
 
     s1 ^= s0
-    rng_state[0] = _rotl(s0, np.uint64(24)) ^ s1 ^ (s1 << np.uint64(16))
-    rng_state[1] = _rotl(s1, np.uint64(37))
+    rng_state[0] = _rotate_bits_left(s0, np.uint64(24)) ^ s1 ^ (s1 << np.uint64(16))
+    rng_state[1] = _rotate_bits_left(s1, np.uint64(37))
 
     return result
 
@@ -99,6 +99,6 @@ def _splitmix64_next(splitmix64_state: np.ndarray) -> np.uint64:
 
 
 @numba.njit(inline="always")
-def _rotl(x: np.uint64, k: np.uint64) -> np.uint64:
-    """Rotate the 64 bits of `x` left by `k` positions."""
+def _rotate_bits_left(x: np.uint64, k: np.uint64) -> np.uint64:
+    """Rotate the 64 bits of `x` left by `k` positions; `k` must lie in 1..63."""
     return (x << k) | (x >> (np.uint64(64) - k))

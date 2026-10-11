@@ -27,7 +27,7 @@ def test_new_rng_state_pinned(seed: int, expected_rng_state: list[int]):
 
 
 def test_rand_float64_pinned():
-    """The first float64 draws from seed 42 are the pinned values."""
+    """The first 3 float64 values drawn from seed 42 match the pinned values."""
     # --- arrange ----------------------
     rng_state = new_rng_state(42)
 
@@ -88,7 +88,7 @@ def test_rand_float64_stats():
     ids=["min_value", "max_value"],
 )
 def test_rand_float64_range_endpoints(rng_state: list[int], expected_uint64: int, expected_float64: float):
-    """The smallest and largest uint64 draws map to 0.0 and to 1.0 - eps."""
+    """The smallest and largest uint64 values map to 0.0 and to 1.0 - eps."""
     # --- arrange ----------------------
     rng_state_np = np.array(rng_state, dtype=np.uint64)
 
