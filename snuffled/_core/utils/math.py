@@ -76,6 +76,22 @@ def smooth_sign_array(x: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarra
     return result
 
 
+def range_diff(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
+    """Return the distance between ranges (x_min, x_max) and (y_min, y_max).
+
+    Defined as the absolute difference between the closest two points.
+    """
+    if x_max < y_min:
+        # (x_min, x_max) < (y_min, y_max)  --> closest 2 points are x_max, y_min
+        return y_min - x_max
+    elif y_max < x_min:
+        # (y_min, y_max) < (x_min, x_max)  --> closest 2 points are y_max, x_min
+        return x_min - y_max
+    else:
+        # intervals must overlap at least partially
+        return 0.0
+
+
 # ==================================================================================================
 #  Internal helpers
 # ==================================================================================================

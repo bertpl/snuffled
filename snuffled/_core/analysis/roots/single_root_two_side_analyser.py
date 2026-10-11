@@ -4,6 +4,7 @@ from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import RootProperty, SnuffledRootProperties
 from snuffled._core.models.root_analysis import Root
+from snuffled._core.utils.math import range_diff
 from snuffled._core.utils.numba import clip_scalar
 from snuffled._core.utils.rng_seed import RngSeed
 from snuffled._core.utils.signs import robust_sign_estimate
@@ -117,22 +118,3 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             return 0.0
         else:
             return clip_scalar(total_delta / total_norm, 0.0, 1.0)
-
-
-# ==================================================================================================
-#  Helpers
-# ==================================================================================================
-def range_diff(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
-    """Computes distance between ranges (x_min, x_max) and (y_min, y_max).
-
-    Defined as the absolute difference between the closest two points.
-    """
-    if x_max < y_min:
-        # (x_min, x_max) < (y_min, y_max)  --> closest 2 points are x_max, y_min
-        return y_min - x_max
-    elif y_max < x_min:
-        # (y_min, y_max) < (x_min, x_max)  --> closest 2 points are y_max, x_min
-        return x_min - y_max
-    else:
-        # intervals must overlap at least partially
-        return 0.0
