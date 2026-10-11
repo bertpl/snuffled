@@ -8,9 +8,10 @@ import numpy as np
 from snuffled._core.models.root_analysis import Root
 from snuffled._core.utils.constants import EPS, FX_CLIP
 from snuffled._core.utils.math import smooth_sign_array
+from snuffled._core.utils.rng import sample_without_replacement
 from snuffled._core.utils.rng_seed import RngSeed
 from snuffled._core.utils.root_finding import find_odd_root
-from snuffled._core.utils.sampling import max_x_delta, multi_scale_samples, sample_integers
+from snuffled._core.utils.sampling import max_x_delta, multi_scale_samples
 from snuffled._core.utils.validation import require_min_n_samples
 
 
@@ -32,7 +33,7 @@ class FunctionSampler:
         x_min: float,
         x_max: float,
         dx: float,
-        seed: RngSeed,
+        rng_seed: RngSeed,
         n_fun_samples: int,
         n_roots: int,
         rel_tol_scale: float = 10.0,
@@ -42,7 +43,7 @@ class FunctionSampler:
         require_min_n_samples("n_roots", n_roots)
 
         # --- randomization ----------------------
-        self._seed = seed.derive("function_sampler")
+        self._rng_seed = rng_seed.derive("function_sampler")
 
         # --- function properties ----------------
         self._fun = fun
@@ -139,7 +140,7 @@ class FunctionSampler:
             x_max=self.x_max,
             dx_min=self.dx,
             n=self.n_fun_samples,
-            rng_state=self._seed.derive("grid").new_rng_state(),
+            rng_state=self._rng_seed.new_rng_state("grid"),
         )
 
     @cache
@@ -283,11 +284,10 @@ class FunctionSampler:
         if len(cand_intervals) > self.n_roots:
             cand_intervals = [
                 cand_intervals[i]
-                for i in sample_integers(
-                    i_min=0,
-                    i_max=len(cand_intervals),
-                    n=self.n_roots,
-                    rng_state=self._seed.derive("root_subset").new_rng_state(),
+                for i in sorted(
+                    sample_without_replacement(
+                        self._rng_seed.new_rng_state("root_subset"), 0, len(cand_intervals), self.n_roots
+                    ).tolist()
                 )
             ]
 

@@ -1,7 +1,7 @@
 import numba
 import numpy as np
 
-from .rng import rand_float64, sample_without_replacement, shuffle_in_place
+from .rng import rand_float64, shuffle_in_place
 
 
 # ==================================================================================================
@@ -11,10 +11,9 @@ def max_x_delta(dx: float) -> float:
     """Largest x_delta `compute_x_deltas` can produce for a given dx: `2^2.5 · dx = 4·√2·dx`.
 
     This is the outer radius of that function's sampling span `[2^-0.5·dx, 2^2.5·dx]`, independent
-    of `k` and of the random draws (which only vary sample density/order within the span). Used to decide which
-    roots sit far enough from the interval edges to have room for the full span on both sides. A
-    consistency test pins it against `max(compute_x_deltas(...))` so a span change can't silently
-    drift. Lives here (not next to `compute_x_deltas`) so `FunctionSampler` can use it without a
+    of `k` and of the random draws (which only vary sample density/order within the span). Used to
+    decide which roots sit far enough from the interval edges to have room for the full span on both
+    sides. Lives here (not next to `compute_x_deltas`) so `FunctionSampler` can use it without a
     dependency cycle through the roots package.
     """
     return (2.0**2.5) * dx
@@ -157,24 +156,13 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
 
 
 # ==================================================================================================
-#  Integer sampling
-# ==================================================================================================
-def sample_integers(i_min: int, i_max: int, n: int, rng_state: np.ndarray) -> list[int]:
-    """Sample n integers (without replacement) from range [i_min, i_max), drawing from `rng_state`.
-
-    Result is returned as a list of sorted integers.
-    """
-    return sorted(sample_without_replacement(rng_state, i_min, i_max, n).tolist())
-
-
-# ==================================================================================================
 #  Pseudo-uniform sampling
 # ==================================================================================================
 @numba.njit
 def pseudo_uniform_samples(x_min: float, x_max: float, n: int, rng_state: np.ndarray) -> np.ndarray:
     """Return n random numbers in [x_min, x_max), one per uniform sub-interval of width (x_max-x_min)/n.
 
-    There are n such sub-intervals; within each, uniform sampling is used, drawing from `rng_state`.
+    Within each sub-interval, one value is drawn uniformly from `rng_state`, which advances in place.
     """
     # take care of corner cases
     if n < 0:

@@ -40,11 +40,13 @@ def test_snuffler_extract_all_rootless(fun: Callable[[float], float]):
 # ==================================================================================================
 #  Global random generators are left untouched
 # ==================================================================================================
-def test_snuffler_extract_all_keeps_global_rng_state():
+def test_snuffler_extract_all_keeps_global_random_states():
     """extract_all() leaves the states of Python's `random` module and NumPy's global generator unchanged."""
     # --- arrange ----------------------
     snuffler = Snuffler(
-        fun=lambda x: math.sin(200 * x),  # more sign changes than n_roots, so a subset of roots is drawn
+        fun=lambda x: math.sin(
+            200 * x
+        ),  # the function has more sign changes than n_roots, so a subset of roots is drawn
         x_min=-1.0,
         x_max=1.0,
         dx=1e-10,

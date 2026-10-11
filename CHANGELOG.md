@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Change how `Snuffler` draws its random samples and picks the roots that it analyzes, so that its results for a given `seed` differ from earlier versions
+- Change the random draws of `Snuffler`, so that its results for a given `seed` differ from earlier versions
 
 ### Deprecated
 

@@ -14,7 +14,7 @@ def test_diagnostic_analyser_supported_properties():
         x_min=-1.0,
         x_max=1.0,
         dx=1e-10,
-        seed=RngSeed(42),
+        rng_seed=RngSeed(42),
         n_fun_samples=1000,
         rel_tol_scale=10.0,
     )
@@ -35,7 +35,7 @@ def test_diagnostic_analyser_extract_all():
         x_min=-1.0,
         x_max=1.0,
         dx=1e-10,
-        seed=RngSeed(42),
+        rng_seed=RngSeed(42),
         n_fun_samples=1000,
         rel_tol_scale=10.0,
     )
@@ -56,7 +56,7 @@ def test_diagnostic_analyser_statistics():
         x_min=-1.0,
         x_max=1.0,
         dx=1e-10,
-        seed=RngSeed(42),
+        rng_seed=RngSeed(42),
         n_fun_samples=1000,
         rel_tol_scale=10.0,
     )

@@ -200,10 +200,12 @@ def test_roots_analyser_properties(
         return _fx
 
     dx = 1e-10
-    sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=RngSeed(42))
+    sampler = FunctionSampler(
+        n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
+    )
 
     # --- act --------------------------
-    analyser = RootsAnalyser(sampler, n_root_samples=100, seed=RngSeed(42))
+    analyser = RootsAnalyser(sampler, n_root_samples=100, rng_seed=RngSeed(42))
 
     print(analyser.extract_all().as_dict())
 
@@ -221,10 +223,12 @@ def test_roots_analyser_no_roots():
         return 1.0 + 0.1 * _x  # no roots in [-1,1]
 
     dx = 1e-10
-    sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=RngSeed(42))
+    sampler = FunctionSampler(
+        n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
+    )
 
     # --- act --------------------------
-    analyser = RootsAnalyser(sampler, n_root_samples=100, seed=RngSeed(42))
+    analyser = RootsAnalyser(sampler, n_root_samples=100, rng_seed=RngSeed(42))
     all_props = analyser.extract_all()
 
     # --- assert -----------------------

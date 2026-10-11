@@ -30,7 +30,7 @@ def compute_x_deltas(dx: float, k: int, rng_state: np.ndarray) -> np.ndarray:
 
     :param dx: (float) reference distance dx > 0
     :param k: (int) sampling count parameter
-    :param rng_state: (np.ndarray) generator state to draw the random values from; it advances in place
+    :param rng_state: (np.ndarray) generator state that supplies the random values; the state advances in place
     :return: np.ndarray with 3*(1+2k) x_delta values, sorted in increasing order
     """
     # initialize

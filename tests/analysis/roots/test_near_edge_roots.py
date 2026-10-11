@@ -26,7 +26,7 @@ def test_analyzable_roots_excludes_near_edge_root():
         x_min=-1.0,
         x_max=1.0,
         dx=1e-9,
-        seed=RngSeed(42),
+        rng_seed=RngSeed(42),
         n_fun_samples=1000,
         n_roots=100,
     )
@@ -39,7 +39,7 @@ def test_analyzable_roots_excludes_near_edge_root():
 def test_analyzable_roots_keeps_interior_root():
     # --- arrange / act ----------------
     sampler = FunctionSampler(
-        fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=1000, n_roots=100
+        fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, rng_seed=RngSeed(42), n_fun_samples=1000, n_roots=100
     )
 
     # --- assert -----------------------

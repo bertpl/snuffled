@@ -60,11 +60,20 @@ def test_rng_seed_derive_depends_on_parent():
     assert RngSeed(1).derive("a") != RngSeed(2).derive("a")
 
 
-@pytest.mark.parametrize("label", [True, None, b"a", np.float32(1.0)])
-def test_rng_seed_derive_rejects_other_label_types(label: object):
-    """A label that is not a str, int or float raises a TypeError."""
+@pytest.mark.parametrize(
+    "label, error",
+    [
+        (True, TypeError),
+        (None, TypeError),
+        (b"a", TypeError),
+        (np.float32(1.0), TypeError),
+        (2**63, ValueError),
+    ],
+)
+def test_rng_seed_derive_rejects_invalid_labels(label: object, error: type[Exception]):
+    """A label that is not a str, int or float, or an int outside the int64 range, raises."""
     # --- act / assert -----------------
-    with pytest.raises(TypeError):
+    with pytest.raises(error):
         RngSeed(7).derive(label)  # ty: ignore[invalid-argument-type]
 
 
@@ -72,10 +81,12 @@ def test_rng_seed_derive_rejects_other_label_types(label: object):
 #  Construction and generator state
 # ==================================================================================================
 @pytest.mark.parametrize("value", [-(2**63), 0, 2**63 - 1])
-def test_rng_seed_new_rng_state_matches_rng(value: int):
-    """The generator state of a seed is the one that `new_rng_state` builds from its value."""
+@pytest.mark.parametrize("labels", [(), ("x",), ("root", 0.25)])
+def test_rng_seed_new_rng_state_matches_rng(value: int, labels: tuple[str | int | float, ...]):
+    """The generator state for some labels is the one that `new_rng_state` builds from the child seed's value."""
     # --- act / assert -----------------
-    assert np.array_equal(RngSeed(value).new_rng_state(), new_rng_state(value))
+    expected_rng_state = new_rng_state(RngSeed(value).derive(*labels).value)
+    assert np.array_equal(RngSeed(value).new_rng_state(*labels), expected_rng_state)
 
 
 @pytest.mark.parametrize(

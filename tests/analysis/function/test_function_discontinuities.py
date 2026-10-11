@@ -55,7 +55,14 @@ def f_constant(x: float) -> float:
 def test_function_analyser_discontinuity(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange ----------------------
     sampler = FunctionSampler(
-        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-10, seed=RngSeed(42), n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100,
+        fun=fun,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-10,
+        rng_seed=RngSeed(42),
+        n_fun_samples=1000,
+        rel_tol_scale=10.0,
     )
     analyser = FunctionAnalyser(sampler)
 

@@ -18,12 +18,12 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
     # --------------------------------------------------------------------------
     #  Constructor
     # --------------------------------------------------------------------------
-    def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, seed: RngSeed) -> None:
+    def __init__(self, function_sampler: FunctionSampler, n_root_samples: int, rng_seed: RngSeed) -> None:
         super().__init__(function_sampler)
         require_min_n_samples("n_root_samples", n_root_samples)
         self.n_root_samples = n_root_samples
         self._root_analyses: dict[Root, SnuffledRootProperties] = {}
-        self._seed = seed.derive("roots_analyser")
+        self._rng_seed = rng_seed.derive("roots_analyser")
 
     # --------------------------------------------------------------------------
     #  Main Implementation
@@ -60,9 +60,9 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
                     self.function_sampler,
                     root,
                     self.n_root_samples,
-                    # a root's seed depends on the root's own x, so it does not change when other roots
+                    # a root's seed depends on the root's own x, so the seed does not change when other roots
                     # are added to or dropped from the analysis
-                    self._seed.derive("root", root.x),
+                    self._rng_seed.derive("root", root.x),
                 ).extract_all()
                 for root in roots
             }

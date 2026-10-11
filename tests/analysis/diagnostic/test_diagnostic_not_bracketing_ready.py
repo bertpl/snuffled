@@ -39,7 +39,14 @@ def test_function_analyser_not_bracketing_ready(fun: Callable[[float], float], e
     """INTERVAL_NOT_BRACKETING_READY is 1.0 for same-sign ends, 0.5 for a zero end, and 0.0 for opposite-sign ends."""
     # --- arrange ----------------------
     sampler = FunctionSampler(
-        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100,
+        fun=fun,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        rng_seed=RngSeed(42),
+        n_fun_samples=1000,
+        rel_tol_scale=10.0,
     )
     analyser = DiagnosticAnalyser(sampler)
 

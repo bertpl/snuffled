@@ -36,6 +36,12 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         n_root_samples: int = DEFAULT_N_ROOT_SAMPLES,
         rel_tol_scale: float = 10.0,
     ) -> None:
+        """Set up the analysis of `fun` on [x_min, x_max].
+
+        Raises:
+            TypeError: If `seed` is not an `int`.
+            ValueError: If `seed` does not fit in an int64.
+        """
         rng_seed = RngSeed(seed)
         function_sampler = FunctionSampler(fun, x_min, x_max, dx, rng_seed, n_fun_samples, n_roots, rel_tol_scale)
         super().__init__(function_sampler)

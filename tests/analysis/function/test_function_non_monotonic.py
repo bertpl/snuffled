@@ -61,7 +61,14 @@ def f_sin(x: float) -> float:
 def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange ----------------------
     sampler = FunctionSampler(
-        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=10000, rel_tol_scale=10.0
+        n_roots=100,
+        fun=fun,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        rng_seed=RngSeed(42),
+        n_fun_samples=10000,
+        rel_tol_scale=10.0,
     )
     analyser = FunctionAnalyser(sampler)
     # --- act --------------------------
@@ -96,7 +103,7 @@ def test_function_analyser_non_monotonic_trend_1():
                 x_min=-1.0,
                 x_max=1.0,
                 dx=1e-9,
-                seed=RngSeed(42),
+                rng_seed=RngSeed(42),
                 n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
@@ -132,7 +139,7 @@ def test_function_analyser_non_monotonic_trend_2():
                 x_min=-1.0,
                 x_max=1.0,
                 dx=1e-9,
-                seed=RngSeed(42),
+                rng_seed=RngSeed(42),
                 n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
@@ -168,7 +175,7 @@ def test_function_analyser_non_monotonic_trend_3():
                 x_min=-1.0,
                 x_max=1.0,
                 dx=1e-9,
-                seed=RngSeed(42),
+                rng_seed=RngSeed(42),
                 n_fun_samples=10_000,
                 rel_tol_scale=10.0,
             )
