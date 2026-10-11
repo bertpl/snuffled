@@ -22,11 +22,9 @@ def _f_nan_middle(x: float) -> float:
 
 
 def _f_nan_at_only_root(x: float) -> float:
-    """Return NaN for |x| < 0.3, x - 0.5 for x >= 0.3, and x for x <= -0.3."""
+    """Return NaN for |x| < 0.3, and x elsewhere, so that the only sign change lies inside the NaN region."""
     if abs(x) < 0.3:
         return float("nan")
-    elif x > 0:
-        return x - 0.5
     else:
         return x
 
