@@ -7,7 +7,7 @@ from snuffled._core.utils.rng import _xoroshiro128plus_next, new_rng_state, rand
 
 
 # =================================================================================================
-#  Pinned values: the CI matrix runs these with the JIT on and off, so both paths must give them
+#  Pinned values: CI runs these tests with the JIT on and off, and both must give the same values
 # =================================================================================================
 @pytest.mark.parametrize(
     "seed, expected_rng_state",
@@ -65,7 +65,7 @@ def test_new_rng_state_depends_on_seed():
 #  rand_float64
 # =================================================================================================
 def test_rand_float64_stats():
-    """Draws spread uniformly over [0.0, 1.0), without repeats."""
+    """The drawn values spread uniformly over [0.0, 1.0), without repeats."""
     # --- arrange ----------------------
     rng_state = new_rng_state(1)
 
@@ -76,7 +76,7 @@ def test_rand_float64_stats():
     assert min(values) < 0.01
     assert max(values) > 0.99
     assert 0.49 < np.mean(values) < 0.51
-    assert len(set(values)) == len(values)  # 10,000 draws from 2^53 possible values
+    assert len(set(values)) == len(values)  # 10,000 draws out of 2^53 possible values almost never repeat
 
 
 @pytest.mark.parametrize(
@@ -87,7 +87,7 @@ def test_rand_float64_stats():
     ],
     ids=["min_value", "max_value"],
 )
-def test_rand_float64_exact_range(rng_state: list[int], expected_uint64: int, expected_float64: float):
+def test_rand_float64_range_endpoints(rng_state: list[int], expected_uint64: int, expected_float64: float):
     """The smallest and largest uint64 draws map to 0.0 and to 1.0 - eps."""
     # --- arrange ----------------------
     rng_state_np = np.array(rng_state, dtype=np.uint64)
@@ -106,7 +106,7 @@ def test_rand_float64_exact_range(rng_state: list[int], expected_uint64: int, ex
 # =================================================================================================
 @pytest.mark.parametrize("low, high", [(0, 100), (-50, 50)])
 def test_rand_int64_covers_range(low: int, high: int):
-    """Draws cover every integer in [low, high) and no other, with the expected mean."""
+    """The drawn values cover every integer in [low, high) and no other, with the expected mean."""
     # --- arrange ----------------------
     rng_state = new_rng_state(1)
 
@@ -119,7 +119,7 @@ def test_rand_int64_covers_range(low: int, high: int):
 
 
 def test_rand_int64_large_range():
-    """Draws from a range of 10^9 values stay in range, spread out, and rarely repeat."""
+    """Values drawn from a range of 10^9 integers stay in range, spread out, and rarely repeat."""
     # --- arrange ----------------------
     rng_state = new_rng_state(1)
 

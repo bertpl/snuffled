@@ -1,9 +1,10 @@
-"""Random number generation with an explicit state, for use inside numba-compiled functions.
+"""This module draws random numbers from an explicit state, for use inside numba-compiled functions.
 
 The generator is xoroshiro128+ (Blackman and Vigna, https://prng.di.unimi.it/), seeded through
 splitmix64. Its state is a 2-element uint64 array that every draw updates in place: a function that
-draws random numbers takes that array as an argument, so no global state is involved. The functions
-return the same numbers with numba's JIT on and off.
+draws random numbers takes that array as an argument, so no global state is involved.
+
+The functions return the same numbers with numba's JIT on and off.
 
 The uint64 arithmetic wraps around on overflow by design; without the JIT, NumPy warns about each
 wraparound.
@@ -18,7 +19,7 @@ import numpy as np
 # =================================================================================================
 #  Constants
 # =================================================================================================
-# Scale factor that maps 2**64 to 1.0 - eps, so that every float64 draw lies below 1.0.
+# The scale factor maps 2**64 to 1.0 - eps, so that every float64 draw lies below 1.0.
 _UINT64_TO_FLOAT64 = np.float64((1.0 - np.finfo(np.float64).eps) / (2**64))
 
 
@@ -29,13 +30,15 @@ _UINT64_TO_FLOAT64 = np.float64((1.0 - np.finfo(np.float64).eps) / (2**64))
 def new_rng_state(seed: int) -> np.ndarray:
     """Return a new xoroshiro128+ state, derived from `seed` with splitmix64.
 
-    A negative seed is used by its 64-bit pattern, so it gives the same state with the JIT on and
-    off. Without the JIT, NumPy refuses to convert a negative int to uint64 directly.
+    `seed` must fit in an int64. A negative seed is reinterpreted as the uint64 with the same 64-bit
+    pattern, so the state is the same with the JIT on and off.
     """
-    init_state = np.array([seed], dtype=np.int64).view(np.uint64)
+    # Without the JIT, NumPy refuses to convert a negative int to uint64 directly, so the seed goes
+    # through int64 and is then viewed as uint64.
+    splitmix64_state = np.array([seed], dtype=np.int64).view(np.uint64)
     rng_state = np.empty(2, dtype=np.uint64)
-    rng_state[0] = _splitmix64_next(init_state)
-    rng_state[1] = _splitmix64_next(init_state)
+    rng_state[0] = _splitmix64_next(splitmix64_state)
+    rng_state[1] = _splitmix64_next(splitmix64_state)
     return rng_state
 
 
@@ -52,8 +55,8 @@ def rand_float64(rng_state: np.ndarray) -> float:
 def rand_int64(rng_state: np.ndarray, low: int, high: int) -> np.int64:
     """Return a random integer in [low, high), advancing `rng_state` in place.
 
-    The draw reduces a uint64 modulo the range size, so the probability of each value is off by a
-    relative amount of at most (high - low) / 2**64.
+    `high` must exceed `low`. The draw reduces a uint64 modulo the range size, so each value's
+    probability differs from uniform by a relative amount of at most (high - low) / 2**64.
     """
     range_size = np.uint64(high - low)
     return low + np.int64(_xoroshiro128plus_next(rng_state) % range_size)
@@ -86,10 +89,10 @@ def _xoroshiro128plus_next(rng_state: np.ndarray) -> np.uint64:
 
 
 @numba.njit(inline="always")
-def _splitmix64_next(init_state: np.ndarray) -> np.uint64:
-    """Return the next uint64 of the splitmix64 sequence, advancing the 1-element `init_state` in place."""
-    z = init_state[0] + np.uint64(0x9E3779B97F4A7C15)
-    init_state[0] = z
+def _splitmix64_next(splitmix64_state: np.ndarray) -> np.uint64:
+    """Return the next uint64 of the splitmix64 sequence, advancing the 1-element `splitmix64_state` in place."""
+    z = splitmix64_state[0] + np.uint64(0x9E3779B97F4A7C15)
+    splitmix64_state[0] = z
     z = (z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
     z = (z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
     return z ^ (z >> np.uint64(31))
