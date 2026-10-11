@@ -76,7 +76,7 @@ def smooth_sign_array(x: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarra
     return result
 
 
-def range_distance(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
+def distance_between_ranges(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
     """Return the distance between ranges (x_min, x_max) and (y_min, y_max).
 
     The distance is the gap between the closest pair of points, one from each range, and 0 when the ranges overlap.
