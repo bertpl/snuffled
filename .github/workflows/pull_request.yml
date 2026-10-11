@@ -83,11 +83,10 @@ jobs:
     needs: [preflight]
     uses: ./.github/workflows/_unit_tests.yml
 
-  # The package check tests the built wheel; _package_check.yml says why the
-  # `test` job cannot.
-  package:
+  # _wheel_check.yml says why the `test` job cannot test the built wheel.
+  wheel-check:
     needs: [preflight]
-    uses: ./.github/workflows/_package_check.yml
+    uses: ./.github/workflows/_wheel_check.yml
 
   # Synchronous dependency-CVE gate: audits the locked runtime dependencies
   # against the advisory DB at PR time — the blocking complement to the async,
@@ -125,7 +124,7 @@ jobs:
     # itself through a job-level `if:` reports `skipped` and fails the gate, so
     # such a condition belongs inside the job.
     if: always()
-    needs: [preflight, pre-commit, test, package, pip-audit]
+    needs: [preflight, pre-commit, test, wheel-check, pip-audit]
     runs-on: ubuntu-latest
     steps:
       # The check runs in the script: a step-level `if:` that skipped this
