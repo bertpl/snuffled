@@ -21,6 +21,13 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
     n_iters: int = 20,
     tol: float = 1e-3,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Explore the region around (a_opt, b_opt, c_opt) whose fitting cost stays at or below cost_threshold.
+
+    Returns:
+        (a_values, b_values, c_values, cost_values)-arrays that hold the optimum first, followed by every point
+        within cost_threshold that the bisection in each step direction finds; all 4 are empty when
+        cost_opt > cost_threshold.
+    """
     # --- shortcuts ------------------------------
     if cost_opt > cost_threshold:
         return (
