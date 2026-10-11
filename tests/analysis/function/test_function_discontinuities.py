@@ -156,8 +156,8 @@ def test_merge_samples():
     new_fx_values = np.array([11.5, 99.0, 10.5])
 
     # --- act --------------------------
-    merged_x, merged_fx = merge_samples(x_values, fx_values, new_x_values, new_fx_values)
+    merged_x_values, merged_fx_values = merge_samples(x_values, fx_values, new_x_values, new_fx_values)
 
     # --- assert -----------------------
-    assert merged_x.tolist() == [0.0, 0.5, 1.0, 1.5, 2.0]
-    assert merged_fx.tolist() == [10.0, 10.5, 11.0, 11.5, 12.0]
+    assert merged_x_values.tolist() == [0.0, 0.5, 1.0, 1.5, 2.0]
+    assert merged_fx_values.tolist() == [10.0, 10.5, 11.0, 11.5, 12.0]

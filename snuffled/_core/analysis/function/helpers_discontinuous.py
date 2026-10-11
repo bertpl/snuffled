@@ -190,7 +190,8 @@ def select_midpoints_to_sample(
 ) -> np.ndarray:
     """Return the midpoints of the at most n_max intervals with the highest positive resampling score.
 
-    The midpoints are returned by decreasing score, and of 2 equal scores the interval further right comes first.
+    The midpoints are returned by decreasing score; of 2 intervals with equal scores, the midpoint of the right one
+    comes first.
     compute_resampling_scores defines the score.
 
     Args:
@@ -201,15 +202,15 @@ def select_midpoints_to_sample(
         n_max: Largest number of midpoints to return.
     """
     # --- select the highest scores --------------
-    # A partition finds the threshold score in linear time, so only the selected intervals get sorted; a full sort
-    # of all scores would cost O(n log n) on every iteration of the resampling loop.
+    # A partition finds the n_selected-th largest score in linear time, so only the selected intervals get sorted;
+    # a full sort of all scores would cost O(n log n) per call.
     scores = compute_resampling_scores(x_values, fx_values, dx_min, dx_total)
     n_intervals = len(scores)
     n_selected = min(n_max, n_intervals)
     if n_selected <= 0:
         return np.zeros(0, dtype=np.float64)
-    # select every score above the n_selected-th largest score, then fill the remaining places with the scores
-    # equal to it, starting from the right
+    # select every interval that scores above the n_selected-th largest score, then add the intervals that score
+    # exactly that value, rightmost first, until n_selected intervals are selected
     threshold = np.partition(scores, n_intervals - n_selected)[n_intervals - n_selected]
     is_selected = scores > threshold
     n_equal_wanted = n_selected - np.sum(is_selected)
@@ -219,13 +220,14 @@ def select_midpoints_to_sample(
             is_selected[i] = True
             n_equal_wanted -= 1
         i -= 1
-    selected_intervals = np.flatnonzero(is_selected & (scores > 0.0))
+    selected_interval_indices = np.flatnonzero(is_selected & (scores > 0.0))
 
     # --- order by decreasing score --------------
-    # a stable ascending sort keeps equal scores in ascending x; reversing it puts equal scores in descending x
-    order = np.argsort(scores[selected_intervals], kind="mergesort")[::-1]
-    selected_intervals = selected_intervals[order]
-    return 0.5 * (x_values[selected_intervals] + x_values[selected_intervals + 1])
+    # a stable ascending sort keeps intervals with equal scores in ascending order of x; reversing the sorted order
+    # puts them in descending order of x
+    order = np.argsort(scores[selected_interval_indices], kind="mergesort")[::-1]
+    selected_interval_indices = selected_interval_indices[order]
+    return 0.5 * (x_values[selected_interval_indices] + x_values[selected_interval_indices + 1])
 
 
 @numba.njit
@@ -234,27 +236,30 @@ def compute_resampling_scores(
 ) -> np.ndarray:
     """Return the resampling score of each interval between 2 consecutive samples.
 
-    An interval's width is dx and its height is dfx = |f(x_right) - f(x_left)|; dx_rel = dx / dx_total and
-    dfx_rel = dfx / dfx_total, where dfx_total is the sum of all heights. The score of an interval is
-    dfx_rel^2 / dx_rel + dx_rel^2, and an interval no wider than dx_min scores 0:
+    Each interval between 2 consecutive samples has:
+       - width dx, and dx_rel = dx / dx_total;
+       - height dfx = |f(x_right) - f(x_left)|, and dfx_rel = dfx / dfx_total, where dfx_total is the sum of all
+         heights.
+    The score of an interval is dfx_rel^2 / dx_rel + dx_rel^2:
        - dfx_rel^2 / dx_rel is the main term: splitting a mostly linear interval in 2 gives each new interval half
-         of the original score, while splitting an interval with a step gives the new interval with the step twice
-         the original score;
+         of the original score, while splitting an interval that contains a step gives the half that contains the
+         step twice the original score;
        - dx_rel^2 makes long, seemingly flat intervals get resampled once no interval looks more like a step.
     When every interval is flat (dfx_total == 0, e.g. a constant function), the score is dx_rel^2 alone.
 
     Args:
         x_values: (n,)-sized array of x-values, sorted in ascending order and without duplicates.
         fx_values: (n,)-sized array of the corresponding f(x)-values.
-        dx_min: Intervals no wider than dx_min are not split.
+        dx_min: Intervals no wider than dx_min score 0.
         dx_total: Width of the analyzed range [x_min, x_max]; each interval width is divided by it.
 
     Returns:
         (n-1,)-sized array of scores, one per interval.
     """
     # --- total height ---------------------------
-    # Neumaier's compensated sum, in the form that Python's built-in sum() uses for floats since Python 3.12, so
-    # that dfx_total equals sum() over the same heights
+    # dfx_total is computed with Neumaier's compensated sum, the algorithm of Python's built-in sum() for floats
+    # since Python 3.12, so the scores match a computation with sum(). dfx_total scales only the first term of the
+    # score, so a rounding difference in it can reorder near-equal scores and change which midpoints get sampled.
     n_intervals = len(x_values) - 1
     dfx_total = 0.0
     compensation = 0.0
@@ -290,7 +295,7 @@ def merge_samples(
     """Return the samples with the new samples merged in, sorted by x, keeping 1 sample per x.
 
     Only the new samples are sorted, and then merged in a single linear pass; sorting all samples again, as
-    np.unique would, would cost O(n log n) on every iteration of the resampling loop.
+    np.unique would, would cost O(n log n) per call.
 
     Args:
         x_values: (n,)-sized array of x-values, sorted in ascending order and without duplicates.
@@ -303,22 +308,22 @@ def merge_samples(
         same way that the function cache keeps only 1 value per x.
     """
     order = np.argsort(new_x_values, kind="mergesort")
-    new_x_sorted = new_x_values[order]
-    new_fx_sorted = new_fx_values[order]
+    new_x_values_sorted = new_x_values[order]
+    new_fx_values_sorted = new_fx_values[order]
 
-    n, m = len(x_values), len(new_x_sorted)
-    merged_x = np.empty(n + m, dtype=np.float64)
-    merged_fx = np.empty(n + m, dtype=np.float64)
+    n, m = len(x_values), len(new_x_values_sorted)
+    merged_x_values = np.empty(n + m, dtype=np.float64)
+    merged_fx_values = np.empty(n + m, dtype=np.float64)
     i, j, k = 0, 0, 0
     while (i < n) or (j < m):
-        if (j == m) or ((i < n) and (x_values[i] <= new_x_sorted[j])):
+        if (j == m) or ((i < n) and (x_values[i] <= new_x_values_sorted[j])):
             x, fx = x_values[i], fx_values[i]
             i += 1
         else:
-            x, fx = new_x_sorted[j], new_fx_sorted[j]
+            x, fx = new_x_values_sorted[j], new_fx_values_sorted[j]
             j += 1
-        if (k == 0) or (merged_x[k - 1] != x):
-            merged_x[k] = x
-            merged_fx[k] = fx
+        if (k == 0) or (merged_x_values[k - 1] != x):
+            merged_x_values[k] = x
+            merged_fx_values[k] = fx
             k += 1
-    return merged_x[:k], merged_fx[:k]
+    return merged_x_values[:k], merged_fx_values[:k]
