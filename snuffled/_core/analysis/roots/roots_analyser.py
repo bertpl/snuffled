@@ -32,7 +32,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
         return SnuffledRootProperties()
 
     def _extract(self, prop: str) -> float:
-        # make sure we have analysed all roots provided by function_sampler.roots
+        # make sure we have analyzed all roots provided by function_sampler.analyzable_roots
         # such that self._root_analyses is populated (if there are >0 roots)
         self._ensure_all_roots_analysed()
 

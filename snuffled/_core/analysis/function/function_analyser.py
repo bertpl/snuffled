@@ -64,8 +64,8 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
 
         :return: score in [0.0, 1.0] indicating to what extent this function exhibits a high dynamic range.
         """
-        q10 = self.function_sampler.abs_fx_quantile(0.1)
-        q90 = self.function_sampler.abs_fx_quantile(0.9)
+        q10 = float(np.quantile(abs(self.function_sampler.fx_values), 0.1))
+        q90 = float(np.quantile(abs(self.function_sampler.fx_values), 0.9))
         if q10 == 0.0:
             # q90/q10 is undefined: q90 > 0 means an unbounded range (saturate to 1.0); q90 == 0 means
             # the function is ~everywhere 0 (no dynamic range at all -> 0.0).

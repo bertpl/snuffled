@@ -122,12 +122,14 @@ class FunctionSampler:
 
     @property
     def saw_nan(self) -> bool:
-        """Whether the function returned NaN for at least one sampled point so far."""
+        """Whether the function returned NaN for a sampled point, including every point of the multi-scale grid."""
+        _ = self.fx_values  # sample the multi-scale grid first, so the flag covers it
         return self._saw_nan
 
     @property
     def saw_inf(self) -> bool:
-        """Whether the function returned +-inf for at least one sampled point so far."""
+        """Whether the function returned +-inf for a sampled point, including every point of the multi-scale grid."""
+        _ = self.fx_values  # sample the multi-scale grid first, so the flag covers it
         return self._saw_inf
 
     @cached_property
@@ -147,14 +149,14 @@ class FunctionSampler:
 
     @cached_property
     def fx_values(self) -> np.ndarray:
-        """f(x) values corresponding to the x_values."""
+        """Each element is f(x) at the corresponding entry of x_values."""
         return np.array(self.f(list(self.x_values)), dtype=np.float64)
 
     def function_cache(self) -> list[tuple[float, float]]:
         """Returns contents of the function cache as a list of (x, f(x))-tuples.
 
-        Note this might return more information than .x_values and .fx_values, since those methods
-        only return information related to the initial multiscale sampling.
+        Note this might return more information than .x_values and .fx_values, since those properties
+        only hold information related to the initial multiscale sampling.
         """
         return list(self._fun_cache.items())
 
@@ -164,12 +166,8 @@ class FunctionSampler:
 
     @cached_property
     def fx_diff_values(self) -> np.ndarray:
-        """Differences between consecutive fx_values, as an array 1 shorter than fx_values."""
+        """Each element is the difference between 2 consecutive fx_values, so the array is 1 shorter than fx_values."""
         return np.diff(self.fx_values)
-
-    def abs_fx_quantile(self, q: float) -> float:
-        """Return the q-quantile of abs(f(x)) over the fx_values."""
-        return float(np.quantile(abs(self.fx_values), q))
 
     @cached_property
     def robust_estimated_fx_max(self) -> float:
@@ -181,7 +179,7 @@ class FunctionSampler:
               estimate under most regular circumstances.
         """
         q = 1 - (1 / math.sqrt(self.n_fun_samples))
-        return (1 / q) * self.abs_fx_quantile(q)
+        return (1 / q) * float(np.quantile(abs(self.fx_values), q))
 
     # --------------------------------------------------------------------------
     #  Specialized - Tolerances
@@ -206,7 +204,7 @@ class FunctionSampler:
 
     @cached_property
     def fx_diff_smooth_sign(self) -> np.ndarray:
-        """Returns an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values)).
+        """Return an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values)).
 
         Local and global tolerances are used to determine the threshold around which differences transition
         (smoothly) from 0 to 1 or 0 to -1.
@@ -241,8 +239,9 @@ class FunctionSampler:
         The root intervals serve as candidates (but potentially too many) for root finding.
 
         Returns:
-            (root_intervals, non_root_intervals)-tuple of lists of (x_left, x_right)-tuples: the intervals between
-            consecutive nonzero samples with a sign flip, and those without one.
+            Tuple (root_intervals, non_root_intervals) of 2 lists of (x_left, x_right)-tuples, each spanning 2
+            consecutive nonzero samples. root_intervals holds the intervals whose endpoints differ in sign;
+            non_root_intervals holds those whose endpoints have the same sign.
         """
         # multi-scale samples as (x, fx)-tuples
         samples = list(zip(self.x_values, self.fx_values))
@@ -303,7 +302,7 @@ class FunctionSampler:
 
         A root is analyzable only if both sides have room for the full sampling span
         `max_x_delta(dx)`; nearer the edge, sampling `root.x ± x_delta` would fall outside
-        `[x_min, x_max]`. Scoped to two-sided root analysis — `roots()` still returns every root
+        `[x_min, x_max]`. Scoped to two-sided root analysis — `roots` still holds every root
         (for counting, zero-width, and the all-too-close diagnostic).
         """
         margin = max_x_delta(self.dx)

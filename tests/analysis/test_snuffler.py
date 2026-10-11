@@ -70,6 +70,9 @@ def test_snuffler_extract_all_keeps_global_random_states():
     assert numpy_state_after[2:] == numpy_state_before[2:]
 
 
+# ==================================================================================================
+#  A Snuffler and its function sampler are freed once the Snuffler is deleted
+# ==================================================================================================
 def test_snuffler_is_freed_after_extract_all():
     """A Snuffler and its function sampler are freed once the last reference to the Snuffler is deleted."""
     # --- arrange ----------------------
@@ -83,9 +86,9 @@ def test_snuffler_is_freed_after_extract_all():
         n_roots=10,
         n_root_samples=10,
     )
-    _ = snuffler.extract_all()  # fills every cached value of the function sampler
+    _ = snuffler.extract_all()  # extract_all() fills every cached value of the function sampler
     snuffler_ref = weakref.ref(snuffler)
-    sampler_ref = weakref.ref(snuffler.function_sampler)
+    function_sampler_ref = weakref.ref(snuffler.function_sampler)
 
     # --- act --------------------------
     del snuffler
@@ -93,9 +96,12 @@ def test_snuffler_is_freed_after_extract_all():
 
     # --- assert -----------------------
     assert snuffler_ref() is None
-    assert sampler_ref() is None
+    assert function_sampler_ref() is None
 
 
+# ==================================================================================================
+#  Seeds, property names and extraction
+# ==================================================================================================
 def test_snuffler_accepts_numpy_integer_seed():
     """A NumPy integer seed gives the same results as the Python int with the same value."""
     # --- act --------------------------

@@ -91,8 +91,6 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
 
     def _extract_nan_values_detected(self) -> float:
         # 1.0 iff the function returned NaN for a sampled point (which the boundary sanitize replaced).
-        # Force the multi-scale grid first so the flag is set even when extracted standalone.
-        _ = self.function_sampler.fx_values
         if self.function_sampler.saw_nan:
             return 1.0
         else:
@@ -100,7 +98,6 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
 
     def _extract_inf_values_detected(self) -> float:
         # 1.0 iff the function returned +-inf for a sampled point (which the boundary clip replaced).
-        _ = self.function_sampler.fx_values
         if self.function_sampler.saw_inf:
             return 1.0
         else:

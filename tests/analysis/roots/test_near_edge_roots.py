@@ -16,7 +16,7 @@ def _mixed_roots(x: float) -> float:
 
 
 # ==================================================================================================
-#  analyzable_roots(): near-edge roots excluded, interior roots kept
+#  analyzable_roots: near-edge roots excluded, interior roots kept
 # ==================================================================================================
 def test_analyzable_roots_excludes_near_edge_root():
     # --- arrange / act ----------------

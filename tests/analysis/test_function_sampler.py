@@ -139,7 +139,7 @@ def test_function_sampler_fx_values(test_fun_quad, warmup_cache: bool):
     ],
 )
 def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x_after: list[float]):
-    """Tests if .function_cache() returns consistent info after calling .fx_values and .f(.)"""
+    """Check that .function_cache() returns consistent info after reading .fx_values and calling .f(.)."""
 
     # --- arrange ----------------------
     sampler = FunctionSampler(
@@ -147,14 +147,13 @@ def test_function_sampler_function_cache(test_fun_quad, x_before: list[float], x
     )
 
     # --- act --------------------------
-    # fetch data before calling x_values, fx_values
+    # fetch data before reading x_values, fx_values
     x_fx_before = [(x, sampler.f(x)) for x in x_before]
 
-    # call x_values, fx_values
     x_values = sampler.x_values
     fx_values = sampler.fx_values
 
-    # fetch data after calling x_values, fx_values
+    # fetch data after reading x_values, fx_values
     x_fx_after = [(x, sampler.f(x)) for x in x_after]
 
     # get cache contents
