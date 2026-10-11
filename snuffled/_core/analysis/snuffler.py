@@ -1,12 +1,8 @@
 from collections.abc import Callable
 
 from snuffled._core.models import SnuffledProperties
-from snuffled._core.utils.constants import (
-    DEFAULT_N_FUN_SAMPLES,
-    DEFAULT_N_ROOT_SAMPLES,
-    DEFAULT_N_ROOTS,
-    SEED_OFFSET_SNUFFLER,
-)
+from snuffled._core.utils.constants import DEFAULT_N_FUN_SAMPLES, DEFAULT_N_ROOT_SAMPLES, DEFAULT_N_ROOTS
+from snuffled._core.utils.rng_seed import RngSeed
 
 from ._function_sampler import FunctionSampler
 from ._property_extractor import PropertyExtractor
@@ -40,11 +36,11 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
         n_root_samples: int = DEFAULT_N_ROOT_SAMPLES,
         rel_tol_scale: float = 10.0,
     ) -> None:
-        seed += SEED_OFFSET_SNUFFLER
-        function_sampler = FunctionSampler(fun, x_min, x_max, dx, seed, n_fun_samples, n_roots, rel_tol_scale)
+        rng_seed = RngSeed(seed)
+        function_sampler = FunctionSampler(fun, x_min, x_max, dx, rng_seed, n_fun_samples, n_roots, rel_tol_scale)
         super().__init__(function_sampler)
         self._function_analyser = FunctionAnalyser(function_sampler)
-        self._roots_analyser = RootsAnalyser(function_sampler, n_root_samples, seed)
+        self._roots_analyser = RootsAnalyser(function_sampler, n_root_samples, rng_seed)
         self._diagnostics_analyser = DiagnosticAnalyser(function_sampler)
 
     # --------------------------------------------------------------------------

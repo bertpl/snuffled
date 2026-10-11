@@ -14,8 +14,9 @@ functions are defined below the functions that they call.
 The uint64 arithmetic wraps around on overflow by design; without the JIT, NumPy warns about each
 wraparound.
 
-The code is a copy of the functions that snuffled needs from the max-div package (version 0.21.5,
-module `max_div._core._random._rng`).
+The generator functions are a copy of the functions that snuffled needs from the max-div package
+(version 0.21.5, module `max_div._core._random._rng`); `shuffle_in_place` and
+`sample_without_replacement` are built on them.
 """
 
 import numba
@@ -107,3 +108,23 @@ def shuffle_in_place(rng_state: np.ndarray, values: np.ndarray) -> None:
     for i in range(n - 1):
         j = rand_int64(rng_state, i, n)
         values[i], values[j] = values[j], values[i]
+
+
+@numba.njit("int64[:](uint64[:], int64, int64, int64)")
+def sample_without_replacement(rng_state: np.ndarray, low: int, high: int, n: int) -> np.ndarray:
+    """Return `n` distinct random integers from [low, high), in random order, drawing from `rng_state`.
+
+    The draw runs the first `n` steps of a Fisher–Yates shuffle over all integers in [low, high), so it
+    allocates an array of size `high - low`.
+
+    Raises:
+        ValueError: If `n` is negative or exceeds `high - low`.
+    """
+    range_size = high - low
+    if n < 0 or n > range_size:
+        raise ValueError("n must lie in [0, high - low]")
+    values = np.arange(low, high, dtype=np.int64)
+    for i in range(n):
+        j = rand_int64(rng_state, i, range_size)
+        values[i], values[j] = values[j], values[i]
+    return values[:n]

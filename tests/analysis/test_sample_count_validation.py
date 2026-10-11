@@ -4,6 +4,7 @@ from snuffled import Snuffler
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.roots.roots_analyser import RootsAnalyser
 from snuffled._core.utils.constants import MIN_USEFUL_N_SAMPLES
+from snuffled._core.utils.rng_seed import RngSeed
 
 
 def _f(x: float) -> float:
@@ -16,20 +17,20 @@ def _f(x: float) -> float:
 @pytest.mark.parametrize("n", [0, 1, MIN_USEFUL_N_SAMPLES - 1])
 def test_function_sampler_rejects_low_n_fun_samples(n: int):
     with pytest.raises(ValueError, match="n_fun_samples"):
-        FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=n, n_roots=100)
+        FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=n, n_roots=100)
 
 
 @pytest.mark.parametrize("n", [0, 1, MIN_USEFUL_N_SAMPLES - 1])
 def test_function_sampler_rejects_low_n_roots(n: int):
     with pytest.raises(ValueError, match="n_roots"):
-        FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100, n_roots=n)
+        FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=100, n_roots=n)
 
 
 @pytest.mark.parametrize("n", [0, 1, MIN_USEFUL_N_SAMPLES - 1])
 def test_roots_analyser_rejects_low_n_root_samples(n: int):
-    sampler = FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100, n_roots=100)
+    sampler = FunctionSampler(fun=_f, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=100, n_roots=100)
     with pytest.raises(ValueError, match="n_root_samples"):
-        RootsAnalyser(sampler, n_root_samples=n, seed=42)
+        RootsAnalyser(sampler, n_root_samples=n, seed=RngSeed(42))
 
 
 def test_min_useful_value_is_accepted():

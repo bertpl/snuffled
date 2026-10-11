@@ -3,7 +3,14 @@ from collections import Counter
 import numpy as np
 import pytest
 
-from snuffled._core.utils.rng import _xoroshiro128plus_next, new_rng_state, rand_float64, rand_int64, shuffle_in_place
+from snuffled._core.utils.rng import (
+    _xoroshiro128plus_next,
+    new_rng_state,
+    rand_float64,
+    rand_int64,
+    sample_without_replacement,
+    shuffle_in_place,
+)
 from tests.helpers import only_with_numba_jit
 
 
@@ -50,6 +57,15 @@ def test_shuffle_in_place_pinned():
 
     # --- assert -----------------------
     assert values.tolist() == [4, 3, 8, 5, 2, 0, 9, 6, 7, 1]
+
+
+def test_sample_without_replacement_pinned():
+    """Sampling 4 of 10..19 with seed 42 gives the pinned values."""
+    # --- act --------------------------
+    values = sample_without_replacement(new_rng_state(42), 10, 20, 4)
+
+    # --- assert -----------------------
+    assert values.tolist() == [14, 13, 18, 15]
 
 
 # ==================================================================================================
@@ -182,3 +198,29 @@ def test_shuffle_in_place_is_uniform():
     # --- assert -----------------------
     assert len(counts) == 6
     assert all(800 < count < 1200 for count in counts.values())
+
+
+# ==================================================================================================
+#  sample_without_replacement
+# ==================================================================================================
+@pytest.mark.parametrize("low, high, n", [(0, 10, 0), (0, 10, 3), (-5, 5, 10), (100, 10_100, 100)])
+def test_sample_without_replacement_draws_distinct_values(low: int, high: int, n: int):
+    """A sample holds n distinct values in [low, high), and depends only on the seed."""
+    # --- act --------------------------
+    values_1 = sample_without_replacement(new_rng_state(7), low, high, n)
+    values_2 = sample_without_replacement(new_rng_state(7), low, high, n)
+
+    # --- assert -----------------------
+    assert values_1.dtype == np.int64
+    assert len(values_1) == n
+    assert len(set(values_1.tolist())) == n
+    assert all(low <= v < high for v in values_1)
+    assert np.array_equal(values_1, values_2)
+
+
+@pytest.mark.parametrize("n", [-1, 11])
+def test_sample_without_replacement_rejects_invalid_n(n: int):
+    """A negative n, or an n larger than the range, raises a ValueError."""
+    # --- act / assert -----------------
+    with pytest.raises(ValueError):
+        sample_without_replacement(new_rng_state(1), 0, 10, n)

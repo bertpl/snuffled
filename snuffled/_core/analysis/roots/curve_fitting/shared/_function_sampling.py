@@ -3,12 +3,11 @@ import math
 import numba
 import numpy as np
 
-from snuffled._core.utils.constants import SEED_OFFSET_COMPUTE_X_DELTAS
 from snuffled._core.utils.sampling import pseudo_uniform_samples
 
 
 @numba.njit
-def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
+def compute_x_deltas(dx: float, k: int, rng_state: np.ndarray) -> np.ndarray:
     """Computes x_delta-array of values used to sample function values around a root: f(root ± x_delta).
 
     x_delta values are constructed such that...
@@ -31,12 +30,9 @@ def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
 
     :param dx: (float) reference distance dx > 0
     :param k: (int) sampling count parameter
-    :param seed: (int) seed for random number generator
+    :param rng_state: (np.ndarray) generator state to draw the random values from; it advances in place
     :return: np.ndarray with 3*(1+2k) x_delta values, sorted in increasing order
     """
-    # seed handling
-    seed += SEED_OFFSET_COMPUTE_X_DELTAS
-
     # initialize
     x_deltas = np.zeros(3 + 6 * k)
     x_deltas[0] = dx
@@ -45,8 +41,8 @@ def compute_x_deltas(dx: float, k: int, seed: int) -> np.ndarray:
 
     # collect appropriate random numbers
     # (=random values in [1, sqrt(2))
-    rand_values_outer = np.exp2(pseudo_uniform_samples(0.0, 0.5, k - 1, seed=seed))
-    rand_values_inner = np.exp2(pseudo_uniform_samples(0.0, 0.5, k, seed=seed + 1))
+    rand_values_outer = np.exp2(pseudo_uniform_samples(0.0, 0.5, k - 1, rng_state))
+    rand_values_inner = np.exp2(pseudo_uniform_samples(0.0, 0.5, k, rng_state))
 
     # 6*k additional randomized samples
     for j in range(k):

@@ -6,6 +6,7 @@ import pytest
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
 from snuffled._core.analysis.roots.single_root_one_side_analyser import SingleRootOneSideAnalyser
 from snuffled._core.utils.noise import noise_from_float
+from snuffled._core.utils.rng import new_rng_state
 
 
 # ==================================================================================================
@@ -71,7 +72,7 @@ def test_single_root_one_side_analyser_abc_params(fx_sign: int, c_true: float, c
 
     dx = 1e-10
     dx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun(x) for x in x_deltas])
 
     # --- act --------------------------
@@ -99,7 +100,7 @@ def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_
 
     dx = 1e-10
     dx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun_with_noise(x) for x in x_deltas])
 
     fx_1_true = fun_true(dx)
@@ -143,7 +144,7 @@ def test_single_root_one_side_analyser_ill_behaved(c_noise: float, min_value: fl
     dx = 1e-10
     dx_sign = +1
     fx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun(x) for x in x_deltas])
 
     # --- act --------------------------
@@ -180,7 +181,7 @@ def test_single_root_one_side_analyser_deriv_zero(c_true: float, c_noise: float,
     dx = 1e-10
     dx_sign = +1
     fx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun(x) for x in x_deltas])
 
     # --- act --------------------------
@@ -219,7 +220,7 @@ def test_single_root_one_side_analyser_deriv_infinite(
     dx = 1e-10
     dx_sign = +1
     fx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun(x) for x in x_deltas])
 
     # --- act --------------------------
@@ -256,7 +257,7 @@ def test_single_root_one_side_analyser_discontinuous(
     dx = 1e-10
     dx_sign = +1
     fx_sign = +1
-    x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
+    x_deltas = compute_x_deltas(dx=dx, k=10, rng_state=new_rng_state(42))
     fx_values = np.array([fun(x) for x in x_deltas])
 
     # --- act --------------------------

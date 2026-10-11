@@ -10,6 +10,7 @@ from snuffled._core.analysis.roots.curve_fitting import (
     fitting_curve,
 )
 from snuffled._core.utils.noise import noise_from_float
+from snuffled._core.utils.rng import new_rng_state
 
 
 # ==================================================================================================
@@ -35,7 +36,7 @@ def test_fit_curve_with_uncertainty(
 
     # --- arrange ----------------------
     # define optimization problem
-    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
+    x_values = compute_x_deltas(dx=0.5, k=5, rng_state=new_rng_state(42))
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)

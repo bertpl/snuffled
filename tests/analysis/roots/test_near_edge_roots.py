@@ -4,6 +4,7 @@ import pytest
 from snuffled import Diagnostic, Snuffler
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.models import RootProperty
+from snuffled._core.utils.rng_seed import RngSeed
 
 
 # ==================================================================================================
@@ -21,7 +22,13 @@ def test_analyzable_roots_excludes_near_edge_root():
     # --- arrange / act ----------------
     # root at -1 + 2e-9, well inside the 4*sqrt(2)*dx (~= 5.66e-9) margin
     sampler = FunctionSampler(
-        fun=lambda x: x - (-1.0 + 2e-9), x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, n_roots=100
+        fun=lambda x: x - (-1.0 + 2e-9),
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        seed=RngSeed(42),
+        n_fun_samples=1000,
+        n_roots=100,
     )
 
     # --- assert -----------------------
@@ -32,7 +39,7 @@ def test_analyzable_roots_excludes_near_edge_root():
 def test_analyzable_roots_keeps_interior_root():
     # --- arrange / act ----------------
     sampler = FunctionSampler(
-        fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, n_roots=100
+        fun=lambda x: x - 0.3, x_min=-1.0, x_max=1.0, dx=1e-9, seed=RngSeed(42), n_fun_samples=1000, n_roots=100
     )
 
     # --- assert -----------------------

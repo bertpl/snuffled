@@ -1,3 +1,5 @@
+import math
+import random
 import time
 from collections.abc import Callable
 from enum import StrEnum
@@ -33,6 +35,35 @@ def test_snuffler_extract_all_rootless(fun: Callable[[float], float]):
 
     # --- assert -----------------------
     assert np.all(np.isfinite(props.as_array()))
+
+
+# ==================================================================================================
+#  Global random generators are left untouched
+# ==================================================================================================
+def test_snuffler_extract_all_keeps_global_rng_state():
+    """extract_all() leaves the states of Python's `random` module and NumPy's global generator unchanged."""
+    # --- arrange ----------------------
+    snuffler = Snuffler(
+        fun=lambda x: math.sin(200 * x),  # more sign changes than n_roots, so a subset of roots is drawn
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-10,
+        seed=42,
+        n_fun_samples=1000,
+        n_roots=10,
+        n_root_samples=10,
+    )
+    random_state_before = random.getstate()
+    numpy_state_before = np.random.get_state()
+
+    # --- act --------------------------
+    _ = snuffler.extract_all()
+
+    # --- assert -----------------------
+    numpy_state_after = np.random.get_state()
+    assert random.getstate() == random_state_before
+    assert np.array_equal(numpy_state_after[1], numpy_state_before[1])
+    assert numpy_state_after[2:] == numpy_state_before[2:]
 
 
 def test_snuffler_supported_properties():

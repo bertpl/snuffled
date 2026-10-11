@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
+from snuffled._core.utils.rng import new_rng_state
 
 
 @pytest.mark.parametrize(
@@ -28,9 +29,9 @@ def test_compute_x_deltas(dx: float, k: int):
         return 2 ** float(np.mean(np.log2(_v)))
 
     # --- act --------------------------
-    x_deltas = compute_x_deltas(dx, k, seed=seed1)
-    x_deltas_2 = compute_x_deltas(dx, k, seed=seed1)
-    x_deltas_3 = compute_x_deltas(dx, k, seed=seed2)
+    x_deltas = compute_x_deltas(dx, k, rng_state=new_rng_state(seed1))
+    x_deltas_2 = compute_x_deltas(dx, k, rng_state=new_rng_state(seed1))
+    x_deltas_3 = compute_x_deltas(dx, k, rng_state=new_rng_state(seed2))
 
     # --- assert -----------------------
     # check seed handling
