@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from snuffled._core.utils.rng import _xoroshiro128plus_next, new_rng_state, rand_float64, rand_int64, shuffle_in_place
+from tests.helpers import only_with_numba_jit
 
 
 # =================================================================================================
@@ -49,6 +50,20 @@ def test_shuffle_in_place_pinned():
 
     # --- assert -----------------------
     assert values.tolist() == [4, 3, 8, 5, 2, 0, 9, 6, 7, 1]
+
+
+# =================================================================================================
+#  Declared numba signatures: without the JIT they do not apply, so these run with the JIT only
+# =================================================================================================
+@only_with_numba_jit
+def test_shuffle_in_place_rejects_other_dtypes():
+    """An int64 array does not match the declared float64 signature, so the call raises."""
+    # --- arrange ----------------------
+    values = np.arange(3, dtype=np.int64)
+
+    # --- act / assert -----------------
+    with pytest.raises(TypeError, match="No matching definition"):
+        shuffle_in_place(new_rng_state(1), values)
 
 
 # =================================================================================================
