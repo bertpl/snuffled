@@ -7,6 +7,7 @@ import pytest
 from snuffled import Diagnostic, FunctionProperty, Snuffler
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.utils.constants import FX_CLIP
+from snuffled._core.utils.rng_seed import RngSeed
 
 
 # ==================================================================================================
@@ -52,7 +53,7 @@ def _f_pole(x: float) -> float:
 def test_f_clips_positive_inf_and_flags():
     # --- arrange / act / assert -------
     sampler = FunctionSampler(
-        n_roots=100, fun=lambda x: float("inf"), x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100
+        n_roots=100, fun=lambda x: float("inf"), x_min=-1.0, x_max=1.0, dx=1e-9, rng_seed=RngSeed(42), n_fun_samples=100
     )
     assert sampler.f(0.0) == FX_CLIP
     assert sampler.saw_inf
@@ -61,7 +62,13 @@ def test_f_clips_positive_inf_and_flags():
 
 def test_f_clips_negative_inf():
     sampler = FunctionSampler(
-        n_roots=100, fun=lambda x: float("-inf"), x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100
+        n_roots=100,
+        fun=lambda x: float("-inf"),
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        rng_seed=RngSeed(42),
+        n_fun_samples=100,
     )
     assert sampler.f(0.0) == -FX_CLIP
     assert sampler.saw_inf
@@ -69,7 +76,7 @@ def test_f_clips_negative_inf():
 
 def test_f_sanitizes_nan_and_flags():
     sampler = FunctionSampler(
-        n_roots=100, fun=lambda x: float("nan"), x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100
+        n_roots=100, fun=lambda x: float("nan"), x_min=-1.0, x_max=1.0, dx=1e-9, rng_seed=RngSeed(42), n_fun_samples=100
     )
     assert math.isfinite(sampler.f(0.0))
     assert sampler.saw_nan
@@ -78,7 +85,7 @@ def test_f_sanitizes_nan_and_flags():
 
 def test_f_clips_huge_finite_without_inf_flag():
     sampler = FunctionSampler(
-        n_roots=100, fun=lambda x: FX_CLIP * 10, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100
+        n_roots=100, fun=lambda x: FX_CLIP * 10, x_min=-1.0, x_max=1.0, dx=1e-9, rng_seed=RngSeed(42), n_fun_samples=100
     )
     assert sampler.f(0.0) == FX_CLIP  # clipped for arithmetic safety ...
     assert not sampler.saw_inf  # ... but a finite value is not flagged as inf

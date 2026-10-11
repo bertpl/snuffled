@@ -7,6 +7,7 @@ import pytest
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.models import FunctionProperty
+from snuffled._core.utils.rng_seed import RngSeed
 from tests.helpers import only_with_numba_jit
 
 
@@ -42,7 +43,9 @@ def f_sine(x: float, n_roots: int) -> float:
 )
 def test_function_analyser_many_zeroes(fun: Callable[[float], float], min_score: float, max_score: float):
     # --- arrange ----------------------
-    sampler = FunctionSampler(n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-6, seed=42, n_fun_samples=10_000)
+    sampler = FunctionSampler(
+        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-6, rng_seed=RngSeed(42), n_fun_samples=10_000
+    )
     analyser = FunctionAnalyser(sampler)
 
     # --- act --------------------------

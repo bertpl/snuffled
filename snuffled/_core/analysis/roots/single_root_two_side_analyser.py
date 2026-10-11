@@ -4,8 +4,8 @@ from snuffled._core.analysis._function_sampler import FunctionSampler
 from snuffled._core.analysis._property_extractor import PropertyExtractor
 from snuffled._core.models import RootProperty, SnuffledRootProperties
 from snuffled._core.models.root_analysis import Root
-from snuffled._core.utils.constants import SEED_OFFSET_SINGLE_ROOT_ANALYSER
 from snuffled._core.utils.numba import clip_scalar
+from snuffled._core.utils.rng_seed import RngSeed
 from snuffled._core.utils.signs import robust_sign_estimate
 
 from .curve_fitting import compute_x_deltas
@@ -21,13 +21,13 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         function_sampler: FunctionSampler,
         root: Root,
         n_root_samples: int,
-        seed: int,
+        rng_seed: RngSeed,
     ) -> None:
         super().__init__(function_sampler)
         self.root = root
         self.dx = function_sampler.dx
         self.n_root_samples = n_root_samples
-        self._seed = seed + SEED_OFFSET_SINGLE_ROOT_ANALYSER
+        self._rng_state = rng_seed.get_derived_seed("single_root_two_side_analyser").new_rng_state()
 
         # actual analyses
         self._analysis_left: SingleRootOneSideAnalyser
@@ -42,7 +42,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         # --- sample function around root --------
         # n_samples = 2 * n_samples_per_side = 2 * (3 + 6*k) = 6 + 12*k
         k = max(1, round((self.n_root_samples - 6) / 12))
-        x_deltas = compute_x_deltas(dx=self.dx, k=k, seed=self._seed)
+        x_deltas = compute_x_deltas(dx=self.dx, k=k, rng_state=self._rng_state)
         fx_values_left = np.array([self.function_sampler.f(self.root.x - x_delta) for x_delta in x_deltas])
         fx_values_right = np.array([self.function_sampler.f(self.root.x + x_delta) for x_delta in x_deltas])
 

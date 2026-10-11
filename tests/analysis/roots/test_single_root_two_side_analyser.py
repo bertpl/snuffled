@@ -5,6 +5,7 @@ from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.roots.single_root_two_side_analyser import SingleRootTwoSideAnalyser
 from snuffled._core.models import RootProperty
 from snuffled._core.utils.noise import noise_from_float
+from snuffled._core.utils.rng_seed import RngSeed
 
 
 # ==================================================================================================
@@ -138,11 +139,13 @@ def test_single_root_two_side_analyser_all_props(
         return _fx
 
     dx = 1e-10
-    sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
-    root = sampler.roots()[0]
+    sampler = FunctionSampler(
+        n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
+    )
+    root = sampler.analyzable_roots()[0]
 
     # --- act --------------------------
-    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
+    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))
 
     # --- assert -----------------------
     for root_prop, (min_value, max_value) in expectations.items():
@@ -172,11 +175,13 @@ def test_single_root_two_side_analyser_asymmetric_linear(
             return c_neg * _x
 
     dx = 1e-10
-    sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
-    root = sampler.roots()[0]
+    sampler = FunctionSampler(
+        n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
+    )
+    root = sampler.analyzable_roots()[0]
 
     # --- act --------------------------
-    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
+    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))
     value = analyser.extract(RootProperty.ASYMMETRIC)
 
     # --- assert -----------------------
@@ -208,11 +213,13 @@ def test_single_root_two_side_analyser_asymmetric_nonlinear(
             return -(abs(_x) ** e_neg)
 
     dx = 1e-10
-    sampler = FunctionSampler(n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, seed=42)
-    root = sampler.roots()[0]
+    sampler = FunctionSampler(
+        n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
+    )
+    root = sampler.analyzable_roots()[0]
 
     # --- act --------------------------
-    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, seed=1234)
+    analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))
     value = analyser.extract(RootProperty.ASYMMETRIC)
 
     # --- assert -----------------------

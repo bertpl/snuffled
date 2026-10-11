@@ -8,6 +8,7 @@ from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.diagnostic import DiagnosticAnalyser
 from snuffled._core.models import Diagnostic
 from snuffled._core.utils.constants import EPS
+from snuffled._core.utils.rng_seed import RngSeed
 
 
 # ==================================================================================================
@@ -46,7 +47,14 @@ def f_wide_zeroes(x: float, width_left: float, width_right: float) -> float:
 def test_function_analyser_max_zero_width(fun: Callable[[float], float], max_width_lb: float, max_width_ub: float):
     # --- arrange ----------------------
     sampler = FunctionSampler(
-        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100,
+        fun=fun,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        rng_seed=RngSeed(42),
+        n_fun_samples=1000,
+        rel_tol_scale=10.0,
     )
     analyser = DiagnosticAnalyser(sampler)
 
@@ -80,7 +88,14 @@ def f_all_zeros(x: float) -> float:
 def test_max_zero_width_rootless_is_zero(fun: Callable[[float], float]):
     # --- arrange ----------------------
     sampler = FunctionSampler(
-        n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
+        n_roots=100,
+        fun=fun,
+        x_min=-1.0,
+        x_max=1.0,
+        dx=1e-9,
+        rng_seed=RngSeed(42),
+        n_fun_samples=1000,
+        rel_tol_scale=10.0,
     )
     analyser = DiagnosticAnalyser(sampler)
 

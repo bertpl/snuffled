@@ -1,9 +1,7 @@
-import random
-
 import numba
 import numpy as np
 
-from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES, SEED_OFFSET_SAMPLE_INTEGERS
+from .rng import rand_float64, shuffle_in_place
 
 
 # ==================================================================================================
@@ -13,11 +11,10 @@ def max_x_delta(dx: float) -> float:
     """Largest x_delta `compute_x_deltas` can produce for a given dx: `2^2.5 · dx = 4·√2·dx`.
 
     This is the outer radius of that function's sampling span `[2^-0.5·dx, 2^2.5·dx]`, independent
-    of `k` and `seed` (which only vary sample density/order within the span). Used to decide which
-    roots sit far enough from the interval edges to have room for the full span on both sides. A
-    consistency test pins it against `max(compute_x_deltas(...))` so a span change can't silently
-    drift. Lives here (not next to `compute_x_deltas`) so `FunctionSampler` can use it without a
-    dependency cycle through the roots package.
+    of `k` and of the random draws (which only vary sample density/order within the span).
+
+    The function lives here, not next to `compute_x_deltas`, so that `FunctionSampler` can use it
+    without a dependency cycle through the roots package.
     """
     return (2.0**2.5) * dx
 
@@ -26,7 +23,7 @@ def max_x_delta(dx: float) -> float:
 #  Multi-scale sampling
 # ==================================================================================================
 @numba.njit
-def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed: int = 42) -> np.ndarray:
+def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, rng_state: np.ndarray) -> np.ndarray:
     """Returns n 'multiscale' samples across interval [x_min, x_max], with minimum distance between samples 'dx_min'.
 
     Distribution of distances between subsequent samples will be uniformly distributed (on a log-scale)
@@ -39,7 +36,7 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
 
     Samples are guaranteed to be unique, sorted and will exactly include end-points x_min, x_max.
 
-    Results across multiple runs are deterministic, but can be controlled by a seed.
+    The order of the interval widths is drawn from `rng_state`, which advances in place.
     """
     # --- determine interval widths --------------
     # get interval widths   (n samples -> n-1 sub-intervals)
@@ -47,8 +44,7 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     w = get_fixed_sum_exponential_intervals(n=n_w, tgt_sum=x_max - x_min, dx_min=dx_min)
 
     # shuffle randomly
-    np.random.seed(seed + SEED_OFFSET_MULTI_SCALE_SAMPLES)
-    np.random.shuffle(w)
+    shuffle_in_place(rng_state, w)
 
     # --- determine actual samples ---------------
     # compute cumulative
@@ -160,25 +156,13 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
 
 
 # ==================================================================================================
-#  Integer sampling
-# ==================================================================================================
-def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]:
-    """Sample n integers (without replacement) from range [i_min, i_max).
-
-    Result is returned as a list of sorted integers.
-    """
-    random.seed(seed + SEED_OFFSET_SAMPLE_INTEGERS)
-    return sorted(random.sample(range(i_min, i_max), n))
-
-
-# ==================================================================================================
 #  Pseudo-uniform sampling
 # ==================================================================================================
 @numba.njit
-def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -> np.ndarray:
+def pseudo_uniform_samples(x_min: float, x_max: float, n: int, rng_state: np.ndarray) -> np.ndarray:
     """Return n random numbers in [x_min, x_max), one per uniform sub-interval of width (x_max-x_min)/n.
 
-    There are n such sub-intervals; within each, uniform sampling is used.
+    Within each sub-interval, one value is drawn uniformly from `rng_state`, which advances in place.
     """
     # take care of corner cases
     if n < 0:
@@ -187,9 +171,11 @@ def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -
         return np.zeros(shape=(0,), dtype=np.float64)
 
     # prep
-    np.random.seed(seed + SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES)
     interval_width = (x_max - x_min) / n
     interval_lefts = np.linspace(x_min, x_max - interval_width, n)  # left edges of each sub-interval
 
     # return
-    return interval_lefts + interval_width * np.random.random(size=n)
+    rand_values = np.empty(n)
+    for i in range(n):
+        rand_values[i] = rand_float64(rng_state)
+    return interval_lefts + interval_width * rand_values

@@ -4,13 +4,13 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
+from snuffled._core.utils.rng import new_rng_state
 from snuffled._core.utils.sampling import (
     fit_fixed_sum_exponential_intervals,
     get_fixed_sum_exponential_intervals,
     max_x_delta,
     multi_scale_samples,
     pseudo_uniform_samples,
-    sample_integers,
 )
 
 
@@ -21,9 +21,10 @@ from snuffled._core.utils.sampling import (
 @pytest.mark.parametrize("k", [1, 2, 5, 10])
 @pytest.mark.parametrize("seed", [1, 42, 999])
 def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> None:
+    """`max_x_delta` equals the largest value that `compute_x_deltas` returns, for every k, seed and dx."""
     # --- act --------------------------
     claimed = max_x_delta(dx)
-    actual = float(np.max(compute_x_deltas(dx=dx, k=k, seed=seed)))
+    actual = float(np.max(compute_x_deltas(dx=dx, k=k, rng_state=new_rng_state(seed))))
 
     # --- assert -----------------------
     assert claimed == pytest.approx(actual, rel=1e-12)
@@ -45,7 +46,7 @@ def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> N
 )
 def test_multi_scale_sampling(x_min: float, x_max: float, dx_min: float, n: int):
     # --- act --------------------------
-    samples = multi_scale_samples(x_min, x_max, dx_min, n)
+    samples = multi_scale_samples(x_min, x_max, dx_min, n, rng_state=new_rng_state(42))
 
     # --- assert -----------------------
     assert samples[0] == x_min
@@ -60,9 +61,9 @@ def test_multi_scale_sampling(x_min: float, x_max: float, dx_min: float, n: int)
 
 def test_multi_scale_sampling_seed():
     # --- act --------------------------
-    s_1 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=123)
-    s_2 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=123)  # same seed
-    s_3 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, seed=345)  # different seed
+    s_1 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, rng_state=new_rng_state(123))
+    s_2 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, rng_state=new_rng_state(123))
+    s_3 = multi_scale_samples(-10.0, 10.0, 1e-6, 1000, rng_state=new_rng_state(345))
 
     # --- assert -----------------------
     assert np.array_equal(s_1, s_2)
@@ -150,33 +151,6 @@ def test_fit_and_get_fixed_sum_exponential_intervals_realistic_cases(n: int, tgt
 
 
 # ==================================================================================================
-#  Integer sampling
-# ==================================================================================================
-@pytest.mark.parametrize(
-    "i_min, i_max, n",
-    [
-        (0, 100, 10),
-        (0, 100, 100),
-        (50, 100, 10),
-        (50, 100, 50),
-        (990, 1_000, 5),
-        (999_900, 1_000_000, 10),
-        (1_000, 1_000_000, 1_000),
-    ],
-)
-def test_sample_n_integers(i_min: int, i_max: int, n: int):
-    # --- act --------------------------
-    samples = sample_integers(i_min, i_max, n)
-
-    # --- assert -----------------------
-    assert isinstance(samples, list)
-    assert len(samples) == n
-    assert all(i_min <= s < i_max for s in samples)
-    assert sorted(samples) == samples
-    assert len(set(samples)) == n
-
-
-# ==================================================================================================
 #  Pseudo-uniform sampling
 # ==================================================================================================
 @pytest.mark.parametrize(
@@ -192,7 +166,7 @@ def test_pseudo_uniform_samples(x_min: float, x_max: float, n: int):
     w = (x_max - x_min) / n  # sub-interval width
 
     # --- act --------------------------
-    samples = pseudo_uniform_samples(x_min, x_max, n)
+    samples = pseudo_uniform_samples(x_min, x_max, n, rng_state=new_rng_state(42))
 
     # --- assert -----------------------
     assert len(samples) == n
@@ -204,9 +178,9 @@ def test_pseudo_uniform_samples(x_min: float, x_max: float, n: int):
 def test_pseudo_uniform_samples_edge_cases():
     # --- act / assert 1 ---------------
     with pytest.raises(ValueError):
-        _ = pseudo_uniform_samples(0.0, 1.0, -3)
+        _ = pseudo_uniform_samples(0.0, 1.0, -3, rng_state=new_rng_state(42))
 
     # --- act / assert 2 ---------------
-    result = pseudo_uniform_samples(0.0, 1.0, 0)
+    result = pseudo_uniform_samples(0.0, 1.0, 0, rng_state=new_rng_state(42))
     assert isinstance(result, np.ndarray)
     assert len(result) == 0

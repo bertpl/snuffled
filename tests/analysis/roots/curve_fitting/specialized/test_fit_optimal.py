@@ -2,6 +2,7 @@ import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas, fit_curve, fitting_cost, fitting_curve
 from snuffled._core.utils.noise import noise_from_float
+from snuffled._core.utils.rng import new_rng_state
 
 
 # ==================================================================================================
@@ -15,7 +16,7 @@ def test_fit_curve_accurate(a_true: float, b_true: float, c_true: float, c_noise
     """Can we recover the true (a,b,c)-values in the presence of varying levels of noise?"""
 
     # --- arrange ----------------------
-    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
+    x_values = compute_x_deltas(dx=0.5, k=5, rng_state=new_rng_state(42))
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)
@@ -43,7 +44,7 @@ def test_fit_curve_bounds(a_true: float, b_true: float, c_true: float, range_c: 
     """Do we always get parameter estimates within bounds?"""
 
     # --- arrange ----------------------
-    x_values = compute_x_deltas(dx=0.5, k=5, seed=42)
+    x_values = compute_x_deltas(dx=0.5, k=5, rng_state=new_rng_state(42))
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
     for i, x in enumerate(x_values):
         fx_values[i] += c_noise * noise_from_float(x)
