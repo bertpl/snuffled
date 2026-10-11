@@ -49,7 +49,7 @@ def test_rng_seed_derive_is_deterministic():
 def test_rng_seed_derive_separates_labels(
     labels_1: tuple[str | int | float, ...], labels_2: tuple[str | int | float, ...]
 ):
-    """Label lists that differ in value, order, split or type give different children."""
+    """Label lists that differ in value, order or type, or that split 1 string differently, give different children."""
     # --- act / assert -----------------
     assert RngSeed(7).derive(*labels_1) != RngSeed(7).derive(*labels_2)
 
@@ -82,11 +82,11 @@ def test_rng_seed_derive_rejects_invalid_labels(label: object, error: type[Excep
 # ==================================================================================================
 @pytest.mark.parametrize("value", [-(2**63), 0, 2**63 - 1])
 @pytest.mark.parametrize("labels", [(), ("x",), ("root", 0.25)])
-def test_rng_seed_new_rng_state_matches_rng(value: int, labels: tuple[str | int | float, ...]):
-    """The generator state for some labels is the one that `new_rng_state` builds from the child seed's value."""
+def test_rng_seed_derive_rng_state_matches_child_seed_state(value: int, labels: tuple[str | int | float, ...]):
+    """`derive_rng_state(*labels)` returns the state that `rng.new_rng_state` builds from `derive(*labels).value`."""
     # --- act / assert -----------------
     expected_rng_state = new_rng_state(RngSeed(value).derive(*labels).value)
-    assert np.array_equal(RngSeed(value).new_rng_state(*labels), expected_rng_state)
+    assert np.array_equal(RngSeed(value).derive_rng_state(*labels), expected_rng_state)
 
 
 @pytest.mark.parametrize(

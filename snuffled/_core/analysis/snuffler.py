@@ -1,3 +1,4 @@
+import operator
 from collections.abc import Callable
 
 from snuffled._core.models import SnuffledProperties
@@ -38,11 +39,14 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
     ) -> None:
         """Set up the analysis of `fun` on [x_min, x_max].
 
+        `seed` seeds every random draw in the analysis: the same seed gives the same results, and the
+        analysis leaves the global states of `random` and NumPy unchanged.
+
         Raises:
-            TypeError: If `seed` is not an `int`.
+            TypeError: If `seed` is not an integer, such as a Python `int` or a NumPy integer.
             ValueError: If `seed` does not fit in an int64.
         """
-        rng_seed = RngSeed(seed)
+        rng_seed = RngSeed(operator.index(seed))
         function_sampler = FunctionSampler(fun, x_min, x_max, dx, rng_seed, n_fun_samples, n_roots, rel_tol_scale)
         super().__init__(function_sampler)
         self._function_analyser = FunctionAnalyser(function_sampler)

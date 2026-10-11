@@ -68,6 +68,27 @@ def test_snuffler_extract_all_keeps_global_random_states():
     assert numpy_state_after[2:] == numpy_state_before[2:]
 
 
+def test_snuffler_accepts_numpy_integer_seed():
+    """A NumPy integer seed gives the same results as the Python int with the same value."""
+    # --- act --------------------------
+    props_int, props_numpy = [
+        Snuffler(
+            fun=lambda x: x - 0.3,
+            x_min=-1.0,
+            x_max=1.0,
+            dx=1e-9,
+            seed=seed,
+            n_fun_samples=100,
+            n_roots=10,
+            n_root_samples=10,
+        ).extract_all()
+        for seed in [3, np.int64(3)]
+    ]
+
+    # --- assert -----------------------
+    assert np.array_equal(props_int.as_array(), props_numpy.as_array())
+
+
 def test_snuffler_supported_properties():
     # --- arrange ----------------------
     snuffler = Snuffler(

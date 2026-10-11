@@ -15,8 +15,8 @@ The uint64 arithmetic wraps around on overflow by design; without the JIT, NumPy
 wraparound.
 
 The generator functions are a copy of the functions that snuffled needs from the max-div package
-(version 0.21.5, module `max_div._core._random._rng`); `shuffle_in_place` and
-`sample_without_replacement` are built on them.
+(version 0.21.5, module `max_div._core._random._rng`); the sampling functions in this module are
+built on those generator functions.
 """
 
 import numba
@@ -114,8 +114,8 @@ def shuffle_in_place(rng_state: np.ndarray, values: np.ndarray) -> None:
 def sample_without_replacement(rng_state: np.ndarray, low: int, high: int, n: int) -> np.ndarray:
     """Return `n` distinct random integers from [low, high), in random order, drawing from `rng_state`.
 
-    The draw runs the first `n` steps of a Fisher–Yates shuffle over all integers in [low, high), so it
-    allocates an array of size `high - low`.
+    `rng_state` advances in place. The draw runs the first `n` steps of a Fisher–Yates shuffle over all
+    integers in [low, high), so it allocates an array of size `high - low`.
 
     Raises:
         ValueError: If `n` is negative or exceeds `high - low`.

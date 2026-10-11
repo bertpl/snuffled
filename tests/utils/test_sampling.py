@@ -21,7 +21,7 @@ from snuffled._core.utils.sampling import (
 @pytest.mark.parametrize("k", [1, 2, 5, 10])
 @pytest.mark.parametrize("seed", [1, 42, 999])
 def test_max_x_delta_matches_compute_x_deltas(dx: float, k: int, seed: int) -> None:
-    """`max_x_delta` equals the largest value of `compute_x_deltas`, so a change to the span cannot drift silently."""
+    """`max_x_delta` equals the largest value that `compute_x_deltas` returns, for every k, seed and dx."""
     # --- act --------------------------
     claimed = max_x_delta(dx)
     actual = float(np.max(compute_x_deltas(dx=dx, k=k, rng_state=new_rng_state(seed))))

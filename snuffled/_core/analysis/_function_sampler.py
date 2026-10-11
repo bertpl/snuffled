@@ -140,7 +140,7 @@ class FunctionSampler:
             x_max=self.x_max,
             dx_min=self.dx,
             n=self.n_fun_samples,
-            rng_state=self._rng_seed.new_rng_state("grid"),
+            rng_state=self._rng_seed.derive_rng_state("grid"),
         )
 
     @cache
@@ -286,7 +286,7 @@ class FunctionSampler:
                 cand_intervals[i]
                 for i in sorted(
                     sample_without_replacement(
-                        self._rng_seed.new_rng_state("root_subset"), 0, len(cand_intervals), self.n_roots
+                        self._rng_seed.derive_rng_state("root_subset"), 0, len(cand_intervals), self.n_roots
                     ).tolist()
                 )
             ]

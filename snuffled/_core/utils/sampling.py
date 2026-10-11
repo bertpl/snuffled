@@ -11,10 +11,10 @@ def max_x_delta(dx: float) -> float:
     """Largest x_delta `compute_x_deltas` can produce for a given dx: `2^2.5 · dx = 4·√2·dx`.
 
     This is the outer radius of that function's sampling span `[2^-0.5·dx, 2^2.5·dx]`, independent
-    of `k` and of the random draws (which only vary sample density/order within the span). Used to
-    decide which roots sit far enough from the interval edges to have room for the full span on both
-    sides. Lives here (not next to `compute_x_deltas`) so `FunctionSampler` can use it without a
-    dependency cycle through the roots package.
+    of `k` and of the random draws (which only vary sample density/order within the span).
+
+    The function lives here, not next to `compute_x_deltas`, so that `FunctionSampler` can use it
+    without a dependency cycle through the roots package.
     """
     return (2.0**2.5) * dx
 

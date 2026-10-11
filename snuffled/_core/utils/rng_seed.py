@@ -1,4 +1,4 @@
-"""This module derives a separate seed for each random draw from 1 user seed, by hashing labels into the user seed.
+"""Every random draw gets its own seed, derived from 1 user seed by hashing labels into the user seed.
 
 Each random draw in snuffled builds its own generator state from a seed that is derived from the
 user's seed by successive `derive` calls, each with its own labels, such as `derive("function_sampler")`
@@ -16,8 +16,8 @@ import numpy as np
 
 from .rng import new_rng_state
 
-_INT64_MIN = -(2**63)
-_INT64_MAX = 2**63 - 1
+_INT64_MIN = int(np.iinfo(np.int64).min)
+_INT64_MAX = int(np.iinfo(np.int64).max)
 
 
 @dataclass(frozen=True)
@@ -60,7 +60,7 @@ class RngSeed:
             hasher.update(self._encode_label(label))
         return RngSeed(int.from_bytes(hasher.digest(), "little", signed=True))
 
-    def new_rng_state(self, *labels: str | int | float) -> np.ndarray:
+    def derive_rng_state(self, *labels: str | int | float) -> np.ndarray:
         """Return a new generator state for the child seed of this seed for the given labels.
 
         Each random draw passes its own labels, so that no 2 draws share a generator state.
