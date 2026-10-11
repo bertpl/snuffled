@@ -10,7 +10,7 @@ from snuffled._core.analysis.roots.curve_fitting import (
     fitting_curve,
 )
 from snuffled._core.utils.rng import new_rng_state
-from tests.noise import noise_from_float
+from tests.helpers import noise_from_float
 
 
 # ==================================================================================================

@@ -2,7 +2,7 @@ import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas, fit_curve, fitting_cost, fitting_curve
 from snuffled._core.utils.rng import new_rng_state
-from tests.noise import noise_from_float
+from tests.helpers import noise_from_float
 
 
 # ==================================================================================================

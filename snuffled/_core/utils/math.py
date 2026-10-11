@@ -27,7 +27,8 @@ def smooth_sign(x: float, inner_tol: float, outer_tol: float) -> float:
 
     If this is not the case, we correct this such that outer_tol = 4*inner_tol.
 
-    The correction requires outer_tol > 0 whenever inner_tol > 0.
+    When inner_tol > 0, the caller must pass outer_tol > 0: with outer_tol == 0, this correction sets both tolerances
+    to 0.
     """
     if x == 0:
         return 0

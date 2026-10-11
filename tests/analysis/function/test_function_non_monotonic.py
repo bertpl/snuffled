@@ -13,8 +13,7 @@ from snuffled._core.analysis.function.helpers_non_monotonic import (
 )
 from snuffled._core.models import FunctionProperty
 from snuffled._core.utils.rng_seed import RngSeed
-from tests.helpers import is_sorted_with_tolerance
-from tests.noise import noise_from_float
+from tests.helpers import is_sorted_with_tolerance, noise_from_float
 
 
 # ==================================================================================================

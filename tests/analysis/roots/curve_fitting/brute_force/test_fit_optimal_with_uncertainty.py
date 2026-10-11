@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from snuffled._core.analysis.roots.curve_fitting import fit_curve_with_uncertainty_brute_force
-from tests.noise import noise_from_float
+from tests.helpers import noise_from_float
 
 
 @pytest.mark.parametrize("c_noise", [1e-9, 1e-6, 1e-4, 1e-2])
