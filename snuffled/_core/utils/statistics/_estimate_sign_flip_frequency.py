@@ -121,16 +121,18 @@ def estimate_sign_flip_frequency(
 
 @numba.njit(inline="always")
 def cross_entropy_loss(w: np.ndarray, p: np.ndarray, lamb: float) -> float:
-    """Return the cross-entropy loss of sign-flip frequency lamb for the observations (w_i, p_i).
+    """Return the cross-entropy loss of sign-flip frequency lamb (lambda) for the observations (w_i, p_i).
 
-    The loss is -sum_i L_i, without the constant log(1/2) terms, with
-    L_i = p_i log(1 - exp(-2*lamb*w_i)) + (1 - p_i) log(1 + exp(-2*lamb*w_i)), as estimate_sign_flip_frequency
-    derives. The loss stays finite for every w_i >= 0:
-       - both logs are computed with expm1 and log1p, because 1 - exp(-2*lamb*w_i) loses its precision for a small
-         2*lamb*w_i, and its log is -inf once exp(-2*lamb*w_i) rounds to 1.0;
-       - the first log is taken only where p_i > 0, because for w_i == 0 it is log(0) = -inf, and p_i * log(0)
-         would be 0 * -inf = NaN for an interval without a sign flip.
+    w_i is the width of interval i and p_i the probability of a sign flip over it. The loss is -sum_i L_i, without
+    the constant log(1/2) terms, with L_i = p_i log(1 - exp(-2*lamb*w_i)) + (1 - p_i) log(1 + exp(-2*lamb*w_i)),
+    as estimate_sign_flip_frequency derives. The loss stays finite for every w_i > 0, and for w_i == 0 where
+    p_i == 0.
     """
     minus_two_lamb_w = -2 * lamb * w
-    p_odd = np.where(p > 0, -np.expm1(minus_two_lamb_w), 1.0)  # 1.0 where p == 0, so its log is 0
-    return -1 * np.sum((p * np.log(p_odd)) + ((1 - p) * np.log1p(np.exp(minus_two_lamb_w))))
+    # 1 - exp(-2*lamb*w_i) is computed with expm1, because the subtraction loses its precision for a small
+    # 2*lamb*w_i, and log(1 - exp(-2*lamb*w_i)) is -inf once exp(-2*lamb*w_i) rounds to 1.0.
+    # The array is 1.0 where p_i == 0, so its log is 0 there: for w_i == 0 the log is log(0) = -inf, and
+    # p_i * log(0) would be 0 * -inf = NaN for an interval without a sign flip.
+    one_minus_exp_minus_two_lamb_w = np.where(p > 0, -np.expm1(minus_two_lamb_w), 1.0)
+    # log1p keeps the precision of log(1 + exp(-2*lamb*w_i)) when exp(-2*lamb*w_i) is close to 0.
+    return -1 * np.sum((p * np.log(one_minus_exp_minus_two_lamb_w)) + ((1 - p) * np.log1p(np.exp(minus_two_lamb_w))))
