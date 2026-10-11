@@ -186,7 +186,6 @@ class SingleRootOneSideAnalyser:
             # this is a degenerate case with all fx values 0 according to fit
             return 1.0
         else:
-            # norm_curve is nonzero, so the ratio is defined
             return clip_scalar(norm_error / norm_curve, 0.0, 1.0)
 
     @cached_property

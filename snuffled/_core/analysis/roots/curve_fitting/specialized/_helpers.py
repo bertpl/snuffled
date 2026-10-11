@@ -34,7 +34,7 @@ def initialize_params(
 #  (a,b,c) search directions used in optimization & uncertainty exploration procedures
 # ==================================================================================================
 @numba.njit
-def param_step(  # noqa: C901 -- each step method needs its own branch with its own invariant
+def param_step(  # noqa: C901 -- each value of `method` needs its own branch
     a: float,
     b: float,
     c: float,

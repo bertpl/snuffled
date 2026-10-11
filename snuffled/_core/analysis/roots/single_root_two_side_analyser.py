@@ -116,7 +116,6 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             # this means both sides are 0
             return 0.0
         else:
-            # total_norm is nonzero, so the ratio is defined
             return clip_scalar(total_delta / total_norm, 0.0, 1.0)
 
 

@@ -21,7 +21,7 @@ def _f_nan_middle(x: float) -> float:
 
 
 def _f_nan_at_only_root(x: float) -> float:
-    """Return NaN over a region that covers the function's only sign flip."""
+    """Return NaN for |x| < 0.3, x - 0.5 for x >= 0.3, and x for x <= -0.3."""
     if abs(x) < 0.3:
         return float("nan")
     elif x > 0:

@@ -42,7 +42,7 @@ class RootsAnalyser(PropertyExtractor[SnuffledRootProperties]):
             if len(self._root_analyses) > 0:
                 return float(np.mean([root_props[prop] for root_props in self._root_analyses.values()]))
             else:
-                # There are no roots to analyze; the Diagnostic properties can detect this case early.
+                # Without roots every root property is 0.0; Diagnostic.NO_ZEROS_DETECTED flags this case.
                 return 0.0
         else:
             raise ValueError(f"Property {prop} not supported")
