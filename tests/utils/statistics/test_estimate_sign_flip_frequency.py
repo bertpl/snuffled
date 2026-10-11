@@ -14,7 +14,7 @@ from snuffled._core.utils.statistics._estimate_sign_flip_frequency import cross_
     ],
 )
 def test_cross_entropy_loss_is_finite(w: list[float], p: list[float], lamb: float):
-    """cross_entropy_loss stays finite for widths that are 0 or so small that exp(-2*lamb*w) rounds to 1.0."""
+    """cross_entropy_loss stays finite where exp(-2*lamb*w) rounds to 1.0, and at width 0 without a sign flip."""
     # --- act --------------------------
     loss = cross_entropy_loss(np.array(w), np.array(p), lamb)
 

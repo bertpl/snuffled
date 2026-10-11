@@ -57,7 +57,7 @@ def test_function_analyser_many_zeroes(fun: Callable[[float], float], min_score:
 
 @pytest.mark.parametrize("dx", [1e-17, 1e-20])
 def test_function_analyser_many_zeroes_below_float_spacing(dx: float):
-    """A linear function scores 0 for MANY_ZEROES when dx is smaller than the spacing between adjacent floats.
+    """A linear function scores 0 for MANY_ZEROES when dx is smaller than the float spacing at some sampled x.
 
     Such a dx makes the sample grid repeat x values, which gives intervals of width 0.
     """

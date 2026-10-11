@@ -123,16 +123,18 @@ def estimate_sign_flip_frequency(
 def cross_entropy_loss(w: np.ndarray, p: np.ndarray, lamb: float) -> float:
     """Return the cross-entropy loss of sign-flip frequency lamb (lambda) for the observations (w_i, p_i).
 
-    w_i is the width of interval i and p_i the probability of a sign flip over it. The loss is -sum_i L_i, without
-    the constant log(1/2) terms, with L_i = p_i log(1 - exp(-2*lamb*w_i)) + (1 - p_i) log(1 + exp(-2*lamb*w_i)),
-    as estimate_sign_flip_frequency derives. The loss stays finite for every w_i > 0, and for w_i == 0 where
+    w_i is the width of interval i and p_i the probability of a sign flip over it. The loss is -sum_i L_i, with
+    L_i = p_i log(1 - exp(-2*lamb*w_i)) + (1 - p_i) log(1 + exp(-2*lamb*w_i)), as estimate_sign_flip_frequency
+    derives; each log-probability also holds a term log(1/2), which does not depend on lamb and is left out.
+
+    The loss stays finite for every w_i > 0 where 2*lamb*w_i does not underflow to 0, and for w_i == 0 where
     p_i == 0.
     """
     minus_two_lamb_w = -2 * lamb * w
     # 1 - exp(-2*lamb*w_i) is computed with expm1, because the subtraction loses its precision for a small
     # 2*lamb*w_i, and log(1 - exp(-2*lamb*w_i)) is -inf once exp(-2*lamb*w_i) rounds to 1.0.
-    # The array is 1.0 where p_i == 0, so its log is 0 there: for w_i == 0 the log is log(0) = -inf, and
-    # p_i * log(0) would be 0 * -inf = NaN for an interval without a sign flip.
+    # one_minus_exp_minus_two_lamb_w is set to 1.0 where p_i == 0, so its log there is 0. Without that, an
+    # interval of width 0 without a sign flip (w_i == 0, p_i == 0) gives p_i * log(0) = 0 * -inf = NaN.
     one_minus_exp_minus_two_lamb_w = np.where(p > 0, -np.expm1(minus_two_lamb_w), 1.0)
     # log1p keeps the precision of log(1 + exp(-2*lamb*w_i)) when exp(-2*lamb*w_i) is close to 0.
     return -1 * np.sum((p * np.log(one_minus_exp_minus_two_lamb_w)) + ((1 - p) * np.log1p(np.exp(minus_two_lamb_w))))

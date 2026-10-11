@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix `Snuffler` reseeding Python's global `random` module
 - Fix `Snuffler` keeping the analyzed function and its samples in memory until the process exits
-- Fix `FunctionProperty.MANY_ZEROES` scoring close to 1, even for a function with 1 zero, when `dx` is below the float spacing in [`x_min`, `x_max`]
+- Fix `FunctionProperty.MANY_ZEROES` scoring close to 1, even for a function with 1 zero, when `dx` is smaller than the spacing between adjacent floats somewhere in [`x_min`, `x_max`]
 
 ### Security
 
