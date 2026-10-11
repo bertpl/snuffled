@@ -83,8 +83,7 @@ jobs:
     needs: [preflight]
     uses: ./.github/workflows/_unit_tests.yml
 
-  # The wheel check tests the built wheel; _wheel_check.yml says why the
-  # `test` job cannot.
+  # _wheel_check.yml says why the `test` job cannot test the built wheel.
   wheel-check:
     needs: [preflight]
     uses: ./.github/workflows/_wheel_check.yml

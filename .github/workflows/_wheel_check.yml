@@ -1,10 +1,10 @@
-# This reusable workflow checks the built wheel in 3 steps:
+# This reusable workflow checks the built wheel:
 #   - build the distribution (sdist and wheel) once;
 #   - check the wheel statically;
-#   - install the wheel into its own environment and run the test suite against it.
+#   - install the wheel into a new virtual environment and run the test suite against the wheel.
 #
 # Only the wheel is checked: the release publishes the sdist from the same build,
-# without checking it.
+# without checking the sdist.
 #
 # The check catches packaging errors (a missing subpackage or py.typed file,
 # shipped code that imports a dev-only dependency outside the `test` group)
@@ -66,7 +66,7 @@ jobs:
           name: dist
           path: dist
 
-      # The environment `wheel-venv` gets its packages in 2 steps:
+      # This step creates a new virtual environment, `wheel-venv`, and installs into it:
       #   - the test dependencies, at the versions pinned in uv.lock, from the `test`
       #     group only (`--only-group` leaves out snuffled and its runtime dependencies);
       #   - snuffled and its runtime dependencies, from the built wheel alone, never
