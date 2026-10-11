@@ -9,7 +9,8 @@ The functions return the same numbers with numba's JIT on and off.
 Every function declares its numba signature, so that the uint64 arithmetic is typed explicitly: a
 call with arguments that do not cast to the declared types raises a TypeError, without compiling
 another version. numba compiles each function when its decorator runs, at import time, so the
-functions are defined below the functions that they call.
+functions are defined below the functions that they call. Every function caches its compiled code on
+disk, so only the first import compiles them; later imports load them from the cache.
 
 The uint64 arithmetic wraps around on overflow by design; without the JIT, NumPy warns about each
 wraparound.
@@ -32,13 +33,13 @@ _UINT64_TO_UNIT_INTERVAL_SCALE = np.float64((1.0 - np.finfo(np.float64).eps) / (
 # ==================================================================================================
 #  Helpers
 # ==================================================================================================
-@numba.njit("uint64(uint64, uint64)", inline="always")
+@numba.njit("uint64(uint64, uint64)", inline="always", cache=True)
 def _rotate_bits_left(x: np.uint64, k: np.uint64) -> np.uint64:
     """Rotate the 64 bits of `x` left by `k` positions; `k` must lie in 1..63."""
     return (x << k) | (x >> (np.uint64(64) - k))
 
 
-@numba.njit("uint64(uint64[:])", inline="always")
+@numba.njit("uint64(uint64[:])", inline="always", cache=True)
 def _xoroshiro128plus_next(rng_state: np.ndarray) -> np.uint64:
     """Return the next uint64 of the xoroshiro128+ sequence, advancing `rng_state` in place."""
     s0 = rng_state[0]
@@ -52,7 +53,7 @@ def _xoroshiro128plus_next(rng_state: np.ndarray) -> np.uint64:
     return result
 
 
-@numba.njit("uint64(uint64[:])", inline="always")
+@numba.njit("uint64(uint64[:])", inline="always", cache=True)
 def _splitmix64_next(splitmix64_state: np.ndarray) -> np.uint64:
     """Return the next uint64 of the splitmix64 sequence, advancing the 1-element `splitmix64_state` in place."""
     z = splitmix64_state[0] + np.uint64(0x9E3779B97F4A7C15)
@@ -65,7 +66,7 @@ def _splitmix64_next(splitmix64_state: np.ndarray) -> np.uint64:
 # ==================================================================================================
 #  State
 # ==================================================================================================
-@numba.njit("uint64[:](int64)", inline="always")
+@numba.njit("uint64[:](int64)", inline="always", cache=True)
 def new_rng_state(seed: int) -> np.ndarray:
     """Return a new xoroshiro128+ state, derived from `seed` with splitmix64.
 
@@ -84,13 +85,13 @@ def new_rng_state(seed: int) -> np.ndarray:
 # ==================================================================================================
 #  Draws
 # ==================================================================================================
-@numba.njit("float64(uint64[:])", inline="always")
+@numba.njit("float64(uint64[:])", inline="always", cache=True)
 def rand_float64(rng_state: np.ndarray) -> float:
     """Return a random float64 in [0.0, 1.0), advancing `rng_state` in place."""
     return np.float64(_xoroshiro128plus_next(rng_state)) * _UINT64_TO_UNIT_INTERVAL_SCALE
 
 
-@numba.njit("int64(uint64[:], int64, int64)", inline="always")
+@numba.njit("int64(uint64[:], int64, int64)", inline="always", cache=True)
 def rand_int64(rng_state: np.ndarray, low: int, high: int) -> np.int64:
     """Return a random integer in [low, high), advancing `rng_state` in place.
 
@@ -101,7 +102,7 @@ def rand_int64(rng_state: np.ndarray, low: int, high: int) -> np.int64:
     return low + np.int64(_xoroshiro128plus_next(rng_state) % range_size)
 
 
-@numba.njit("void(uint64[:], float64[:])", inline="always")
+@numba.njit("void(uint64[:], float64[:])", inline="always", cache=True)
 def shuffle_in_place(rng_state: np.ndarray, values: np.ndarray) -> None:
     """Shuffle the float64 array `values` in place with the Fisher–Yates algorithm, drawing from `rng_state`."""
     n = len(values)
@@ -110,7 +111,7 @@ def shuffle_in_place(rng_state: np.ndarray, values: np.ndarray) -> None:
         values[i], values[j] = values[j], values[i]
 
 
-@numba.njit("int64[:](uint64[:], int64, int64, int64)")
+@numba.njit("int64[:](uint64[:], int64, int64, int64)", cache=True)
 def sample_without_replacement(rng_state: np.ndarray, low: int, high: int, n: int) -> np.ndarray:
     """Return `n` distinct random integers from [low, high), in random order, drawing from `rng_state`.
 
