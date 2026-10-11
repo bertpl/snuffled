@@ -11,7 +11,7 @@ from tests.helpers import only_with_numba_jit
 
 
 # =================================================================================================
-#  Rootless functions complete extract_all() with all-finite scores (regression R1)
+#  Rootless functions complete extract_all() with all-finite scores
 # =================================================================================================
 @pytest.mark.parametrize(
     "fun",

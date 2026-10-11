@@ -25,7 +25,7 @@ def _f_inf_region(x: float) -> float:
 
 
 def _f_pole(x: float) -> float:
-    return 1.0 / (x - 0.2) if x != 0.2 else float("inf")  # R4 pole
+    return 1.0 / (x - 0.2) if x != 0.2 else float("inf")
 
 
 # =================================================================================================
@@ -68,7 +68,7 @@ def test_f_clips_huge_finite_without_inf_flag():
 
 
 # =================================================================================================
-#  Pipeline: NaN / inf functions complete extract_all() + are flagged (regression R3, R4)
+#  Pipeline: extract_all() completes on functions that return NaN or inf, and flags those values
 # =================================================================================================
 @pytest.mark.parametrize("fun", [_f_nan_middle, _f_nan_at_only_root])
 def test_extract_all_nan_completes_and_flags(fun: Callable[[float], float]):
@@ -90,7 +90,7 @@ def test_extract_all_inf_completes_and_flags():
 
 
 def test_extract_all_pole_has_finite_discontinuity():
-    # R4: the pole used to give a NaN discontinuity score (+ leaked warnings); the clip makes it finite
+    # without clipping +-inf to +-FX_CLIP, the pole would make the discontinuity score NaN
     # --- act ---------------------------------------------
     props = Snuffler(fun=_f_pole, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
 
