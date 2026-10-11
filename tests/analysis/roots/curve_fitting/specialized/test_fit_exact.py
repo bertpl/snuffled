@@ -4,9 +4,9 @@ import pytest
 from snuffled._core.analysis.roots.curve_fitting import fit_curve_exact_three_points, fitting_curve
 
 
-# =================================================================================================
+# ==================================================================================================
 #  TEST - Find solution WITHOUT uncertainty - EXACT
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "a_true, b_true, c_true",
     [
@@ -49,14 +49,14 @@ from snuffled._core.analysis.roots.curve_fitting import fit_curve_exact_three_po
 def test_fit_curve_exact_three_points_simple_cases(a_true: float, b_true: float, c_true: float):
     """See if we can reproduce a,b,c in simple cases"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_values = np.array([0.5, 1.0, 2.0])
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
 
     # set range_c such that it has correct sign for capturing exact c
     range_c = (1e-10, 10000000000.0) if c_true > 0 else (-10000000000.0, -1e-10)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     a_fit, b_fit, c_fit = fit_curve_exact_three_points(
         fx_05=fx_values[0],
         fx_1=fx_values[1],
@@ -66,7 +66,7 @@ def test_fit_curve_exact_three_points_simple_cases(a_true: float, b_true: float,
         range_c=range_c,
     )
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert a_fit == pytest.approx(a_true, rel=1e-9, abs=1e-9)
     assert b_fit == pytest.approx(b_true, rel=1e-9, abs=1e-9)
     assert c_fit == pytest.approx(c_true, rel=1e-9, abs=1e-9)
@@ -104,14 +104,14 @@ def test_fit_curve_exact_three_points_simple_cases(a_true: float, b_true: float,
 def test_fit_curve_exact_three_points_bounds(a_true: float, b_true: float, c_true: float):
     """See if imposed bounds (a in [0.5, 2.0], b in [0.0, 0.9], c in ±[0.5, 2.0]) are always respected"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_values = np.array([0.5, 1.0, 2.0])
     fx_values = fitting_curve(x_values, a_true, b_true, c_true)
 
     # set range_c such that it has correct sign for capturing exact c
     range_c = (0.5, 2.0) if c_true > 0 else (-2.0, -0.5)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     a_fit, b_fit, c_fit = fit_curve_exact_three_points(
         fx_05=fx_values[0],
         fx_1=fx_values[1],
@@ -121,7 +121,7 @@ def test_fit_curve_exact_three_points_bounds(a_true: float, b_true: float, c_tru
         range_c=range_c,
     )
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert 0.5 <= a_fit <= 2.0
     assert 0.0 <= b_fit <= 0.9
     assert range_c[0] <= c_fit <= range_c[1]
@@ -190,7 +190,7 @@ def test_fit_curve_exact_three_points_bounds(a_true: float, b_true: float, c_tru
 def test_fit_curve_exact_three_points_ill_conditioning(fx_05: float, fx_1: float, fx_2: float):
     """Check if the function at least gracefully return _some_ result under unexpected circumstances."""
 
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     a_fit, b_fit, c_fit = fit_curve_exact_three_points(
         fx_05=float(fx_05),
         fx_1=float(fx_1),
@@ -200,7 +200,7 @@ def test_fit_curve_exact_three_points_ill_conditioning(fx_05: float, fx_1: float
         range_c=(1 / 32.0, 32.0),
     )
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert 1e-3 <= a_fit <= 1e3
     assert -0.5 <= b_fit <= 1.5
     assert 1 / 32.0 <= c_fit <= 32.0

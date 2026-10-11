@@ -75,7 +75,7 @@ def estimate_sign_flip_frequency(
     :param n_iters: (int) number of iteratively-refined grid search iterations
     :return: (float) optimal lambda value
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     n_per_iter = 20
     n_per_iter_per_side = int(n_per_iter / 2)
     log_lambda_min = np.log(lambda_min)
@@ -83,7 +83,7 @@ def estimate_sign_flip_frequency(
 
     results: dict[float, float] = {}  # log_lambda -> loss
 
-    # --- main loop ---------------------------------------
+    # --- main loop ------------------------------
     for i in range(n_iters):
         # generate candidate log(lambda)-values to evaluate
         if i == 0:

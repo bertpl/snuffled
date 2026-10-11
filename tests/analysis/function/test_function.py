@@ -6,41 +6,41 @@ from snuffled._core.models import FunctionProperty
 
 
 def test_function_analyser_supported_properties():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     supported_properties = analyser.supported_properties()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert set(supported_properties) == set(FunctionProperty)
 
 
 def test_function_analyser_extract_all():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     _ = analyser.extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     # if it doesn't fail, that's good enough for this test
 
 
 def test_function_analyser_statistics():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=lambda x: x, x_min=-1.0, x_max=1.0, dx=1e-10, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = FunctionAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     t_start = time.perf_counter()
     _ = analyser.extract_all()
     t_end = time.perf_counter()
@@ -50,7 +50,7 @@ def test_function_analyser_statistics():
     t_elapsed_min = (0.99 * t_elapsed) - 1e-3
     t_elapsed_max = (1.01 * t_elapsed) + 1e-3
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(stats) == len(FunctionProperty)
     assert all(s.t_duration_sec >= 0 for s in stats.values())
     assert t_elapsed_min <= sum([s.t_duration_sec for s in stats.values()]) <= t_elapsed_max

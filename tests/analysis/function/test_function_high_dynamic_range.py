@@ -7,9 +7,9 @@ from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.models import FunctionProperty
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions     (for x-range [-1,1])
-# =================================================================================================
+# ==================================================================================================
 def f_constant(x: float) -> float:
     """Should have an extremely low dynamic range"""
     return 1.0 + (1e-10 * x)
@@ -34,9 +34,9 @@ def f_exp_2(x: float) -> float:
     return (10 ** (20 * x)) - (1e-20)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, min_score, max_score",
     [
@@ -47,12 +47,12 @@ def f_exp_2(x: float) -> float:
     ],
 )
 def test_function_analyser_high_dynamic_range(fun: Callable[[float], float], min_score: float, max_score: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000)
     analyser = FunctionAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     hdr_score = analyser.extract(FunctionProperty.HIGH_DYNAMIC_RANGE)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_score <= hdr_score <= max_score

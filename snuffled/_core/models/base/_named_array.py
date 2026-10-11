@@ -1,9 +1,9 @@
 class NamedArray:
     """Array of numbers that can also be accessed by means of str-valued identifiers, much like a dict."""
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(self, names: list[str], values: list[float] | None = None) -> None:
         """Initialize the NamedArray with names and values.
 
@@ -24,9 +24,9 @@ class NamedArray:
         self._names = names
         self._values = values
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Conversion methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def names(self) -> list[str]:
         return self._names.copy()
 
@@ -37,9 +37,9 @@ class NamedArray:
         """Return a dict that maps each name to its value."""
         return dict(zip(self._names, self._values))
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Overridden methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __eq__(self, other: object) -> bool:
         return isinstance(other, NamedArray) and (self._names == other._names) and (self._values == other._values)
 
@@ -55,9 +55,9 @@ class NamedArray:
     def __setitem__(self, key: str | int, value: float) -> None:
         self._values[self._key_to_index(key)] = value
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internals
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _key_to_index(self, key: str | int) -> int:
         """Return the index for a name or an int index; an int is returned as is, without a range check.
 

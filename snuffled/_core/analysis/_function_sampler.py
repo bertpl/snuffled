@@ -22,9 +22,9 @@ class FunctionSampler:
       - DiagnosticAnalyser.
     """
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(
         self,
         fun: Callable[[float], float],
@@ -36,36 +36,36 @@ class FunctionSampler:
         n_roots: int,
         rel_tol_scale: float = 10.0,
     ) -> None:
-        # --- validation ----------------------------------
+        # --- validation -------------------------
         require_min_n_samples("n_fun_samples", n_fun_samples)
         require_min_n_samples("n_roots", n_roots)
 
-        # --- randomization -------------------------------
+        # --- randomization ----------------------
         self._seed = seed + SEED_OFFSET_FUNCTION_SAMPLER
 
-        # --- function properties -------------------------
+        # --- function properties ----------------
         self._fun = fun
         self.x_min = x_min
         self.x_max = x_max
 
-        # --- settings ------------------------------------
+        # --- settings ---------------------------
         self.dx = dx
         self.n_fun_samples = n_fun_samples
         self.n_roots = n_roots
         self.rel_tol = EPS * rel_tol_scale
 
-        # --- cache ---------------------------------------
+        # --- cache ------------------------------
         self._fun_cache: dict[float, float] = {}
 
-        # --- non-finite tracking -------------------------
+        # --- non-finite tracking ----------------
         # set in _eval() when the function returns NaN / +-inf for a sampled point; read by the
         # NAN_VALUES_DETECTED / INF_VALUES_DETECTED diagnostics.
         self._saw_nan = False
         self._saw_inf = False
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Low-level generic functionality
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     @overload
     def f(self, x: float) -> float: ...
     @overload
@@ -73,7 +73,7 @@ class FunctionSampler:
     def f(self, x: float | list[float]) -> float | list[float]:
         # simple cached version of fun(x), without size limit (and simpler than lru_cache, so less overhead)
         if isinstance(x, list):
-            # --- get MULTIPLE f(x) values ------
+            # --- get MULTIPLE f(x) values -------
             fx_values = []
             for single_x in x:
                 if not (self.x_min <= single_x <= self.x_max):
@@ -84,7 +84,7 @@ class FunctionSampler:
                     fx = self._fun_cache[single_x]
                 fx_values.append(fx)
             return fx_values
-        # --- get SINGLE f(x) values --------
+        # --- get SINGLE f(x) values -------------
         if x in self._fun_cache:
             return self._fun_cache[x]
         if self.x_min <= x <= self.x_max:
@@ -182,9 +182,9 @@ class FunctionSampler:
         q = 1 - (1 / math.sqrt(self.n_fun_samples))
         return (1 / q) * self.fx_quantile(q, absolute=True)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Specialized - Tolerances
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     @cache
     def tol_array_local(self) -> np.ndarray:
         """Return (n_fun_samples,)-sized array with absolute (>0) LOCAL tolerance values.
@@ -230,9 +230,9 @@ class FunctionSampler:
             outer_tol=outer_tol,
         )
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Specialized - Roots
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     @cache
     def candidate_root_intervals(self) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
         """Return a list of 'root intervals' and 'non-root intervals' for root finding.

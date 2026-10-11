@@ -35,7 +35,7 @@ from snuffled._core.models.root_analysis import Root
 def test_root_validation(
     x_min: float, x: float, x_max: float, fx_min: float, fx: float, fx_max: float, expectation_mgr
 ):
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     with expectation_mgr:
         _ = Root(
             x_min=x_min,
@@ -48,13 +48,13 @@ def test_root_validation(
 
 
 def test_root_width():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     r = Root(x_min=1.1235, x=2.0, x_max=5.23234, fx_min=-1.0, fx=0.0, fx_max=1.0)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     w = r.width
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert w == (5.23234 - 1.1235)
 
 
@@ -68,11 +68,11 @@ def test_root_width():
     ],
 )
 def test_root_deriv_sign(fx_min: float, fx_max: float, expected_result: int):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     r = Root(x_min=-1.0, x=0.0, x_max=1.0, fx_min=fx_min, fx=0.0, fx_max=fx_max)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = r.deriv_sign
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert result == expected_result

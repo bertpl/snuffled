@@ -13,9 +13,9 @@ from .single_root_one_side_analyser import SingleRootOneSideAnalyser
 
 
 class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(
         self,
         function_sampler: FunctionSampler,
@@ -34,20 +34,19 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         self._analysis_right: SingleRootOneSideAnalyser
         self._perform_analyses()
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internal - Root Analysis
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _perform_analyses(self) -> None:
         """Performs left- and right-sided root analysis and populates self._analysis_left, self._analysis_right."""
-        # --- sample function around root -----------------
+        # --- sample function around root --------
         # n_samples = 2 * n_samples_per_side = 2 * (3 + 6*k) = 6 + 12*k
         k = max(1, round((self.n_root_samples - 6) / 12))
         x_deltas = compute_x_deltas(dx=self.dx, k=k, seed=self._seed)
         fx_values_left = np.array([self.function_sampler.f(self.root.x - x_delta) for x_delta in x_deltas])
         fx_values_right = np.array([self.function_sampler.f(self.root.x + x_delta) for x_delta in x_deltas])
 
-        # --- determine left/right function sign ----------
-
+        # --- left/right function sign -----------
         # get robust sign estimates from left & right fx-values
         sign_estimate_left = robust_sign_estimate(fx_values_left)
         sign_estimate_right = robust_sign_estimate(fx_values_right)
@@ -61,13 +60,13 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             fx_sign_left = -self.root.deriv_sign
             fx_sign_right = self.root.deriv_sign
 
-        # --- actual analyses -----------------------------
+        # --- actual analyses --------------------
         self._analysis_left = SingleRootOneSideAnalyser(self.dx, x_deltas, fx_values_left, -1, fx_sign_left)
         self._analysis_right = SingleRootOneSideAnalyser(self.dx, x_deltas, fx_values_right, +1, fx_sign_right)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Main Implementation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _new_named_array(self) -> SnuffledRootProperties:
         return SnuffledRootProperties()
 
@@ -86,9 +85,9 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             case _:
                 raise ValueError(f"Property {prop} not supported")
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internal methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _extract_ill_behaved(self) -> float:
         return 0.5 * (self._analysis_left.ill_behaved + self._analysis_right.ill_behaved)
 
@@ -102,7 +101,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         return 0.5 * (self._analysis_left.discontinuous + self._analysis_right.discontinuous)
 
     def _extract_asymmetric(self) -> float:
-        # --- aggregate norms & deltas of f1,f2,f4 --------
+        # --- norms & deltas of f1,f2,f4 ---------
         total_norm = 0.0
         total_delta = 0.0
         for att in ["f1", "f2", "f4"]:
@@ -112,7 +111,7 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
             total_norm += max(abs(f_left_min), abs(f_left_max), abs(f_right_min), abs(f_right_max))
             total_delta += range_diff(f_left_min, f_left_max, -f_right_max, -f_right_min)
 
-        # --- final score ----------------------------------
+        # --- final score ------------------------
         if total_norm == 0.0:
             # this means both sides are 0
             return 0.0
@@ -120,9 +119,9 @@ class SingleRootTwoSideAnalyser(PropertyExtractor[SnuffledRootProperties]):
         return clip_scalar(total_delta / total_norm, 0.0, 1.0)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Helpers
-# =================================================================================================
+# ==================================================================================================
 def range_diff(x_min: float, x_max: float, y_min: float, y_max: float) -> float:
     """Computes distance between ranges (x_min, x_max) and (y_min, y_max).
 

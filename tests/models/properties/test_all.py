@@ -10,19 +10,19 @@ from snuffled._core.models.properties import (
 
 
 def test_snuffled_properties_construction_extraction_getters():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sfp = SnuffledFunctionProperties([1, 2, 3, 4, 5])
     srp = SnuffledRootProperties([11, 12, 13, 14, 15])
     sdp = SnuffledDiagnostics([21, 22, 23, 24, 25, 26])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     sp = SnuffledProperties(
         function_props=sfp,
         root_props=srp,
         diagnostics=sdp,
     )
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert sp.function_props == sfp
     assert sp.root_props == srp
     assert sp.diagnostics == sdp

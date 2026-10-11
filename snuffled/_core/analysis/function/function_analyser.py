@@ -12,15 +12,15 @@ from .helpers_non_monotonic import non_monotonicity_score
 
 
 class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Constructor
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def __init__(self, function_sampler: FunctionSampler) -> None:
         super().__init__(function_sampler)
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Main Implementation
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def supported_properties(self) -> list[str]:
         return [
             FunctionProperty.HIGH_DYNAMIC_RANGE,
@@ -48,9 +48,9 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
             case _:
                 raise ValueError(f"Property {prop} not supported")
 
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     #  Internal methods
-    # -------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     def _extract_high_dynamic_range(self) -> float:
         """Score the dynamic range of the function from the q90/q10 ratio of abs(f(x)) over [x_min, x_max].
 

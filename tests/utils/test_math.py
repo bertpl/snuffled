@@ -28,10 +28,10 @@ from snuffled._core.utils.math import smooth_sign, smooth_sign_array
     ],
 )
 def test_smooth_sign(x: float, inner_tol: float, outer_tol: float, min_result: float, max_result: float):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result_pos_x = smooth_sign(x, inner_tol, outer_tol)
     result_neg_x = smooth_sign(-x, inner_tol, outer_tol)
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_result * (1 - 1e-14) <= result_pos_x <= max_result * (1 + 1e-14)
     assert result_neg_x == -result_pos_x
 
@@ -48,8 +48,8 @@ def test_smooth_sign(x: float, inner_tol: float, outer_tol: float, min_result: f
     ],
 )
 def test_smooth_sign_array(x: np.ndarray, inner_tol: np.ndarray, outer_tol: np.ndarray, expected_result: np.ndarray):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = smooth_sign_array(x, inner_tol, outer_tol)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.allclose(result, expected_result, rtol=1e-14)

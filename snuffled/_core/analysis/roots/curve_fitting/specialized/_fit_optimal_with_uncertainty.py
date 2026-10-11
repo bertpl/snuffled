@@ -5,9 +5,9 @@ from ._explore_uncertainty import explore_uncertainty
 from ._fit_optimal import fit_curve
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Find solution WITH uncertainty
-# =================================================================================================
+# ==================================================================================================
 def fit_curve_with_uncertainty(
     x: np.ndarray,
     fx: np.ndarray,
@@ -53,10 +53,10 @@ def fit_curve_with_uncertainty(
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     c_ranges = [range_c, (-range_c[1], -range_c[0])] if include_opposite_c_range else [range_c]
 
-    # --- get optimal solutions ---------------------------
+    # --- get optimal solutions ------------------
     abc_opt_lst: list[tuple[float, float, float]] = []
     cost_opt_lst: list[float] = []
     for range_c in c_ranges:
@@ -65,7 +65,7 @@ def fit_curve_with_uncertainty(
         abc_opt_lst.append((a_opt, b_opt, c_opt))
         cost_opt_lst.append(cost_opt)
 
-    # --- determine threshold cost for uncertainty --------
+    # --- threshold cost for uncertainty ---------
     fx_q25, fx_q50, fx_q75 = np.quantile(fx, [0.25, 0.5, 0.75])
     cost_threshold = compute_threshold_cost(
         relative_margin=uncertainty_size,
@@ -75,7 +75,7 @@ def fit_curve_with_uncertainty(
         fx_q75=fx_q75,
     )
 
-    # --- get uncertainty bounds --------------------------
+    # --- get uncertainty bounds -----------------
     a_lst: list[np.ndarray] = []
     b_lst: list[np.ndarray] = []
     c_lst: list[np.ndarray] = []
@@ -104,7 +104,7 @@ def fit_curve_with_uncertainty(
             c_lst.append(c_values)
             cost_lst.append(cost_values)
 
-    # --- aggregate & return ------------------------------
+    # --- aggregate & return ---------------------
     return (
         np.array([a for a_arr in a_lst for a in a_arr]),
         np.array([b for b_arr in b_lst for b in b_arr]),

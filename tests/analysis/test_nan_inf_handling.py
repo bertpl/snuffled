@@ -9,9 +9,9 @@ from snuffled._core.analysis import FunctionSampler
 from snuffled._core.utils.constants import FX_CLIP
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions
-# =================================================================================================
+# ==================================================================================================
 def _f_nan_middle(x: float) -> float:
     return float("nan") if abs(x) < 0.3 else x  # NaN over a region
 
@@ -28,11 +28,11 @@ def _f_pole(x: float) -> float:
     return 1.0 / (x - 0.2) if x != 0.2 else float("inf")
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Boundary sanitize (FunctionSampler.f): NaN / +-inf never leave f(); flags are set
-# =================================================================================================
+# ==================================================================================================
 def test_f_clips_positive_inf_and_flags():
-    # --- arrange / act / assert --------------------------
+    # --- arrange / act / assert -------
     sampler = FunctionSampler(
         n_roots=100, fun=lambda x: float("inf"), x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=100
     )
@@ -67,41 +67,41 @@ def test_f_clips_huge_finite_without_inf_flag():
     assert not sampler.saw_nan
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Pipeline: extract_all() completes on functions that return NaN or inf, and flags those values
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("fun", [_f_nan_middle, _f_nan_at_only_root])
 def test_extract_all_nan_completes_and_flags(fun: Callable[[float], float]):
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     props = Snuffler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.all(np.isfinite(props.as_array()))  # never crashes, output stays finite
     assert props[Diagnostic.NAN_VALUES_DETECTED] == 1.0
 
 
 def test_extract_all_inf_completes_and_flags():
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     props = Snuffler(fun=_f_inf_region, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.all(np.isfinite(props.as_array()))
     assert props[Diagnostic.INF_VALUES_DETECTED] == 1.0
 
 
 def test_extract_all_pole_has_finite_discontinuity():
     # without clipping +-inf to +-FX_CLIP, the pole would make the discontinuity score NaN
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     props = Snuffler(fun=_f_pole, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert np.all(np.isfinite(props.as_array()))
     assert props[FunctionProperty.DISCONTINUOUS] > 0.99
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Deep detection: a non-finite value first hit during root-finding (not the initial grid) is flagged
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "bad, diagnostic",
     [
@@ -115,10 +115,10 @@ def test_non_finite_hit_only_in_deep_analysis_is_flagged(bad: float, diagnostic:
     def fun(x: float) -> float:
         return bad if abs(x) < 1e-7 else x
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     props = Snuffler(
         fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=10, n_roots=10, n_root_samples=10
     ).extract_all()
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert props[diagnostic] == 1.0

@@ -10,9 +10,9 @@ from snuffled._core.models import Diagnostic
 from snuffled._core.utils.constants import EPS
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float) -> float:
     return x - 1 / math.pi
 
@@ -28,9 +28,9 @@ def f_wide_zeroes(x: float, width_left: float, width_right: float) -> float:
     return x * (x + 0.5) * (x - 0.5)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, max_width_lb, max_width_ub",
     [
@@ -43,22 +43,22 @@ def f_wide_zeroes(x: float, width_left: float, width_right: float) -> float:
     ],
 )
 def test_function_analyser_max_zero_width(fun: Callable[[float], float], max_width_lb: float, max_width_ub: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = DiagnosticAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     max_width = analyser.extract(Diagnostic.MAX_ZERO_WIDTH)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert max_width_lb <= max_width <= max_width_ub
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Rootless functions: an empty root list gives 0.0, without crashing on max() of an empty list
-# =================================================================================================
+# ==================================================================================================
 def f_parabola(x: float) -> float:
     return 1.0 + x * x  # strictly positive on [-1, 1] -> no root
 
@@ -77,14 +77,14 @@ def f_all_zeros(x: float) -> float:
 
 @pytest.mark.parametrize("fun", [f_parabola, f_constant, f_monotone_no_root, f_all_zeros])
 def test_max_zero_width_rootless_is_zero(fun: Callable[[float], float]):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = DiagnosticAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     max_width = analyser.extract(Diagnostic.MAX_ZERO_WIDTH)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert max_width == 0.0

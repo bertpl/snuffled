@@ -8,17 +8,17 @@ from snuffled._core.analysis.diagnostic import DiagnosticAnalyser
 from snuffled._core.models import Diagnostic
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Test functions
-# =================================================================================================
+# ==================================================================================================
 def f_linear(x: float, negated_fx_left: float, fx_right: float) -> float:
     """Return the line through (-1, -negated_fx_left) and (1, fx_right), evaluated at x."""
     return ((x - 1) / 2) * negated_fx_left + ((x + 1) / 2) * fx_right
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Tests
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "fun, expected_result",
     [
@@ -36,14 +36,14 @@ def f_linear(x: float, negated_fx_left: float, fx_right: float) -> float:
 )
 def test_function_analyser_not_bracketing_ready(fun: Callable[[float], float], expected_result: float):
     """INTERVAL_NOT_BRACKETING_READY is 1.0 for same-sign ends, 0.5 for a zero end, and 0.0 for opposite-sign ends."""
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     sampler = FunctionSampler(
         n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42, n_fun_samples=1000, rel_tol_scale=10.0
     )
     analyser = DiagnosticAnalyser(sampler)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     result = analyser.extract(Diagnostic.INTERVAL_NOT_BRACKETING_READY)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert result == expected_result

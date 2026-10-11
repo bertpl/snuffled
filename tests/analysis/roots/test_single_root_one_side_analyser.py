@@ -8,9 +8,9 @@ from snuffled._core.analysis.roots.single_root_one_side_analyser import SingleRo
 from snuffled._core.utils.noise import noise_from_float
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Pre-Processing
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "dx, x_deltas, fx_values, dx_sign, fx_sign",
     [
@@ -35,15 +35,14 @@ def test_single_root_one_side_analyser_preprocess_x_fx(
     dx_sign: int,
     fx_sign: int,
 ):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_deltas_arr = np.array(x_deltas)
     fx_values_arr = np.array(fx_values)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas_arr, fx_values_arr, dx_sign, fx_sign)
 
-    # --- assert ------------------------------------------
-
+    # --- assert -----------------------
     # check if core data is stored correctly
     assert analyser.dx == dx
     assert np.array_equal(analyser.x_deltas, x_deltas)
@@ -59,14 +58,14 @@ def test_single_root_one_side_analyser_preprocess_x_fx(
     assert np.allclose(analyser.fx_sign * analyser.fx_scale * analyser.fx_pre, fx_values_arr, rtol=1e-15)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Parameter extraction
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize("fx_sign", [+1, -1])
 @pytest.mark.parametrize("c_true", [1.0, -1.0, 0.456, 1.893, -2.235, -0.345])
 @pytest.mark.parametrize("c_noise", [0.0, 1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1e-2, 1e-1])
 def test_single_root_one_side_analyser_abc_params(fx_sign: int, c_true: float, c_noise: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return fx_sign * (_x**c_true) * (1 + (c_noise * noise_from_float(_x)))
 
@@ -75,13 +74,13 @@ def test_single_root_one_side_analyser_abc_params(fx_sign: int, c_true: float, c
     x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
     fx_values = np.array([fun(x) for x in x_deltas])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     a_min, a_max = analyser._a_min_max
     b_min, b_max = analyser._b_min_max
     c_min, c_max = analyser._c_min_max
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert a_min <= 1.0 <= a_max  # additional check if scaling works well for these simple cases
     assert b_min <= 0.0 <= b_max  # we didn't add a constant term in fun(x)
     assert c_min <= c_true <= c_max
@@ -91,7 +90,7 @@ def test_single_root_one_side_analyser_abc_params(fx_sign: int, c_true: float, c
 @pytest.mark.parametrize("c_true", [1.0, -1.0, 0.456, 1.893, -2.235, -0.345])
 @pytest.mark.parametrize("c_noise", [0.0, 1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1e-2, 1e-1])
 def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_noise: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun_true(_x: float) -> float:
         return fx_sign * (_x**c_true)
 
@@ -107,13 +106,13 @@ def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_
     fx_2_true = fun_true(2 * dx)
     fx_4_true = fun_true(4 * dx)
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     fx_1_min, fx_1_max = analyser.f1
     fx_2_min, fx_2_max = analyser.f2
     fx_4_min, fx_4_max = analyser.f4
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     print(fx_1_min, fx_1_true, fx_1_max)
     print(fx_2_min, fx_2_true, fx_2_max)
     print(fx_4_min, fx_4_true, fx_4_max)
@@ -123,9 +122,9 @@ def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_
     assert fx_4_min <= fx_4_true <= fx_4_max
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Property extraction
-# =================================================================================================
+# ==================================================================================================
 @pytest.mark.parametrize(
     "c_noise, min_value, max_value",
     [
@@ -137,7 +136,7 @@ def test_single_root_one_side_analyser_fx_values(fx_sign: int, c_true: float, c_
     ],
 )
 def test_single_root_one_side_analyser_ill_behaved(c_noise: float, min_value: float, max_value: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return _x + (c_noise * noise_from_float(_x))
 
@@ -147,11 +146,11 @@ def test_single_root_one_side_analyser_ill_behaved(c_noise: float, min_value: fl
     x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
     fx_values = np.array([fun(x) for x in x_deltas])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     value = analyser.ill_behaved
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value
 
 
@@ -174,7 +173,7 @@ def test_single_root_one_side_analyser_ill_behaved(c_noise: float, min_value: fl
     ],
 )
 def test_single_root_one_side_analyser_deriv_zero(c_true: float, c_noise: float, min_value: float, max_value: float):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return (_x**c_true) + (c_noise * noise_from_float(_x))
 
@@ -184,11 +183,11 @@ def test_single_root_one_side_analyser_deriv_zero(c_true: float, c_noise: float,
     x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
     fx_values = np.array([fun(x) for x in x_deltas])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     value = analyser.deriv_zero
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value
 
 
@@ -213,7 +212,7 @@ def test_single_root_one_side_analyser_deriv_zero(c_true: float, c_noise: float,
 def test_single_root_one_side_analyser_deriv_infinite(
     c_true: float, c_noise: float, min_value: float, max_value: float
 ):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return (_x**c_true) + (c_noise * noise_from_float(_x))
 
@@ -223,11 +222,11 @@ def test_single_root_one_side_analyser_deriv_infinite(
     x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
     fx_values = np.array([fun(x) for x in x_deltas])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     value = analyser.deriv_infinite
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value
 
 
@@ -250,7 +249,7 @@ def test_single_root_one_side_analyser_deriv_infinite(
 def test_single_root_one_side_analyser_discontinuous(
     c_true: float, offset: float, c_noise: float, min_value: float, max_value: float
 ):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     def fun(_x: float) -> float:
         return offset + (_x**c_true) + (c_noise * noise_from_float(_x))
 
@@ -260,9 +259,9 @@ def test_single_root_one_side_analyser_discontinuous(
     x_deltas = compute_x_deltas(dx=dx, k=10, seed=42)
     fx_values = np.array([fun(x) for x in x_deltas])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     analyser = SingleRootOneSideAnalyser(dx, x_deltas, fx_values, dx_sign, fx_sign)
     value = analyser.discontinuous
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert min_value <= value <= max_value

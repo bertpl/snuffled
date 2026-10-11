@@ -19,7 +19,7 @@ from snuffled._core.analysis.roots.curve_fitting import compute_x_deltas
     ],
 )
 def test_compute_x_deltas(dx: float, k: int):
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     len_expected = 3 + 6 * k
     seed1 = 1234
     seed2 = 2345
@@ -27,13 +27,12 @@ def test_compute_x_deltas(dx: float, k: int):
     def geomean(_v: np.ndarray) -> float:
         return 2 ** float(np.mean(np.log2(_v)))
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     x_deltas = compute_x_deltas(dx, k, seed=seed1)
     x_deltas_2 = compute_x_deltas(dx, k, seed=seed1)
     x_deltas_3 = compute_x_deltas(dx, k, seed=seed2)
 
-    # --- assert ------------------------------------------
-
+    # --- assert -----------------------
     # check seed handling
     assert np.array_equal(x_deltas, x_deltas_2)
     assert not np.array_equal(x_deltas, x_deltas_3)

@@ -6,9 +6,9 @@ import numpy as np
 from snuffled._core.analysis import FunctionSampler
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Main computation
-# =================================================================================================
+# ==================================================================================================
 def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> float:
     """Compute discontinuity score (value in [0,1]) for the given function.
 
@@ -79,8 +79,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     :param n_samples: (int) number of additional samples we can take to zoom in on suspected discontinuities.
     :return score: (int) value in [0,1]
     """
-    # --- init --------------------------------------------
-
+    # --- init -----------------------------------
     # extract sampling settings
     dx_min = function_sampler.dx
     x_min, x_max = function_sampler.x_min, function_sampler.x_max
@@ -96,7 +95,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     )
     n_samples_remaining = n_samples
 
-    # --- iterative sampling ------------------------------
+    # --- iterative sampling ---------------------
     for i in range(n_iters):
         # init
         n_samples_i = math.ceil(n_samples_remaining / (n_iters - i))
@@ -146,7 +145,7 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
         if (len(new_x_values) == 0) or (n_samples_remaining == 0):
             break  # stop prematurely
 
-    # --- compute final score -----------------------------
+    # --- compute final score --------------------
     samples = sorted(function_sampler.function_cache())
     x_values = np.array([x for x, fx in samples], dtype=np.float64)
     fx_values = np.array([fx for x, fx in samples], dtype=np.float64)
@@ -157,9 +156,9 @@ def discontinuity_score(function_sampler: FunctionSampler, n_samples: int) -> fl
     )
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Helper functions
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: np.ndarray, dx_min: float) -> float:
     """Computes final discontinuity score (value in [0,1]) from the provided samples.
@@ -174,7 +173,7 @@ def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: 
     :param dx_min: (float > 0) smallest relevant interval size.
     :return: score in [0,1]
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     dx_values = np.diff(x_values)
     dfx_values = np.abs(np.diff(fx_values))
     dx_total = x_values[-1] - x_values[0]
@@ -204,7 +203,7 @@ def compute_discontinuity_score_from_intervals(x_values: np.ndarray, fx_values: 
     #       distinguish 'step' vs 'non-step' intervals if dx_min is smaller.
     c = 0.5 / ((1 / (1 + (deriv_threshold / deriv_max))) - 0.5)
 
-    # --- actual computations -------------------
+    # --- actual computations --------------------
     score = 0.0
     for i in range(len(dx_values)):
         dfx_i, dx_i = dfx_values[i], dx_values[i]

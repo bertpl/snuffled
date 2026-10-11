@@ -7,13 +7,13 @@ from snuffled._core.models.base import NamedArray
 
 def test_named_array_construction_without_values():
     """Leaving out values gives one 0.0 per name."""
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     names = ["a", "b", "c"]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     named_array = NamedArray(names)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(named_array) == 3
     assert named_array.names() == names
     assert named_array.as_array() == [0.0, 0.0, 0.0]
@@ -21,14 +21,14 @@ def test_named_array_construction_without_values():
 
 
 def test_named_array_construction_with_values():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     names = ["a", "b", "c"]
     values = [1.0, 2.0, 3.0]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     named_array = NamedArray(names, values)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(named_array) == 3
     assert named_array.names() == names
     assert named_array.as_array() == [1.0, 2.0, 3.0]
@@ -36,7 +36,7 @@ def test_named_array_construction_with_values():
 
 
 def test_named_array_construction_with_str_enum():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     class MyStrEnum(StrEnum):
         MEMBER_A = "a"
         MEMBER_B = "b"
@@ -44,10 +44,10 @@ def test_named_array_construction_with_str_enum():
 
     values = [3.0, 5.0, 7.0]
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     named_array = NamedArray(list(MyStrEnum), values)
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(named_array) == 3
     assert named_array.names() == ["a", "b", "c"]
     assert named_array.names() == list(MyStrEnum)
@@ -67,33 +67,33 @@ def test_named_array_construction_with_str_enum():
 )
 def test_named_array_construction_rejects_invalid_input(names: list[str], values: list[float] | None, match: str):
     """The constructor raises ValueError for a values list of the wrong length, and for duplicate names."""
-    # --- act / assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(ValueError, match=match):
         NamedArray(names, values)
 
 
 def test_named_array_construction_with_no_names():
     """An empty values list is valid when there are no names."""
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     named_array = NamedArray([], [])
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert len(named_array) == 0
     assert named_array.as_dict() == {}
 
 
 def test_named_array_get_set():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     named_array = NamedArray(["a", "b", "c"])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     named_array["a"] = 1.0
     named_array["b"] = 2.0
     named_array["c"] = 3.0
 
     named_array[2] = 4.0
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     assert named_array["a"] == 1.0
     assert named_array["b"] == 2.0
     assert named_array["c"] == 4.0
@@ -104,10 +104,10 @@ def test_named_array_get_set():
 
 
 def test_named_array_get_error():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     named_array = NamedArray(["a", "b", "c"])
 
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     with pytest.raises(IndexError):
         _ = named_array[3]
 
@@ -119,9 +119,9 @@ def test_named_array_get_error():
 
 
 def test_named_array_eq():
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     named_array_1 = NamedArray(["a", "b", "c"], [1.2, 3.4, 5.6])
     named_array_2 = NamedArray(["a", "b", "c"], [1.2, 3.4, 5.6])
 
-    # --- act & assert ------------------------------------
+    # --- act / assert -----------------
     assert named_array_1 == named_array_2

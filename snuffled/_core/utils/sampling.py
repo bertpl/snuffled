@@ -6,9 +6,9 @@ import numpy as np
 from .constants import SEED_OFFSET_MULTI_SCALE_SAMPLES, SEED_OFFSET_PSEUDO_UNIFORM_SAMPLES, SEED_OFFSET_SAMPLE_INTEGERS
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Root-sampling geometry
-# =================================================================================================
+# ==================================================================================================
 def max_x_delta(dx: float) -> float:
     """Largest x_delta `compute_x_deltas` can produce for a given dx: `2^2.5 · dx = 4·√2·dx`.
 
@@ -22,9 +22,9 @@ def max_x_delta(dx: float) -> float:
     return (2.0**2.5) * dx
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Multi-scale sampling
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed: int = 42) -> np.ndarray:
     """Returns n 'multiscale' samples across interval [x_min, x_max], with minimum distance between samples 'dx_min'.
@@ -41,8 +41,7 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
 
     Results across multiple runs are deterministic, but can be controlled by a seed.
     """
-    # --- determine interval widths -----------------------
-
+    # --- determine interval widths --------------
     # get interval widths   (n samples -> n-1 sub-intervals)
     n_w = n - 1
     w = get_fixed_sum_exponential_intervals(n=n_w, tgt_sum=x_max - x_min, dx_min=dx_min)
@@ -51,8 +50,7 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     np.random.seed(seed + SEED_OFFSET_MULTI_SCALE_SAMPLES)
     np.random.shuffle(w)
 
-    # --- determine actual samples ------------------------
-
+    # --- determine actual samples ---------------
     # compute cumulative
     x_rel = np.cumsum(w)  # x-positions of samples relative to x_min
     x_rel = x_rel * (x_max - x_min) / x_rel[-1]  # rescale (probably very slightly) to adjust for numerical errors
@@ -67,9 +65,9 @@ def multi_scale_samples(x_min: float, x_max: float, dx_min: float, n: int, seed:
     return x
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Exponential spacing helpers
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def get_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -> np.ndarray:
     """Similar to fit_fixed_sum_exponential_intervals(...) but returns a numpy array of actual interval sizes.
@@ -121,7 +119,7 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
         This problem is only well-defined if dx_min <= tgt_sum/n.  If not, we raise a ValueError
 
     """
-    # --- argument handling -------------------------------
+    # --- argument handling ----------------------
     if n < 2:
         raise ValueError(f"n should be >=2, here {n}")
     if dx_min <= 0.0:
@@ -133,7 +131,7 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
     if dx_min == tgt_sum / n:
         return 1.0  # in this corner case we have c==1.0 as exact solution
 
-    # --- solve -------------------------------------------
+    # --- solve ----------------------------------
     rhs = tgt_sum / dx_min
 
     def f_bisect(_c: float) -> float:
@@ -161,9 +159,9 @@ def fit_fixed_sum_exponential_intervals(n: int, tgt_sum: float, dx_min: float) -
     return c_mid
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Integer sampling
-# =================================================================================================
+# ==================================================================================================
 def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]:
     """Sample n integers (without replacement) from range [i_min, i_max).
 
@@ -173,9 +171,9 @@ def sample_integers(i_min: int, i_max: int, n: int, seed: int = 42) -> list[int]
     return sorted(random.sample(range(i_min, i_max), n))
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Pseudo-uniform sampling
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def pseudo_uniform_samples(x_min: float, x_max: float, n: int, seed: int = 42) -> np.ndarray:
     """Return n random numbers in [x_min, x_max), one per uniform sub-interval of width (x_max-x_min)/n.

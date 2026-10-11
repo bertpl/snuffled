@@ -8,9 +8,9 @@ from ._fit_exact import fit_curve_exact_three_points
 from ._helpers import initialize_params, param_step
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Find solution WITHOUT uncertainty - OPTIMAL FIT
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def fit_curve(
     x: np.ndarray,
@@ -39,10 +39,10 @@ def fit_curve(
 
     :return: (a,b,c,cost)-tuple of parameters that are considered optimal, with a, b, c in requested ranges.
     """
-    # --- initial approximate solution --------------------
+    # --- initial approximate solution -----------
     a_opt, b_opt, c_opt, optimal_cost, _ = fit_curve_approx(x, fx, range_a, range_b, range_c, reg, debug_flag)
 
-    # --- refine - step 2 - grid --------------------------
+    # --- refine - step 2 - grid -----------------
     for step_methods in (["a", "b", "c"], ["ac", "ba", "bc"], ["a", "b", "c"], ["ac", "ba", "bc"]):
         # First optimize over primary directions, then over the combined directions.
         # This should improve the odds of being able to take large steps in the combined directions in the 2nd phase.
@@ -89,13 +89,13 @@ def fit_curve(
                             optimal_cost = current_cost
                             break  # no need to explore the other step direction (back to where we came from)
 
-    # --- return ------------------------------------------
+    # --- return ---------------------------------
     return a_opt, b_opt, c_opt, optimal_cost
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Find solution WITHOUT uncertainty - APPROXIMATE FIT
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def fit_curve_approx(
     x: np.ndarray,
@@ -128,13 +128,13 @@ def fit_curve_approx(
                cost:    optimal cost of this solution
                method:  one of 'default', 'median_local', 'median_global', 'geomean_local', 'geomean_global'
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     n = len(fx)
     fx_group_1 = fx[: n // 3]
     fx_group_2 = fx[n // 3 : 2 * n // 3]
     fx_group_3 = fx[2 * n // 3 :]
 
-    # --- default values ----------------------------------
+    # --- default values -------------------------
     a_opt, b_opt, c_opt = initialize_params(range_a, range_b, range_c)
     optimal_cost = fitting_cost(x, fx, a_opt, b_opt, c_opt, reg)
     optimal_method = "default"
@@ -142,8 +142,7 @@ def fit_curve_approx(
     if debug_flag:
         print("Method 'default'  --> cost=", optimal_cost)
 
-    # --- heuristics --------------------------------------
-
+    # --- heuristics -----------------------------
     # prepare a few reference values
     fx_median = np.median(fx)
     fx_05_median = np.median(fx_group_1)
@@ -192,5 +191,5 @@ def fit_curve_approx(
             optimal_cost = current_cost
             optimal_method = method_names[i]
 
-    # --- return all results ------------------------------
+    # --- return all results ---------------------
     return a_opt, b_opt, c_opt, optimal_cost, optimal_method

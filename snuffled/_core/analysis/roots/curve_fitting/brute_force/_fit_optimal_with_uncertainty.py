@@ -4,9 +4,9 @@ import numpy as np
 from ..shared import compute_threshold_cost, fitting_cost
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Find solution WITH uncertainty
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def fit_curve_with_uncertainty_brute_force(
     x: np.ndarray,
@@ -49,7 +49,7 @@ def fit_curve_with_uncertainty_brute_force(
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     b_min, b_max = range_b
     c_min, c_max = range_c
 
@@ -58,17 +58,17 @@ def fit_curve_with_uncertainty_brute_force(
 
     fx_q25, fx_q50, fx_q75 = np.quantile(fx, [0.25, 0.5, 0.75])
 
-    # --- determine a -------------------------------------
+    # --- determine a ----------------------------
     # float(fx_q50) is a reasonable value for 'a' given that median(x) == 1.0 and g(1)==a
     a = fixed_a_value if fixed_a_value is not None else float(fx_q50)
 
-    # --- grid search -------------------------------------
+    # --- grid search ----------------------------
     cost_arr = np.zeros(shape=(n_grid, n_grid))
     for i_b, b in enumerate(b_values):
         for i_c, c in enumerate(c_values):
             cost_arr[i_b, i_c] = fitting_cost(x, fx, a, b, c, reg)
 
-    # --- return good enough results ----------------------
+    # --- return good enough results -------------
     cost_min = np.min(cost_arr)
     cost_threshold = compute_threshold_cost(
         relative_margin=rel_uncertainty_size,

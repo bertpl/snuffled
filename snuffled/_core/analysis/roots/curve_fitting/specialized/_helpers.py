@@ -10,9 +10,9 @@ from snuffled._core.utils.numba import clip_scalar
 __LN_R = math.log(2 * math.sqrt(2))  # ln(r) with r = 2*math.sqrt(2)
 
 
-# =================================================================================================
+# ==================================================================================================
 #  Parameter initialization
-# =================================================================================================
+# ==================================================================================================
 @numba.njit(inline="always")
 def initialize_params(
     range_a: tuple[float, float], range_b: tuple[float, float], range_c: tuple[float, float]
@@ -30,9 +30,9 @@ def initialize_params(
     return a, b, c
 
 
-# =================================================================================================
+# ==================================================================================================
 #  (a,b,c) search directions used in optimization & uncertainty exploration procedures
-# =================================================================================================
+# ==================================================================================================
 @numba.njit
 def param_step(
     a: float,
@@ -48,20 +48,18 @@ def param_step(
 
     Returns (a_new, b_new, c_new).
     """
-    # --- init --------------------------------------------
+    # --- init -----------------------------------
     a_new, b_new, c_new = a, b, c
     a_min, a_max = range_a
     b_min, b_max = range_b
     c_min, c_max = range_c
 
-    # --- take step ---------------------------------------
+    # --- take step ------------------------------
     if step_size != 0.0:
         match method:
             case "a" | "ac":
-                # -------------------------------
                 # These steps first modify parameter 'a' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
-                # -------------------------------
                 # STEP 1: modify 'a' with a factor in [0.1, 10.0]
                 a_new *= 10**step_size
                 # STEP 2: modify 'c' if needed
@@ -77,10 +75,8 @@ def param_step(
                         ratio = a / a_new
                         c_new = math.asinh(ratio * math.sinh(__LN_R * c)) / __LN_R
             case "b" | "ba" | "bc":
-                # -------------------------------
                 # These steps first modify parameter 'b' in a certain way and then optionally modify 'c'
                 # to satisfy an invariant
-                # -------------------------------
                 # STEP 1: modify 'b' in [b_min, b_max] with step_size=-1 -> b_min and step_size=+1 -> b_max  (LIN scale)
                 b_new = b + step_size * (b - b_min) if step_size < 0 else b + step_size * (b_max - b)
                 # STEP 2: modify 'c' if needed
@@ -108,7 +104,7 @@ def param_step(
             case _:
                 raise ValueError(f"Unknown step method: {method}")
 
-    # --- return clipped updates --------------------------
+    # --- return clipped updates -----------------
     return (
         clip_scalar(float(a_new), a_min, a_max),
         clip_scalar(float(b_new), b_min, b_max),

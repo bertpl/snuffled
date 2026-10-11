@@ -10,11 +10,11 @@ from snuffled._core.utils.noise import noise_from_float
 def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: float):
     """Check if for simple cases we can reliably reverse-engineer parameter 'c'"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_values = np.linspace(0.5, 1.5, 11)
     fx_values = np.array([(x**true_c) + (c_noise * noise_from_float(x)) for x in x_values])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     _a_values, b_values, c_values, _cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
@@ -29,7 +29,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: 
     print(f"b : {min(b_values)} -> {max(b_values)}")
     print(f"c : {min(c_values)} -> {max(c_values)}")
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     # NOTE: we need to add some tolerances, since we search over a fixed grid
     #       that might not even contain the true value.
     assert min(b_values) - 0.01 <= 0.0 <= max(b_values) + 0.01
@@ -41,11 +41,11 @@ def test_fit_curve_with_uncertainty_brute_force_param_c(true_c: float, c_noise: 
 def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: float):
     """Check if for simple cases we can reliably reverse-engineer parameter 'b'"""
 
-    # --- arrange -----------------------------------------
+    # --- arrange ----------------------
     x_values = np.linspace(0.5, 1.5, 11)
     fx_values = np.array([true_b + (1 - true_b) * x + (c_noise * noise_from_float(x)) for x in x_values])
 
-    # --- act ---------------------------------------------
+    # --- act --------------------------
     _a_values, b_values, c_values, _cost_values = fit_curve_with_uncertainty_brute_force(
         x=x_values,
         fx=fx_values,
@@ -60,7 +60,7 @@ def test_fit_curve_with_uncertainty_brute_force_param_b(true_b: float, c_noise: 
     print(f"b : {min(b_values)} -> {max(b_values)}")
     print(f"c : {min(c_values)} -> {max(c_values)}")
 
-    # --- assert ------------------------------------------
+    # --- assert -----------------------
     # NOTE: we need to add some tolerances, since we search over a fixed grid
     #       that might not even contain the true value.
     assert min(b_values) - 0.01 <= true_b <= max(b_values) + 0.01
