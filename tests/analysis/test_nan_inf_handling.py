@@ -25,7 +25,7 @@ def _f_inf_region(x: float) -> float:
 
 
 def _f_pole(x: float) -> float:
-    return 1.0 / (x - 0.2) if x != 0.2 else float("inf")  # pole at x = 0.2
+    return 1.0 / (x - 0.2) if x != 0.2 else float("inf")
 
 
 # =================================================================================================
@@ -68,7 +68,7 @@ def test_f_clips_huge_finite_without_inf_flag():
 
 
 # =================================================================================================
-#  Pipeline: NaN / inf functions complete extract_all() + are flagged
+#  Pipeline: extract_all() completes on functions that return NaN or inf, and flags those values
 # =================================================================================================
 @pytest.mark.parametrize("fun", [_f_nan_middle, _f_nan_at_only_root])
 def test_extract_all_nan_completes_and_flags(fun: Callable[[float], float]):

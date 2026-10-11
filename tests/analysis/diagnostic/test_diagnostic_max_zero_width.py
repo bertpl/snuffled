@@ -57,7 +57,7 @@ def test_function_analyser_max_zero_width(fun: Callable[[float], float], max_wid
 
 
 # =================================================================================================
-#  Rootless functions: empty root list -> 0.0  (regression: used to crash on max() of empty)
+#  Rootless functions: an empty root list gives 0.0, without crashing on max() of an empty list
 # =================================================================================================
 def f_parabola(x: float) -> float:
     return 1.0 + x * x  # strictly positive on [-1, 1] -> no root

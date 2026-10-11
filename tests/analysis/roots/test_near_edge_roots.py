@@ -40,7 +40,7 @@ def test_analyzable_roots_keeps_interior_root():
 
 
 # =================================================================================================
-#  Pipeline: extract_all() completes on near-edge roots, flags them, and falls back to 0.0 root scores
+#  Pipeline: extract_all() completes on near-edge roots; if all are, it flags this and sets each RootProperty to 0.0
 # =================================================================================================
 @pytest.mark.parametrize("root_x", [-1.0 + 2e-9, 1.0 - 2e-9])  # both edges
 def test_extract_all_near_edge_root_completes(root_x: float):
