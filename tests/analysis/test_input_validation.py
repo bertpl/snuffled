@@ -51,21 +51,24 @@ def test_min_useful_value_is_accepted():
 
 
 # ==================================================================================================
-#  A dx below the float spacing in [x_min, x_max] is rejected, because it repeats samples
+#  A dx below the float spacing at max(|x_min|, |x_max|, x_max - x_min) is rejected
 # ==================================================================================================
 @pytest.mark.parametrize(
     "x_min, x_max, dx",
     [
-        (-1.0, 1.0, 1e-16),  # the spacing at the interval width 2 is about 4.4e-16
+        (-1.0, 1.0, 1e-16),  # the interval width 2 exceeds |x_min| and |x_max|; the spacing at 2 is about 4.4e-16
         (-1.0, 1.0, 1e-20),
         (1e6, 1e6 + 1.0, 1e-11),  # the spacing at 1e6 is about 1.2e-10
     ],
 )
 def test_snuffler_rejects_dx_below_float_spacing(x_min: float, x_max: float, dx: float):
+    """Snuffler raises ValueError for a dx below the float spacing at max(|x_min|, |x_max|, x_max - x_min)."""
+    # --- act / assert -----------------
     with pytest.raises(ValueError, match="dx must be >="):
         Snuffler(fun=_f, x_min=x_min, x_max=x_max, dx=dx, seed=42)
 
 
 def test_snuffler_accepts_dx_at_float_spacing():
-    # exactly at the float spacing is valid (the message says ">=")
+    """Snuffler accepts a dx exactly equal to the float spacing, as the ">=" in the ValueError message states."""
+    # --- act / assert -----------------
     _ = Snuffler(fun=_f, x_min=-1.0, x_max=1.0, dx=float(np.spacing(2.0)), seed=42)

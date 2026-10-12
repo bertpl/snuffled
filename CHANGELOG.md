@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- **Breaking:** Make `Snuffler` raise `ValueError` for a `dx` below the spacing between adjacent floats in [`x_min`, `x_max`]
+- **Breaking:** Make `Snuffler` raise `ValueError` for a `dx` below the float spacing at the largest of `abs(x_min)`, `abs(x_max)` and `x_max - x_min`
 - Make `Snuffler.extract_all()` 8 to 30 times faster at default settings
 - Change the results of `Snuffler` for a given `seed`, so that they differ from earlier versions
 
