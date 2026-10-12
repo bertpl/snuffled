@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- **Breaking:** Make `Snuffler` raise `ValueError` for a `dx` below the float spacing at the largest of `abs(x_min)`, `abs(x_max)` and `x_max - x_min`
 - Make `Snuffler.extract_all()` 8 to 30 times faster at default settings
 - Change the results of `Snuffler` for a given `seed`, so that they differ from earlier versions
 
@@ -20,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix `Snuffler` reseeding Python's global `random` module
 - Fix `Snuffler` keeping the analyzed function and its samples in memory until the process exits
-- Fix `FunctionProperty.MANY_ZEROES` scoring close to 1, even for a function with 1 zero, when `dx` is smaller than the spacing between adjacent floats somewhere in [`x_min`, `x_max`]
 
 ### Security
 
