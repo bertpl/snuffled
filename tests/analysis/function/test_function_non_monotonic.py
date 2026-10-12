@@ -12,9 +12,8 @@ from snuffled._core.analysis.function.helpers_non_monotonic import (
     non_monotonicity_score_up_down_x,
 )
 from snuffled._core.models import FunctionProperty
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng_seed import RngSeed
-from tests.helpers import is_sorted_with_tolerance
+from tests.helpers import is_sorted_with_tolerance, noise_from_float
 
 
 # ==================================================================================================
@@ -74,8 +73,6 @@ def test_function_analyser_non_monotonic(fun: Callable[[float], float], min_scor
     # --- act --------------------------
     non_monotonic_score = analyser.extract(FunctionProperty.NON_MONOTONIC)
 
-    print(non_monotonic_score)
-
     # --- assert -----------------------
     assert min_score - 0.05 <= non_monotonic_score <= max_score + 0.05
 
@@ -111,8 +108,6 @@ def test_function_analyser_non_monotonic_trend_1():
         for c in [10**e for e in np.linspace(-1, 10, 20)]
     ]
 
-    print(scores)
-
     # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
@@ -147,8 +142,6 @@ def test_function_analyser_non_monotonic_trend_2():
         for c in [10**e for e in np.linspace(-20, 20, 20)]
     ]
 
-    print(scores)
-
     # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=1e-3)
     assert min(scores) == 0.0
@@ -182,8 +175,6 @@ def test_function_analyser_non_monotonic_trend_3():
         ).extract(FunctionProperty.NON_MONOTONIC)
         for c in [10**e for e in np.linspace(0, 10, 11)]
     ]
-
-    print(scores)
 
     # --- assert -----------------------
     assert is_sorted_with_tolerance(scores, abs_tol=0.1)  # large tol. as n_up_down_flips score is quite stochastic

@@ -129,6 +129,8 @@ select = [
     "ANN",     # flake8-annotations
     "SLF",     # flake8-self: private-member access
     "S",       # flake8-bandit: security lint
+    "T20",     # flake8-print: no bare print()
+    "NPY",     # NumPy rules (NPY002: no legacy np.random API)
     "C901",    # mccabe complexity gate (threshold in [tool.ruff.lint.mccabe])
 ]
 ignore = [
@@ -152,9 +154,9 @@ raises-require-match-for = ["Exception", "BaseException"]  # only the truly broa
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["SLF001", "S101", "S311", "D", "ANN"]  # AAA tests: asserts, private access, random data, no docstring/annotation duty
 "__init__.py" = ["F401"]                 # re-export modules: naked imports, no `as` alias
-"scripts/**" = ["INP001", "S"]   # maintainer tooling, not the shipped library
-".github/scripts/**" = ["INP001", "S", "D", "ANN"]   # maintainer tooling, not held to shipped-source style
-"notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901", "B"]  # exploratory notebooks, not held to shipped-source style
+"scripts/**" = ["INP001", "S", "T20"]   # maintainer tooling, not the shipped library
+".github/scripts/**" = ["INP001", "S", "D", "ANN", "T20"]   # maintainer tooling, not held to shipped-source style
+"notebooks/**" = ["INP001", "S", "D", "ANN", "E501", "PTH", "PLW2901", "B", "T20"]  # exploratory notebooks, not held to shipped-source style
 # @cache on FunctionSampler's computed-array methods is deliberate; the resulting instance
 # retention is tracked as a parked behavior item, not silently refactored here.
 "snuffled/_core/analysis/_function_sampler.py" = ["B019"]

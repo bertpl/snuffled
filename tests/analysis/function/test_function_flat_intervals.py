@@ -6,9 +6,8 @@ import pytest
 from snuffled._core.analysis import FunctionSampler
 from snuffled._core.analysis.function import FunctionAnalyser
 from snuffled._core.models import FunctionProperty
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng_seed import RngSeed
-from tests.helpers import is_sorted_with_tolerance
+from tests.helpers import is_sorted_with_tolerance, noise_from_float
 
 
 # ==================================================================================================
@@ -80,8 +79,6 @@ def test_function_analyser_flat_intervals(fun: Callable[[float], float], min_sco
 
     # --- act --------------------------
     flat_score = analyser.extract(FunctionProperty.FLAT_INTERVALS)
-
-    print(flat_score)
 
     # --- assert -----------------------
     assert min_score <= flat_score <= max_score

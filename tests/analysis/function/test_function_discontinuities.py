@@ -72,8 +72,6 @@ def test_function_analyser_discontinuity(fun: Callable[[float], float], min_scor
     # --- act --------------------------
     discontinuity_score = analyser.extract(FunctionProperty.DISCONTINUOUS)
 
-    print(discontinuity_score)
-
     # --- assert -----------------------
     assert min_score <= discontinuity_score <= max_score
 
@@ -109,8 +107,6 @@ def test_compute_discontinuity_score_from_intervals(
 
     # --- act --------------------------
     score = compute_discontinuity_score_from_intervals(x_values, fx_values, dx_min)
-
-    print(score)
 
     # --- assert -----------------------
     assert min_score <= score <= max_score

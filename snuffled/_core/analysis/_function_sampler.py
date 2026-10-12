@@ -255,7 +255,7 @@ class FunctionSampler:
         samples = list(zip(self.x_values(), self.fx_values()))
 
         # remove 0-valued samples, we are looking for strict sign flips
-        samples = [(x, fx) for i, (x, fx) in enumerate(samples) if (fx != 0.0)]
+        samples = [(x, fx) for x, fx in samples if (fx != 0.0)]
 
         # split in root- and non-root-intervals
         root_intervals = []

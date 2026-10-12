@@ -19,7 +19,6 @@ def fit_curve_with_uncertainty(
     n_iters: int = 20,
     uncertainty_size: float = 1.0,
     uncertainty_tol: float = 1e-3,
-    debug_flag: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Estimate optimal parameters (a,b,c) for curve fitting as well as their uncertainties.
 
@@ -49,7 +48,6 @@ def fit_curve_with_uncertainty(
     :param uncertainty_size: (float, default=1.0) factor to influence size of uncertainty region; this parameter
                                    maps to the 'relative_margin' parameter of the compute_threshold_cost function
     :param uncertainty_tol: (float, default=1e-3) accuracy with which uncertainty region needs to be determined
-    :param debug_flag: (bool, default=False) if True, stdout output is generated to debug algorithm flow.
     :return: (a_values, b_values, c_values, cost_values)-tuples, each of which is a (k,)-sized numpy array with k>=1
                i-th elements of these arrays should be interpreted as tuples (a[i], b[i], c[i]) having cost[i]
     """
@@ -64,7 +62,7 @@ def fit_curve_with_uncertainty(
     cost_opt_lst: list[float] = []
     for range_c in c_ranges:
         # go over each range_c-value and find optimal fit
-        a_opt, b_opt, c_opt, cost_opt = fit_curve(x, fx, range_a, range_b, range_c, reg, n_iters, debug_flag)
+        a_opt, b_opt, c_opt, cost_opt = fit_curve(x, fx, range_a, range_b, range_c, reg, n_iters)
         abc_opt_lst.append((a_opt, b_opt, c_opt))
         cost_opt_lst.append(cost_opt)
 
@@ -100,7 +98,6 @@ def fit_curve_with_uncertainty(
                 reg,
                 n_iters,
                 uncertainty_tol,
-                debug_flag,
             )
             a_lst.append(a_values)
             b_lst.append(b_values)

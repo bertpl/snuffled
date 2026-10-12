@@ -207,8 +207,6 @@ def test_roots_analyser_properties(
     # --- act --------------------------
     analyser = RootsAnalyser(sampler, n_root_samples=100, rng_seed=RngSeed(42))
 
-    print(analyser.extract_all().as_dict())
-
     # --- assert -----------------------
     for root_prop, (min_value, max_value) in expectations.items():
         assert min_value <= analyser.extract(root_prop) <= max_value, f"{root_prop} not in [{min_value},{max_value}]"

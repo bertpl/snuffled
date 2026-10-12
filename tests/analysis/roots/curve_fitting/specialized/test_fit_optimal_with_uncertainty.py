@@ -9,8 +9,8 @@ from snuffled._core.analysis.roots.curve_fitting import (
     fitting_cost,
     fitting_curve,
 )
-from snuffled._core.utils.noise import noise_from_float
 from snuffled._core.utils.rng import new_rng_state
+from tests.helpers import noise_from_float
 
 
 # ==================================================================================================
@@ -67,7 +67,6 @@ def test_fit_curve_with_uncertainty(
         include_opposite_c_range=include_opposite_c_range,
         uncertainty_size=uncertainty_size,
         uncertainty_tol=uncertainty_tol,
-        debug_flag=True,
     )
 
     # --- assert -----------------------

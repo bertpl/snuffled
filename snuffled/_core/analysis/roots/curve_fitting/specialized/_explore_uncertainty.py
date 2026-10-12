@@ -20,8 +20,18 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
     reg: float,
     n_iters: int = 20,
     tol: float = 1e-3,
-    debug_flag: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Explore the region around (a_opt, b_opt, c_opt) in which the fitting cost stays at or below cost_threshold.
+
+    From the optimum, a bisection along each search direction of param_step, in both signs, looks for the point
+    where the fitting cost reaches cost_threshold. Each bisection runs at most n_iters iterations, and stops early
+    once it finds a cost in [(1 - tol) * cost_threshold, cost_threshold].
+
+    Returns:
+        (a_values, b_values, c_values, cost_values)-arrays that hold the optimum first, followed by every
+        (a, b, c)-point with a cost at or below cost_threshold that the bisection along each search direction
+        finds; all 4 are empty when cost_opt > cost_threshold.
+    """
     # --- shortcuts ------------------------------
     if cost_opt > cost_threshold:
         return (
@@ -40,11 +50,6 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
         # until we find the edge.  We know that for step_size==0.0 we are strictly below the threshold_cost.
         # If for step_size==1.0 we are still below, then we consider this an edge point;
         # otherwise we can perform bisection.
-        if debug_flag:
-            print("=== UNCERTAINTY EXPLORATION ================================")
-            print("cost_opt       =", cost_opt)
-            print("cost_threshold =", cost_threshold)
-            print("============================================================")
         for step_method in ["a", "b", "c", "ac", "ba", "bc"]:
             for step_dir in [-1.0, 1.0]:
                 # initialize bisection
@@ -58,9 +63,6 @@ def explore_uncertainty(  # noqa: C901 -- inherent branching in the bisection-ba
                         a_opt, b_opt, c_opt, step_method, step_dir * cand_step_size, range_a, range_b, range_c
                     )
                     cost_cand = fitting_cost(x, fx, a_cand, b_cand, c_cand, reg)
-
-                    if debug_flag:
-                        print(f"direction '{step_method}', step_size=", step_dir * cand_step_size, " cost=", cost_cand)
 
                     if cost_cand <= cost_threshold:
                         # remember this solution
