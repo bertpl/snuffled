@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from snuffled._core.utils.math import smooth_sign, smooth_sign_array
+from snuffled._core.utils.math import distance_between_ranges, smooth_sign, smooth_sign_array
 
 
 @pytest.mark.parametrize(
@@ -53,3 +53,20 @@ def test_smooth_sign_array(x: np.ndarray, inner_tol: np.ndarray, outer_tol: np.n
 
     # --- assert -----------------------
     assert np.allclose(result, expected_result, rtol=1e-14)
+
+
+@pytest.mark.parametrize(
+    "x_min, x_max, y_min, y_max, expected_distance",
+    [
+        (0.0, 1.0, 3.0, 4.0, 2.0),  # the first range below the second
+        (3.0, 4.0, 0.0, 1.0, 2.0),  # the first range above the second
+        (0.0, 2.0, 1.0, 3.0, 0.0),  # overlapping ranges
+    ],
+)
+def test_distance_between_ranges(x_min: float, x_max: float, y_min: float, y_max: float, expected_distance: float):
+    """distance_between_ranges returns the gap between 2 separate ranges, and 0 for overlapping ones."""
+    # --- act --------------------------
+    distance = distance_between_ranges(x_min, x_max, y_min, y_max)
+
+    # --- assert -----------------------
+    assert distance == expected_distance
