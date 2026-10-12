@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Make `Snuffler` extract `FunctionProperty.DISCONTINUOUS` faster
+- Make `Snuffler.extract_all()` 8 to 30 times faster at default settings
 - Change the results of `Snuffler` for a given `seed`, so that they differ from earlier versions
 
 ### Deprecated
