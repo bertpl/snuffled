@@ -64,8 +64,8 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
 
         :return: score in [0.0, 1.0] indicating to what extent this function exhibits a high dynamic range.
         """
-        q10 = self.function_sampler.fx_quantile(0.1, absolute=True)
-        q90 = self.function_sampler.fx_quantile(0.9, absolute=True)
+        q10 = float(np.quantile(abs(self.function_sampler.fx_values), 0.1))
+        q90 = float(np.quantile(abs(self.function_sampler.fx_values), 0.9))
         if q10 == 0.0:
             # q90/q10 is undefined: q90 > 0 means an unbounded range (saturate to 1.0); q90 == 0 means
             # the function is ~everywhere 0 (no dynamic range at all -> 0.0).
@@ -93,7 +93,7 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
         # Estimate 'zero frequency' lambda = # of zeroes estimated to occur in a unit interval
 
         #  STEP 1: build list of observations (w, p) with w the interval width and p indicating if we have a sign flip
-        root_intervals, non_root_intervals = self.function_sampler.candidate_root_intervals()
+        root_intervals, non_root_intervals = self.function_sampler.candidate_root_intervals
         observations = [(x_right - x_left, 1.0) for x_left, x_right in root_intervals]
         observations += [(x_right - x_left, 0.0) for x_left, x_right in non_root_intervals]
         w_values = np.array([w for w, p in observations])
@@ -115,12 +115,12 @@ class FunctionAnalyser(PropertyExtractor[SnuffledFunctionProperties]):
 
     def _extract_non_monotonic(self) -> float:
         return non_monotonicity_score(
-            fx_diff=self.function_sampler.fx_diff_values(),
-            fx_diff_signs=self.function_sampler.fx_diff_smooth_sign(),
+            fx_diff=self.function_sampler.fx_diff_values,
+            fx_diff_signs=self.function_sampler.fx_diff_smooth_sign,
         )
 
     def _extract_flat_intervals(self) -> float:
-        fx_sign = self.function_sampler.fx_diff_smooth_sign()
+        fx_sign = self.function_sampler.fx_diff_smooth_sign
         return 1.0 - float(np.mean(abs(fx_sign)))
 
     def _extract_discontinuous(self) -> float:

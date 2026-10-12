@@ -16,7 +16,7 @@ def _mixed_roots(x: float) -> float:
 
 
 # ==================================================================================================
-#  analyzable_roots(): near-edge roots excluded, interior roots kept
+#  analyzable_roots: near-edge roots excluded, interior roots kept
 # ==================================================================================================
 def test_analyzable_roots_excludes_near_edge_root():
     # --- arrange / act ----------------
@@ -32,8 +32,8 @@ def test_analyzable_roots_excludes_near_edge_root():
     )
 
     # --- assert -----------------------
-    assert len(sampler.roots()) > 0  # the root IS detected ...
-    assert len(sampler.analyzable_roots()) == 0  # ... but excluded from two-sided analysis
+    assert len(sampler.roots) > 0  # the root IS detected ...
+    assert len(sampler.analyzable_roots) == 0  # ... but excluded from two-sided analysis
 
 
 def test_analyzable_roots_keeps_interior_root():
@@ -43,7 +43,7 @@ def test_analyzable_roots_keeps_interior_root():
     )
 
     # --- assert -----------------------
-    assert len(sampler.analyzable_roots()) == len(sampler.roots()) == 1
+    assert len(sampler.analyzable_roots) == len(sampler.roots) == 1
 
 
 # ==================================================================================================

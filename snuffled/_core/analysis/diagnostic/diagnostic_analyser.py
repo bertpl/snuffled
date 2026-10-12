@@ -69,10 +69,10 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     def _extract_max_zero_width(self) -> float:
         # default=0.0 for rootless functions: no roots -> no zero-width interval,
         # mirroring the RootsAnalyser no-roots contract (all root properties 0.0).
-        return max((root.width for root in self.function_sampler.roots()), default=0.0)
+        return max((root.width for root in self.function_sampler.roots), default=0.0)
 
     def _extract_no_zeros_detected(self) -> float:
-        root_intervals, _no_root_intervals = self.function_sampler.candidate_root_intervals()
+        root_intervals, _no_root_intervals = self.function_sampler.candidate_root_intervals
         if len(root_intervals) == 0:
             # no candidate intervals to find roots
             return 1.0
@@ -82,8 +82,8 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
     def _extract_all_roots_too_close_to_edge(self) -> float:
         # 1.0 iff roots exist but every one is too close to an interval edge to analyze reliably
         # (distinct from NO_ZEROS_DETECTED, which flags the genuinely rootless case).
-        has_roots = len(self.function_sampler.roots()) > 0
-        has_analyzable = len(self.function_sampler.analyzable_roots()) > 0
+        has_roots = len(self.function_sampler.roots) > 0
+        has_analyzable = len(self.function_sampler.analyzable_roots) > 0
         if has_roots and not has_analyzable:
             return 1.0
         else:
@@ -91,8 +91,6 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
 
     def _extract_nan_values_detected(self) -> float:
         # 1.0 iff the function returned NaN for a sampled point (which the boundary sanitize replaced).
-        # Force the multi-scale grid first so the flag is set even when extracted standalone.
-        self.function_sampler.fx_values()
         if self.function_sampler.saw_nan:
             return 1.0
         else:
@@ -100,7 +98,6 @@ class DiagnosticAnalyser(PropertyExtractor[SnuffledDiagnostics]):
 
     def _extract_inf_values_detected(self) -> float:
         # 1.0 iff the function returned +-inf for a sampled point (which the boundary clip replaced).
-        self.function_sampler.fx_values()
         if self.function_sampler.saw_inf:
             return 1.0
         else:

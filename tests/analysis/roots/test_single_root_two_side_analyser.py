@@ -142,7 +142,7 @@ def test_single_root_two_side_analyser_all_props(
     sampler = FunctionSampler(
         n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
     )
-    root = sampler.analyzable_roots()[0]
+    root = sampler.analyzable_roots[0]
 
     # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))
@@ -178,7 +178,7 @@ def test_single_root_two_side_analyser_asymmetric_linear(
     sampler = FunctionSampler(
         n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
     )
-    root = sampler.analyzable_roots()[0]
+    root = sampler.analyzable_roots[0]
 
     # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))
@@ -216,7 +216,7 @@ def test_single_root_two_side_analyser_asymmetric_nonlinear(
     sampler = FunctionSampler(
         n_fun_samples=1000, n_roots=100, fun=fun, x_min=-1.0, x_max=1.0, dx=dx, rng_seed=RngSeed(42)
     )
-    root = sampler.analyzable_roots()[0]
+    root = sampler.analyzable_roots[0]
 
     # --- act --------------------------
     analyser = SingleRootTwoSideAnalyser(sampler, root, n_root_samples=100, rng_seed=RngSeed(1234))

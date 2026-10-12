@@ -67,7 +67,7 @@ def test_function_analyser_discontinuity(fun: Callable[[float], float], min_scor
     analyser = FunctionAnalyser(sampler)
 
     # seed function cache
-    _ = sampler.fx_values()
+    _ = sampler.fx_values
 
     # --- act --------------------------
     discontinuity_score = analyser.extract(FunctionProperty.DISCONTINUOUS)

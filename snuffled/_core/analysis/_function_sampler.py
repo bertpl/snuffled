@@ -1,6 +1,6 @@
 import math
 from collections.abc import Callable
-from functools import cache
+from functools import cached_property
 from typing import overload
 
 import numpy as np
@@ -122,15 +122,25 @@ class FunctionSampler:
 
     @property
     def saw_nan(self) -> bool:
-        """Whether the function returned NaN for at least one sampled point so far."""
+        """Return True if the function returned NaN for any sampled point.
+
+        The first read of this property, or of fx_values, evaluates the function on every point of x_values, so
+        the flag covers them.
+        """
+        _ = self.fx_values  # evaluate the function on every point of x_values first, so the flag covers them
         return self._saw_nan
 
     @property
     def saw_inf(self) -> bool:
-        """Whether the function returned +-inf for at least one sampled point so far."""
+        """Return True if the function returned +-inf for any sampled point.
+
+        The first read of this property, or of fx_values, evaluates the function on every point of x_values, so
+        the flag covers them.
+        """
+        _ = self.fx_values  # evaluate the function on every point of x_values first, so the flag covers them
         return self._saw_inf
 
-    @cache
+    @cached_property
     def x_values(self) -> np.ndarray:
         """Returns an array of x-values in [x_min, x_max] that we use to sample the function and infer its properties.
 
@@ -145,16 +155,16 @@ class FunctionSampler:
             rng_state=self._rng_state,
         )
 
-    @cache
+    @cached_property
     def fx_values(self) -> np.ndarray:
-        """f(x) values corresponding to the x_values()."""
-        return np.array(self.f(list(self.x_values())), dtype=np.float64)
+        """Each element is f(x) at the corresponding entry of x_values."""
+        return np.array(self.f(list(self.x_values)), dtype=np.float64)
 
     def function_cache(self) -> list[tuple[float, float]]:
         """Returns contents of the function cache as a list of (x, f(x))-tuples.
 
-        Note this might return more information than .x_values() and .fx_values(), since those methods
-        only return information related to the initial multiscale sampling.
+        Note that function_cache() might return more information than .x_values and .fx_values, since those properties
+        only hold information related to the initial multiscale sampling.
         """
         return list(self._fun_cache.items())
 
@@ -162,23 +172,12 @@ class FunctionSampler:
         """Return number of values in function cache."""
         return len(self._fun_cache)
 
-    @cache
+    @cached_property
     def fx_diff_values(self) -> np.ndarray:
-        return np.diff(self.fx_values())
+        """Each element is the difference between 2 consecutive fx_values, so the array is 1 shorter than fx_values."""
+        return np.diff(self.fx_values)
 
-    @cache
-    def fx_quantile(self, q: float, absolute: bool) -> float:
-        """Returns the requested quantile f(x).
-
-        absolute==False    --> quantile of f(x)
-        absolute==True     --> quantile of abs(f(x)).
-        """
-        if absolute:
-            return float(np.quantile(abs(self.fx_values()), q))
-        else:
-            return float(np.quantile(self.fx_values(), q))
-
-    @cache
+    @cached_property
     def robust_estimated_fx_max(self) -> float:
         """Robust, approximate estimate of max(f(x)), not susceptible to single-sample outliers.
 
@@ -188,32 +187,32 @@ class FunctionSampler:
               estimate under most regular circumstances.
         """
         q = 1 - (1 / math.sqrt(self.n_fun_samples))
-        return (1 / q) * self.fx_quantile(q, absolute=True)
+        return (1 / q) * float(np.quantile(abs(self.fx_values), q))
 
     # --------------------------------------------------------------------------
     #  Specialized - Tolerances
     # --------------------------------------------------------------------------
-    @cache
+    @cached_property
     def tol_array_local(self) -> np.ndarray:
         """Return (n_fun_samples,)-sized array with absolute (>0) LOCAL tolerance values.
 
         These represent the tolerance wrt numerical rounding errors on a LOCAL per-sample basis, i.e. computed
         based on the magnitude of each f(x) sample.
         """
-        return self.rel_tol * abs(self.fx_values())
+        return self.rel_tol * abs(self.fx_values)
 
-    @cache
+    @cached_property
     def tol_array_global(self) -> np.ndarray:
         """Return (n_fun_samples,)-sized array with absolute (>0) GLOBAL tolerance values.
 
         These represent the tolerance wrt numerical rounding errors on a GLOBAL basis, i.e. computed based on the
         overall (~maximum) magnitude of f(x).  This is a constant array.
         """
-        return np.full(self.n_fun_samples, self.rel_tol * self.robust_estimated_fx_max())
+        return np.full(self.n_fun_samples, self.rel_tol * self.robust_estimated_fx_max)
 
-    @cache
+    @cached_property
     def fx_diff_smooth_sign(self) -> np.ndarray:
-        """Returns an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values())).
+        """Return an array with elements in [-1,+1] representing a more nuanced np.sign(np.diff(fx_values)).
 
         Local and global tolerances are used to determine the threshold around which differences transition
         (smoothly) from 0 to 1 or 0 to -1.
@@ -221,8 +220,8 @@ class FunctionSampler:
         See also smooth_sign().
         """
         # determine inner_tol, outer_tol
-        tol_global = self.tol_array_global()
-        tol_local = self.tol_array_local()
+        tol_global = self.tol_array_global
+        tol_local = self.tol_array_local
 
         inner_tol = np.minimum(tol_local, tol_global)  # make sure inner_tol[i] is the smallest of both tolerances
         outer_tol = np.maximum(tol_local, tol_global)  # make sure outer_tol[i] is the largest of both tolerances
@@ -233,7 +232,7 @@ class FunctionSampler:
 
         # compute smooth_sign
         return smooth_sign_array(
-            x=self.fx_diff_values(),
+            x=self.fx_diff_values,
             inner_tol=inner_tol,
             outer_tol=outer_tol,
         )
@@ -241,18 +240,19 @@ class FunctionSampler:
     # --------------------------------------------------------------------------
     #  Specialized - Roots
     # --------------------------------------------------------------------------
-    @cache
+    @cached_property
     def candidate_root_intervals(self) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
         """Return a list of 'root intervals' and 'non-root intervals' for root finding.
 
         The root intervals serve as candidates (but potentially too many) for root finding.
 
-        :return: (root_intervals, non_root_intervals)-tuple
-                    root_intervals      : list of (x_left, x_right)-tuples   WITH    sign flip
-                    non_root_intervals  : list of (x_left, x_right)-tuples   WITHOUT sign flip.
+        Returns:
+            Tuple (root_intervals, non_root_intervals) of 2 lists of (x_left, x_right)-tuples. Each tuple spans 2
+            consecutive nonzero samples. root_intervals holds the intervals whose endpoints differ in sign;
+            non_root_intervals holds those whose endpoints have the same sign.
         """
         # multi-scale samples as (x, fx)-tuples
-        samples = list(zip(self.x_values(), self.fx_values()))
+        samples = list(zip(self.x_values, self.fx_values))
 
         # remove 0-valued samples, we are looking for strict sign flips
         samples = [(x, fx) for x, fx in samples if (fx != 0.0)]
@@ -271,16 +271,18 @@ class FunctionSampler:
         # we're done
         return root_intervals, non_root_intervals
 
-    @cache
+    @cached_property
     def roots(self) -> list[Root]:
         """Returns at most 'n_roots' root intervals [root_min, root_max] obtained using find_root_and_width().
 
         We start from the candidate_root_intervals and - if needed - sample 'n_roots' intervals randomly
         to if there are too many candidate intervals.
-        :return: list of Root objects, with deriv_sign != 0.
+
+        Returns:
+            List of Root objects, with deriv_sign != 0.
         """
         # get intervals
-        cand_intervals, _ = self.candidate_root_intervals()
+        cand_intervals, _ = self.candidate_root_intervals
 
         # sample if needed
         if len(cand_intervals) > self.n_roots:
@@ -302,14 +304,14 @@ class FunctionSampler:
             for x_min, x_max in cand_intervals
         ]
 
-    @cache
+    @cached_property
     def analyzable_roots(self) -> list[Root]:
         """Roots far enough from the interval edges for reliable two-sided analysis.
 
         A root is analyzable only if both sides have room for the full sampling span
         `max_x_delta(dx)`; nearer the edge, sampling `root.x ± x_delta` would fall outside
-        `[x_min, x_max]`. Scoped to two-sided root analysis — `roots()` still returns every root
-        (for counting, zero-width, and the all-too-close diagnostic).
+        `[x_min, x_max]`. This list is for two-sided root analysis only; `roots` holds every root, including
+        those near the edges.
         """
         margin = max_x_delta(self.dx)
-        return [root for root in self.roots() if (root.x - self.x_min >= margin) and (self.x_max - root.x >= margin)]
+        return [root for root in self.roots if (root.x - self.x_min >= margin) and (self.x_max - root.x >= margin)]
