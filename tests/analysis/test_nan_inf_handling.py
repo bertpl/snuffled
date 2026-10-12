@@ -13,16 +13,19 @@ from snuffled._core.utils.rng_seed import RngSeed
 # ==================================================================================================
 #  Test functions
 # ==================================================================================================
-def _f_nan_middle(x: float) -> float:
-    """Return NaN over the region |x| < 0.3, and x elsewhere."""
+def _f_nan_at_root(x: float) -> float:
+    """Return x, but NaN for |x| < 0.3, so that the only sign change, at x = 0, lies inside the NaN region."""
     if abs(x) < 0.3:
         return float("nan")
     else:
         return x
 
 
-def _f_nan_at_only_root(x: float) -> float:
-    """Return NaN for |x| < 0.3, x - 0.5 for x >= 0.3, and x for x <= -0.3."""
+def _f_nan_beside_root(x: float) -> float:
+    """Return x - 0.5 for x >= 0.3 and x for x <= -0.3, but NaN for |x| < 0.3.
+
+    The only root, at x = 0.5, lies outside the NaN region.
+    """
     if abs(x) < 0.3:
         return float("nan")
     elif x > 0:
@@ -95,7 +98,7 @@ def test_f_clips_huge_finite_without_inf_flag():
 # ==================================================================================================
 #  Pipeline: extract_all() completes on functions that return NaN or inf, and flags those values
 # ==================================================================================================
-@pytest.mark.parametrize("fun", [_f_nan_middle, _f_nan_at_only_root])
+@pytest.mark.parametrize("fun", [_f_nan_at_root, _f_nan_beside_root])
 def test_extract_all_nan_completes_and_flags(fun: Callable[[float], float]):
     # --- act --------------------------
     props = Snuffler(fun=fun, x_min=-1.0, x_max=1.0, dx=1e-9, seed=42).extract_all()
