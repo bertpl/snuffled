@@ -41,6 +41,10 @@ class FunctionSampler:
         # --- validation -------------------------
         require_min_n_samples("n_fun_samples", n_fun_samples)
         require_min_n_samples("n_roots", n_roots)
+        # a dx below the spacing between adjacent floats in [x_min, x_max] makes the sample grid repeat x values
+        min_dx = float(np.spacing(max(abs(x_min), abs(x_max), x_max - x_min)))
+        if dx < min_dx:
+            raise ValueError(f"dx must be >= {min_dx}, the float spacing in [x_min, x_max], got {dx}")
 
         # --- randomization ----------------------
         # the grid is always drawn before the root subset, because finding candidate roots needs the
