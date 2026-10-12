@@ -256,32 +256,16 @@ def compute_resampling_scores(
     Returns:
         (n-1,)-sized array of scores, one per interval.
     """
-    # --- total height ---------------------------
-    # dfx_total is computed with Neumaier's compensated sum, the algorithm of Python's built-in sum() for floats
-    # since Python 3.12, so the scores match a computation with sum(). dfx_total scales only the first term of the
-    # score, so a rounding difference in it can reorder near-equal scores and change which midpoints get sampled.
-    n_intervals = len(x_values) - 1
-    dfx_total = 0.0
-    compensation = 0.0
-    for i in range(n_intervals):
-        dfx = abs(fx_values[i + 1] - fx_values[i])
-        dfx_total_new = dfx_total + dfx
-        if abs(dfx_total) >= abs(dfx):
-            compensation += (dfx_total - dfx_total_new) + dfx
-        else:
-            compensation += (dfx - dfx_total_new) + dfx_total
-        dfx_total = dfx_total_new
-    if (compensation != 0.0) and math.isfinite(compensation):
-        dfx_total += compensation
+    dx_values = np.diff(x_values)
+    dfx_values = np.abs(np.diff(fx_values))
+    dfx_total = np.sum(dfx_values)
 
-    # --- interval scores ------------------------
-    scores = np.zeros(n_intervals, dtype=np.float64)
-    for i in range(n_intervals):
-        dx = x_values[i + 1] - x_values[i]
-        if dx > dx_min:
-            dx_rel = dx / dx_total
+    scores = np.zeros(len(dx_values), dtype=np.float64)
+    for i in range(len(dx_values)):
+        if dx_values[i] > dx_min:
+            dx_rel = dx_values[i] / dx_total
             if dfx_total > 0:
-                dfx_rel = abs(fx_values[i + 1] - fx_values[i]) / dfx_total
+                dfx_rel = dfx_values[i] / dfx_total
             else:
                 dfx_rel = 0.0
             scores[i] = (dfx_rel * dfx_rel / dx_rel) + (dx_rel * dx_rel)
