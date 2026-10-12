@@ -44,7 +44,8 @@ class Snuffler(PropertyExtractor[SnuffledProperties]):
 
         Raises:
             TypeError: If `seed` is not an integer, such as a Python `int` or a NumPy integer.
-            ValueError: If `seed` does not fit in an int64, or if `dx` is below
+            ValueError: If `seed` does not fit in an int64, if `n_fun_samples`, `n_roots` or `n_root_samples`
+                is below `MIN_USEFUL_N_SAMPLES`, or if `dx` is below
                 `np.spacing(max(abs(x_min), abs(x_max), x_max - x_min))`, the spacing between adjacent
                 floats at the largest of |x_min|, |x_max| and the interval width.
         """

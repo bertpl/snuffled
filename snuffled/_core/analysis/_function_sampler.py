@@ -42,17 +42,18 @@ class FunctionSampler:
 
         Raises:
             ValueError: If `n_fun_samples` or `n_roots` is below `MIN_USEFUL_N_SAMPLES`, or if `dx` is below
-                the float spacing at the largest of |x_min|, |x_max| and x_max - x_min.
+                the spacing between adjacent floats at the largest of |x_min|, |x_max| and x_max - x_min.
         """
         # --- validation -------------------------
         require_min_n_samples("n_fun_samples", n_fun_samples)
         require_min_n_samples("n_roots", n_roots)
-        # reject a dx below the float spacing at the largest of |x_min|, |x_max| and x_max - x_min, because such
-        # a dx makes the sample grid repeat x values; the interval width is included as a safety margin
+        # a dx below this float spacing makes the sample grid repeat x values; the interval width is included
+        # because the grid sums its steps as offsets from x_min, and those offsets reach x_max - x_min
         min_dx = float(np.spacing(max(abs(x_min), abs(x_max), x_max - x_min)))
         if dx < min_dx:
             raise ValueError(
-                f"dx must be >= {min_dx}, the float spacing at max(|x_min|, |x_max|, x_max - x_min); got {dx}"
+                f"dx must be >= {min_dx}, the spacing between adjacent floats at max(|x_min|, |x_max|, x_max - x_min); "
+                f"got {dx}"
             )
 
         # --- randomization ----------------------

@@ -69,6 +69,6 @@ def test_snuffler_rejects_dx_below_float_spacing(x_min: float, x_max: float, dx:
 
 
 def test_snuffler_accepts_dx_at_float_spacing():
-    """Snuffler accepts a dx exactly equal to the float spacing, as the ">=" in the ValueError message states."""
+    """Snuffler accepts a dx equal to the float spacing at max(|x_min|, |x_max|, x_max - x_min), as ">=" states."""
     # --- act / assert -----------------
     _ = Snuffler(fun=_f, x_min=-1.0, x_max=1.0, dx=float(np.spacing(2.0)), seed=42)
