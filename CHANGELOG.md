@@ -5,24 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
-### Added
+## 0.1.11 (2026-10-12)
 
 ### Changed
 - **Breaking:** Make `Snuffler` raise `ValueError` for a `dx` below the float spacing at the largest of `abs(x_min)`, `abs(x_max)` and `x_max - x_min`
 - Make `Snuffler.extract_all()` 8 to 30 times faster at default settings
 - Change the results of `Snuffler` for a given `seed`, so that they differ from earlier versions
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Fix `Snuffler` reseeding Python's global `random` module
 - Fix `Snuffler` keeping the analyzed function and its samples in memory until the process exits
-
-### Security
 
 ## 0.1.10 (2026-10-10)
 
